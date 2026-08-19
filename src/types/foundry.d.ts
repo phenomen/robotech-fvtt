@@ -22,6 +22,10 @@ declare module "@client/documents/actor.mjs" {
     sheet: foundry.applications.api.ApplicationV2 | null;
     readonly isOwner: boolean;
     statuses: Set<string>;
+    toggleStatusEffect(
+      statusId: string,
+      options?: { active?: boolean; overlay?: boolean },
+    ): Promise<foundry.documents.ActiveEffect | boolean | undefined>;
   }
 }
 

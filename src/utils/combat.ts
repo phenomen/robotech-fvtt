@@ -12,7 +12,7 @@ import {
   type ConflictActionValue,
   type SlotPhaseValue,
 } from "@/config/choices";
-import { SLOWED_STATUS_ID } from "@/config/statuses";
+import { MENTAL_BREAK_STATUS_ID, SLOWED_STATUS_ID } from "@/config/statuses";
 import { ACTION_SLOT_COUNT, emptySlot, emptySlots, type ActionSlot } from "@/models/combat";
 import { isActorOf } from "@/utils/documents";
 
@@ -37,6 +37,10 @@ export function actorSpeed(actor: Actor | null): number {
 
 export function isSlowed(actor: Actor | null): boolean {
   return !!actor?.statuses.has(SLOWED_STATUS_ID);
+}
+
+export function isMentalBreak(actor: Actor | null): boolean {
+  return !!actor?.statuses.has(MENTAL_BREAK_STATUS_ID);
 }
 
 export function combatPhaseOf(combat: Combat): CombatPhaseValue {

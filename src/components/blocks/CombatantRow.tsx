@@ -12,7 +12,14 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
 import { Tag } from "@/components/ui/Tag";
 import { Text } from "@/components/ui/Text";
-import { combatPhaseOf, isSlowed, remainingSlots, takenActionLabel, writeTurnOrder } from "@/utils/combat";
+import {
+  combatPhaseOf,
+  isMentalBreak,
+  isSlowed,
+  remainingSlots,
+  takenActionLabel,
+  writeTurnOrder,
+} from "@/utils/combat";
 
 const DRAG_TYPE = "robotech-combatant";
 
@@ -32,6 +39,7 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
   const slots = combatant.system.slots.filter((slot) => slot.action);
   const left = remainingSlots(combatant.system.slots);
   const slowed = isSlowed(actor);
+  const mentalBreak = isMentalBreak(actor);
   // const speed = actorSpeed(actor);
   const portrait = combatant.img ?? actor?.img ?? CONST.DEFAULT_TOKEN;
   const rolled = Number.isFinite(combatant.initiative);
@@ -114,9 +122,10 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
         </Button>
       ) : null}
 
-      {slowed || combatant.hidden || combatant.isDefeated ? (
+      {slowed || mentalBreak || combatant.hidden || combatant.isDefeated ? (
         <Stack direction="row" gap={1} align="center" wrap>
           {slowed ? <Tag label={game.i18n.localize("ROBOTECH.Status.Slowed")} color="amber" /> : null}
+          {mentalBreak ? <Tag label={game.i18n.localize("ROBOTECH.Status.MentalBreak")} color="red" /> : null}
           {combatant.hidden ? <Tag label={game.i18n.localize("ROBOTECH.Combat.Hidden")} color="purple" /> : null}
           {combatant.isDefeated ? <Tag label={game.i18n.localize("ROBOTECH.Status.Defeated")} color="red" /> : null}
         </Stack>

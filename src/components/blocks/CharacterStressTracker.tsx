@@ -46,6 +46,7 @@ function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxP
 export function StressTracker({ actor }: StressTrackerProps): JSX.Element {
   const boxes = actor.system.stress.boxes;
   const burnout = actor.system.burnout;
+  const mentalBreak = actor.system.isMentalBreak;
 
   const setBoxState = (index: number, state: string) => {
     const newBoxes = [...boxes];
@@ -65,7 +66,10 @@ export function StressTracker({ actor }: StressTrackerProps): JSX.Element {
     <Card pad={0}>
       <Stack gap={3}>
         <CardHeader>
-          <CardTitle>{game.i18n.localize("ROBOTECH.Stress.Stress")}</CardTitle>
+          <CardTitle>
+            {game.i18n.localize("ROBOTECH.Stress.Stress")}
+            {mentalBreak ? ` [${game.i18n.localize("ROBOTECH.Status.MentalBreak")}]` : null}
+          </CardTitle>
         </CardHeader>
 
         <Stack direction="row" gap={3} align="center" justify="between" wrap pad={1}>

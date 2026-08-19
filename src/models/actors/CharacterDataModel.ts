@@ -1,4 +1,5 @@
 import { WEALTH_VALUES, type WealthValue } from "@/config/choices";
+import { MENTAL_BREAK_STATUS_ID } from "@/config/statuses";
 import {
   MAX_BRAWL_WOUNDS,
   MAX_CRITICAL_WOUNDS,
@@ -215,7 +216,17 @@ export class CharacterDataModel extends ActorDataModel {
   }
 
   get isMentalBreak(): boolean {
-    return this.stress.value >= MENTAL_BREAK_THRESHOLD;
+    return this.parent.statuses.has(MENTAL_BREAK_STATUS_ID);
+  }
+
+  override _onUpdate(
+    changed: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[0],
+    options: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[1],
+    userId: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[2],
+  ): void {
+    super._onUpdate(changed, options, userId);
+    if (game.user?.id !== userId) return;
+    applyMentalBreak(this, changed);
   }
 }
 
@@ -241,4 +252,18 @@ function syncStressBoxes(boxes: string[], value: number): string[] {
     if (index < boxes.length) return boxes[index] ?? "";
     return boxes.length === 0 && index < value ? "F" : "";
   });
+}
+
+function applyMentalBreak(system: CharacterDataModel, changed: object): void {
+  if (system.stress.value < MENTAL_BREAK_THRESHOLD) return;
+  if (!stressChanged(changed)) return;
+  const actor = system.parent;
+  if (actor.statuses.has(MENTAL_BREAK_STATUS_ID)) return;
+  void actor.toggleStatusEffect(MENTAL_BREAK_STATUS_ID, { active: true });
+}
+
+function stressChanged(changed: object): boolean {
+  return Object.keys(foundry.utils.flattenObject(changed)).some(
+    (key) => key === "system.stress" || key.startsWith("system.stress."),
+  );
 }

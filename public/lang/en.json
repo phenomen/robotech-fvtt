@@ -591,7 +591,8 @@
     },
     "Status": {
       "Defeated": "Defeated",
-      "Slowed": "Slowed"
+      "Slowed": "Slowed",
+      "MentalBreak": "Mental Break"
     },
     "Combat": {
       "Create": "Create encounter",
