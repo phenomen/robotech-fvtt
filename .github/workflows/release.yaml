@@ -1,0 +1,43 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: canary
+
+      - name: Build
+        run: |
+          bun install
+          bun run build
+
+      - name: Zip build output
+        run: zip -r robotech.zip dist
+
+      - name: Create/Update Release
+        id: create_release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: release
+          name: Release
+          draft: false
+          prerelease: false
+          files: |
+            robotech.zip
+            public/system.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,376 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:ital,wght@0,100..900;1,100..900&family=Geist:ital,wght@0,100..900;1,100..900&display=swap");
+
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "./typography.css";
+@import "./chat.css";
+@import "./prosemirror.css";
+
+@theme inline {
+  --font-rt-sans: var(--rt-font-sans);
+  --font-rt-mono: var(--rt-font-mono);
+
+  --color-rt-background: var(--rt-background);
+  --color-rt-foreground: var(--rt-foreground);
+
+  --color-rt-primary: var(--rt-primary);
+  --color-rt-primary-foreground: var(--rt-primary-foreground);
+
+  --color-rt-secondary: var(--rt-secondary);
+  --color-rt-secondary-foreground: var(--rt-secondary-foreground);
+
+  --color-rt-muted: var(--rt-muted);
+
+  --color-rt-danger: var(--rt-danger);
+  --color-rt-danger-foreground: var(--rt-danger-foreground);
+
+  --color-rt-border: var(--rt-border);
+  --color-rt-input: var(--rt-input);
+
+  --color-rt-custom-blue: var(--rt-custom-blue);
+  --color-rt-custom-red: var(--rt-custom-red);
+  --color-rt-custom-amber: var(--rt-custom-amber);
+  --color-rt-custom-green: var(--rt-custom-green);
+  --color-rt-custom-teal: var(--rt-custom-teal);
+  --color-rt-custom-purple: var(--rt-custom-purple);
+  --color-rt-custom-pink: var(--rt-custom-pink);
+
+  --color-rt-gradation-best: var(--rt-gradation-best);
+  --color-rt-gradation-good: var(--rt-gradation-good);
+  --color-rt-gradation-neutral: var(--rt-gradation-neutral);
+  --color-rt-gradation-bad: var(--rt-gradation-bad);
+  --color-rt-gradation-worst: var(--rt-gradation-worst);
+}
+
+@layer base {
+  .root {
+    isolation: isolate;
+  }
+
+  .robotech * {
+    border-color: var(--rt-border);
+    border-radius: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rt-border) var(--rt-background);
+    scrollbar-track-color: var(--rt-background);
+  }
+}
+
+/* Default Dark Theme */
+:root {
+  --rt-background: oklch(0.1 0 270);
+  --rt-foreground: oklch(0.985 0 0);
+  --rt-primary: oklch(0.6504 0.1925 251.63);
+  --rt-primary-foreground: oklch(0.97 0.014 254.604);
+  --rt-secondary: oklch(18.309% 0.00406 285.925);
+  --rt-secondary-foreground: oklch(0.985 0 0);
+  --rt-muted: oklch(0.705 0.015 286.067);
+  --rt-danger: oklch(0.704 0.191 22.216);
+  --rt-danger-foreground: oklch(0.985 0 0);
+  --rt-border: oklch(1 0 0 / 12%);
+  --rt-input: oklch(0.274 0.006 286.033);
+
+  --rt-custom-blue: oklch(57.875% 0.21472 258.058);
+  --rt-custom-red: oklch(0.6254 0.1931 22.94);
+  --rt-custom-amber: oklch(0.8173 0.164 75.99);
+  --rt-custom-green: oklch(0.6465 0.146 147.33);
+  --rt-custom-teal: oklch(0.6498 0.1137 181.88);
+  --rt-custom-purple: oklch(0.5548 0.1825 305.87);
+  --rt-custom-pink: oklch(0.6362 0.2124 1.24);
+
+  --rt-gradation-best: oklch(0.6498 0.1137 181.88);
+  --rt-gradation-good: oklch(0.6465 0.146 147.33);
+  --rt-gradation-neutral: oklch(0.8173 0.164 75.99);
+  --rt-gradation-bad: oklch(0.705 0.213 47.604);
+  --rt-gradation-worst: oklch(0.6254 0.1931 22.94);
+}
+
+/* All Light Themes */
+:root[data-theme="light"],
+:root[data-theme="sky"],
+:root[data-theme="brown"] {
+  --rt-custom-blue: oklch(0.48 0.2 252);
+  --rt-custom-red: oklch(0.52 0.22 25);
+  --rt-custom-amber: oklch(0.54 0.17 75);
+  --rt-custom-green: oklch(0.46 0.16 145);
+  --rt-custom-teal: oklch(0.46 0.13 182);
+  --rt-custom-purple: oklch(0.46 0.18 305);
+  --rt-custom-pink: oklch(0.5 0.2 1.24);
+
+  --rt-gradation-best: oklch(0.46 0.13 182);
+  --rt-gradation-good: oklch(0.46 0.16 145);
+  --rt-gradation-neutral: oklch(0.54 0.17 75);
+  --rt-gradation-bad: oklch(0.52 0.2 47);
+  --rt-gradation-worst: oklch(0.52 0.22 25);
+}
+
+:root[data-theme="light"] .chat-message.robotech,
+:root[data-theme="sky"] .chat-message.robotech,
+:root[data-theme="brown"] .chat-message.robotech {
+  color-scheme: light;
+}
+
+/* Dark Green Theme */
+:root[data-theme="green"] {
+  --rt-background: oklch(0.14 0.018 155);
+  --rt-foreground: oklch(0.91 0.012 155);
+  --rt-primary: oklch(83.767% 0.19265 157.641);
+  --rt-primary-foreground: oklch(0.2 0.05 48);
+  --rt-secondary: oklch(0.18 0.022 135);
+  --rt-secondary-foreground: oklch(0.91 0.01 155);
+  --rt-muted: oklch(0.66 0.018 155);
+  --rt-danger: oklch(0.65 0.18 25);
+  --rt-danger-foreground: oklch(0.985 0 0);
+  --rt-border: oklch(0.72 0.018 155 / 18%);
+  --rt-input: oklch(0.22 0.02 155);
+}
+
+/* Dark Blue Theme */
+:root[data-theme="blue"] {
+  --rt-background: oklch(0.11 0.044 253);
+  --rt-foreground: oklch(0.92 0.016 253);
+  --rt-primary: oklch(0.84 0.16 98);
+  --rt-primary-foreground: oklch(0.2 0.05 95);
+  --rt-secondary: oklch(0.14 0.051 253);
+  --rt-secondary-foreground: oklch(0.92 0.014 253);
+  --rt-muted: oklch(0.67 0.029 253);
+  --rt-danger: oklch(0.7 0.19 22);
+  --rt-danger-foreground: oklch(0.985 0 0);
+  --rt-border: oklch(0.65 0.039 253 / 25%);
+  --rt-input: oklch(0.21 0.048 253);
+}
+
+/* Dark Orange Theme */
+:root[data-theme="orange"] {
+  --rt-background: oklch(0.2046 0.012 55);
+  --rt-foreground: oklch(0.9219 0.008 70);
+  --rt-primary: oklch(0.735651 0.164077 34.7091);
+  --rt-primary-foreground: oklch(1 0 0);
+  --rt-secondary: oklch(0.2686 0.014 55);
+  --rt-secondary-foreground: oklch(0.9219 0.008 70);
+  --rt-muted: oklch(0.7155 0.016 60);
+  --rt-danger: oklch(0.6122 0.2082 22.24);
+  --rt-danger-foreground: oklch(1 0 0);
+  --rt-border: oklch(0.3715 0.014 55);
+  --rt-input: oklch(0.329 0.014 55);
+}
+
+/* Light Red Theme */
+:root[data-theme="light"] {
+  --rt-background: oklch(0.955 0.008 85);
+  --rt-foreground: oklch(0.18 0.015 85);
+  --rt-primary: oklch(0.505 0.213 27.518);
+  --rt-primary-foreground: oklch(0.99 0 0);
+  --rt-secondary: oklch(0.99 0.004 85);
+  --rt-secondary-foreground: oklch(0.2 0.015 85);
+  --rt-muted: oklch(0.46 0.02 85);
+  --rt-danger: oklch(0.53 0.261 312);
+  --rt-danger-foreground: oklch(0.99 0 0);
+  --rt-border: oklch(0.82 0.012 85);
+  --rt-input: oklch(0.925 0.009 85);
+}
+
+/* Light Sky Theme */
+:root[data-theme="sky"] {
+  --rt-background: oklch(0.96 0.016 235);
+  --rt-foreground: oklch(0.22 0.032 250);
+  --rt-primary: oklch(0.55 0.14 242);
+  --rt-primary-foreground: oklch(0.99 0.006 235);
+  --rt-secondary: oklch(0.99 0.008 230);
+  --rt-secondary-foreground: oklch(0.24 0.03 250);
+  --rt-muted: oklch(0.48 0.032 240);
+  --rt-danger: oklch(0.53 0.22 25);
+  --rt-danger-foreground: oklch(0.99 0 0);
+  --rt-border: oklch(0.82 0.028 235);
+  --rt-input: oklch(0.92 0.018 235);
+}
+
+/* Light Brown Theme */
+:root[data-theme="brown"] {
+  --rt-background: oklch(0.94 0.028 68);
+  --rt-foreground: oklch(0.24 0.045 50);
+  --rt-primary: oklch(0.58 0.15 8);
+  --rt-primary-foreground: oklch(0.99 0 0);
+  --rt-secondary: oklch(0.97 0.016 75);
+  --rt-secondary-foreground: oklch(0.26 0.04 50);
+  --rt-muted: oklch(0.48 0.04 55);
+  --rt-danger: oklch(0.52 0.18 25);
+  --rt-danger-foreground: oklch(0.99 0 0);
+  --rt-border: oklch(0.82 0.035 68);
+  --rt-input: oklch(0.9 0.03 65);
+}
+
+.robotech.sheet.actor {
+  min-width: 610px;
+}
+
+.robotech.sheet.item {
+  min-width: 500px;
+}
+
+.robotech,
+.application.robotech {
+  font-family: var(--font-rt-sans);
+  background-color: var(--rt-background);
+  color: var(--rt-foreground);
+  border-radius: 0;
+}
+
+.robotech-sheet-container,
+.robotech-item-container,
+.robotech-dialog-container,
+.window-content:has(.robotech-sheet-container),
+.window-content:has(.robotech-item-container),
+.window-content:has(.robotech-dialog-container) {
+  padding: 0px;
+  background-color: var(--rt-background);
+  color: var(--rt-foreground);
+  overflow-x: hidden;
+}
+
+.application.dialog .window-content {
+  overflow: visible;
+  flex: none;
+}
+
+.application.dialog .robotech-dialog-container {
+  flex: none;
+  min-height: auto;
+  overflow: visible;
+  height: auto;
+}
+
+.window-app.dragging,
+.window-app.is-dragging,
+.application.dragging,
+.application.is-dragging,
+.robotech-sheet-container.dragging,
+.dragging .robotech,
+.is-dragging .robotech {
+  pointer-events: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.window-app.dragging *,
+.window-app.is-dragging *,
+.application.dragging *,
+.application.is-dragging *,
+.dragging .robotech *,
+.is-dragging .robotech * {
+  pointer-events: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.robotech .window-header {
+  background-color: var(--rt-secondary);
+  color: var(--rt-secondary-foreground);
+  border-bottom: 1px solid var(--rt-border);
+  border-radius: 0;
+}
+
+.robotech .window-header .window-title,
+.robotech .window-header .header-control,
+.robotech .window-header button,
+.robotech .window-header a {
+  color: var(--rt-secondary-foreground) !important;
+}
+
+.robotech .window-header .header-control:hover,
+.robotech .window-header button:hover,
+.robotech .window-header a:hover {
+  color: var(--rt-primary) !important;
+}
+
+/* Unlayered so these beat Foundry's unlayered chrome.
+   Height, min-height, padding, gap, shadow, outline, and border utilities on <button>
+   need the `!` modifier — Foundry sets those on `a.button, button` outside any layer.
+   `thead`/`th` fill and text-shadow are reset here for the same reason. */
+.robotech table {
+  margin: 0 !important;
+}
+
+.robotech table thead,
+.robotech table th {
+  background: transparent !important;
+  color: inherit;
+  text-shadow: none;
+}
+
+.robotech button:focus,
+.robotech button:focus-visible {
+  box-shadow: none;
+  outline: none;
+}
+
+.robotech button[data-slot="tab"] {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.robotech button[data-slot="tab"]:hover,
+.robotech button[data-slot="tab"]:focus {
+  background-color: transparent !important;
+}
+
+.robotech button[data-slot="tab"][aria-selected="true"] {
+  color: var(--rt-primary) !important;
+}
+
+.robotech button[data-slot="tab"]:focus-visible {
+  outline: 2px solid var(--rt-primary) !important;
+  outline-offset: -2px !important;
+}
+
+/* Unlayered so these beat Foundry's unlayered input color / -webkit-text-fill-color. */
+.robotech input,
+.robotech select,
+.robotech textarea {
+  color: var(--rt-foreground) !important;
+  -webkit-text-fill-color: var(--rt-foreground);
+}
+
+.robotech select:disabled {
+  color: var(--rt-muted) !important;
+  -webkit-text-fill-color: var(--rt-muted);
+}
+
+.robotech input::placeholder,
+.robotech textarea::placeholder {
+  color: var(--rt-muted);
+  -webkit-text-fill-color: var(--rt-muted);
+}
+
+.robotech [role="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.tab.sidebar-tab.combat-sidebar.robotech,
+.application.robotech.combat-popout {
+  font-family: var(--font-rt-sans);
+  background-color: var(--rt-background);
+  color: var(--rt-foreground);
+  border-radius: 0;
+}
+
+.tab.sidebar-tab.combat-sidebar.robotech {
+  padding: 0;
+}
+
+.robotech-combat-container {
+  height: 100%;
+}
+
+.robotech .combatant.hover > * {
+  outline: 1px solid var(--rt-primary);
+  outline-offset: -1px;
+}

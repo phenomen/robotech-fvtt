@@ -1,0 +1,182 @@
+/* Typography tokens and utilities. Consume via `typo-{role}` plus `typo-small` / `typo-medium` / `typo-large`. */
+
+:root {
+  --rt-font-sans: "Geist", "Arial", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --rt-font-mono: "Geist Mono", consolas, monospace;
+
+  --typo-title-family: var(--rt-font-sans);
+  --typo-title-weight: 600;
+  --typo-title-tracking: -0.02em;
+  --typo-title-small-size: 1rem;
+  --typo-title-small-leading: 1.5rem;
+  --typo-title-medium-size: 1.25rem;
+  --typo-title-medium-leading: 1.75rem;
+  --typo-title-large-size: 1.5rem;
+  --typo-title-large-leading: 2rem;
+
+  --typo-label-family: var(--rt-font-sans);
+  --typo-label-weight: 500;
+  --typo-label-tracking: 0;
+  --typo-label-small-size: 0.75rem;
+  --typo-label-small-leading: 1rem;
+  --typo-label-medium-size: 0.875rem;
+  --typo-label-medium-leading: 1.25rem;
+  --typo-label-large-size: 1rem;
+  --typo-label-large-leading: 1.5rem;
+
+  --typo-caption-family: var(--rt-font-sans);
+  --typo-caption-weight: 400;
+  --typo-caption-tracking: 0;
+  --typo-caption-small-size: 0.625rem;
+  --typo-caption-small-leading: 0.875rem;
+  --typo-caption-medium-size: 0.75rem;
+  --typo-caption-medium-leading: 1rem;
+  --typo-caption-large-size: 0.875rem;
+  --typo-caption-large-leading: 1.25rem;
+
+  --typo-stat-family: var(--rt-font-mono);
+  --typo-stat-weight: 400;
+  --typo-stat-tracking: 0;
+  --typo-stat-small-size: 0.75rem;
+  --typo-stat-small-leading: 1rem;
+  --typo-stat-medium-size: 0.8125rem;
+  --typo-stat-medium-leading: 1.25rem;
+  --typo-stat-large-size: 0.875rem;
+  --typo-stat-large-leading: 1.25rem;
+
+  --typo-copy-family: var(--rt-font-sans);
+  --typo-copy-weight: 400;
+  --typo-copy-tracking: 0;
+  --typo-copy-small-size: 0.8125rem;
+  --typo-copy-small-leading: 1.25rem;
+  --typo-copy-medium-size: 0.875rem;
+  --typo-copy-medium-leading: 1.25rem;
+  --typo-copy-large-size: 1rem;
+  --typo-copy-large-leading: 1.5rem;
+
+  --typo-button-family: var(--rt-font-mono);
+  --typo-button-weight: 500;
+  --typo-button-tracking: 0;
+  --typo-button-small-size: 0.625rem;
+  --typo-button-small-leading: 0.875rem;
+  --typo-button-medium-size: 0.75rem;
+  --typo-button-medium-leading: 1rem;
+  --typo-button-large-size: 0.875rem;
+  --typo-button-large-leading: 1.25rem;
+
+  --typo-title-size: var(--typo-title-medium-size);
+  --typo-title-leading: var(--typo-title-medium-leading);
+  --typo-label-size: var(--typo-label-medium-size);
+  --typo-label-leading: var(--typo-label-medium-leading);
+  --typo-caption-size: var(--typo-caption-medium-size);
+  --typo-caption-leading: var(--typo-caption-medium-leading);
+  --typo-stat-size: var(--typo-stat-medium-size);
+  --typo-stat-leading: var(--typo-stat-medium-leading);
+  --typo-copy-size: var(--typo-copy-medium-size);
+  --typo-copy-leading: var(--typo-copy-medium-leading);
+  --typo-button-size: var(--typo-button-medium-size);
+  --typo-button-leading: var(--typo-button-medium-leading);
+}
+
+.robotech subtle {
+  font-weight: 400;
+}
+
+.robotech strong {
+  font-weight: 600;
+}
+
+@utility typo-title {
+  font-family: var(--typo-title-family);
+  font-size: var(--typo-title-size);
+  line-height: var(--typo-title-leading);
+  letter-spacing: var(--typo-title-tracking);
+  font-weight: var(--typo-title-weight);
+}
+
+@utility typo-label {
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-size);
+  line-height: var(--typo-label-leading);
+  letter-spacing: var(--typo-label-tracking);
+  font-weight: var(--typo-label-weight);
+}
+
+@utility typo-caption {
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-size);
+  line-height: var(--typo-caption-leading);
+  letter-spacing: var(--typo-caption-tracking);
+  font-weight: var(--typo-caption-weight);
+}
+
+@utility typo-stat {
+  font-family: var(--typo-stat-family);
+  font-size: var(--typo-stat-size);
+  line-height: var(--typo-stat-leading);
+  letter-spacing: var(--typo-stat-tracking);
+  font-weight: var(--typo-stat-weight);
+  font-variant-numeric: tabular-nums;
+}
+
+@utility typo-copy {
+  font-family: var(--typo-copy-family);
+  font-size: var(--typo-copy-size);
+  line-height: var(--typo-copy-leading);
+  letter-spacing: var(--typo-copy-tracking);
+  font-weight: var(--typo-copy-weight);
+}
+
+@utility typo-button {
+  font-family: var(--typo-button-family);
+  font-size: var(--typo-button-size);
+  line-height: var(--typo-button-leading);
+  letter-spacing: var(--typo-button-tracking);
+  font-weight: var(--typo-button-weight);
+  text-transform: uppercase;
+}
+
+@utility typo-small {
+  --typo-title-size: var(--typo-title-small-size);
+  --typo-title-leading: var(--typo-title-small-leading);
+  --typo-label-size: var(--typo-label-small-size);
+  --typo-label-leading: var(--typo-label-small-leading);
+  --typo-caption-size: var(--typo-caption-small-size);
+  --typo-caption-leading: var(--typo-caption-small-leading);
+  --typo-stat-size: var(--typo-stat-small-size);
+  --typo-stat-leading: var(--typo-stat-small-leading);
+  --typo-copy-size: var(--typo-copy-small-size);
+  --typo-copy-leading: var(--typo-copy-small-leading);
+  --typo-button-size: var(--typo-button-small-size);
+  --typo-button-leading: var(--typo-button-small-leading);
+}
+
+@utility typo-medium {
+  --typo-title-size: var(--typo-title-medium-size);
+  --typo-title-leading: var(--typo-title-medium-leading);
+  --typo-label-size: var(--typo-label-medium-size);
+  --typo-label-leading: var(--typo-label-medium-leading);
+  --typo-caption-size: var(--typo-caption-medium-size);
+  --typo-caption-leading: var(--typo-caption-medium-leading);
+  --typo-stat-size: var(--typo-stat-medium-size);
+  --typo-stat-leading: var(--typo-stat-medium-leading);
+  --typo-copy-size: var(--typo-copy-medium-size);
+  --typo-copy-leading: var(--typo-copy-medium-leading);
+  --typo-button-size: var(--typo-button-medium-size);
+  --typo-button-leading: var(--typo-button-medium-leading);
+}
+
+@utility typo-large {
+  --typo-title-size: var(--typo-title-large-size);
+  --typo-title-leading: var(--typo-title-large-leading);
+  --typo-label-size: var(--typo-label-large-size);
+  --typo-label-leading: var(--typo-label-large-leading);
+  --typo-caption-size: var(--typo-caption-large-size);
+  --typo-caption-leading: var(--typo-caption-large-leading);
+  --typo-stat-size: var(--typo-stat-large-size);
+  --typo-stat-leading: var(--typo-stat-large-leading);
+  --typo-copy-size: var(--typo-copy-large-size);
+  --typo-copy-leading: var(--typo-copy-large-leading);
+  --typo-button-size: var(--typo-button-large-size);
+  --typo-button-leading: var(--typo-button-large-leading);
+}

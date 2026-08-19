@@ -1,0 +1,512 @@
+/* ========================================== */
+/* Chat Messages & Chat Log Styling          */
+/* ========================================== */
+
+.chat-message.robotech {
+  color-scheme: dark;
+  background: var(--rt-secondary) !important;
+  background-image: none !important;
+  border: 1px solid var(--rt-border) !important;
+  color: var(--rt-secondary-foreground) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 4px 0 8px 0 !important;
+  padding: 8px 10px !important;
+}
+
+.chat-message.robotech::before,
+.chat-message.robotech::after {
+  background: none !important;
+  background-image: none !important;
+}
+
+.chat-message.robotech .message-header {
+  color: var(--rt-muted);
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-weight: var(--typo-caption-weight);
+  letter-spacing: var(--typo-caption-tracking);
+  border-bottom: 1px solid var(--rt-border);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.chat-message.robotech .message-header .message-sender {
+  color: var(--rt-foreground) !important;
+  font-family: var(--typo-label-family);
+  font-weight: var(--typo-label-weight) !important;
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  letter-spacing: var(--typo-label-tracking);
+}
+
+.chat-message.robotech .message-header .message-timestamp {
+  display: none;
+}
+
+.chat-message.robotech .message-header .message-delete {
+  color: var(--rt-muted);
+}
+
+.chat-message.robotech .message-header .message-delete:hover {
+  color: var(--rt-danger) !important;
+}
+
+.chat-message.robotech .message-content {
+  color: var(--rt-secondary-foreground);
+  font-family: var(--typo-copy-family);
+  font-size: var(--typo-copy-small-size);
+  line-height: var(--typo-copy-small-leading);
+  font-weight: var(--typo-copy-weight);
+}
+
+.chat-message.robotech .dice-roll .dice-formula,
+.chat-message.robotech .dice-roll .dice-total {
+  background-color: var(--rt-background) !important;
+  border: 1px solid var(--rt-border) !important;
+  color: var(--rt-foreground) !important;
+  font-family: var(--font-rt-mono) !important;
+  border-radius: 0;
+}
+
+.chat-message.robotech .dice-roll .dice-total {
+  color: var(--rt-primary) !important;
+  font-weight: 800 !important;
+  border-color: var(--rt-primary) !important;
+}
+
+/* Custom Robotech Chat Cards */
+.rt-chat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rt-chat-header {
+  font-family: var(--typo-title-family);
+  font-size: var(--typo-title-small-size);
+  line-height: var(--typo-title-small-leading);
+  font-weight: var(--typo-title-weight);
+  letter-spacing: var(--typo-title-tracking);
+  color: var(--rt-primary);
+  border-bottom: 1px solid var(--rt-border);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.rt-chat-header--danger {
+  color: var(--rt-danger);
+}
+
+.rt-chat-description {
+  font-family: var(--typo-copy-family);
+  font-size: var(--typo-copy-small-size);
+  line-height: var(--typo-copy-small-leading);
+  font-weight: var(--typo-copy-weight);
+  color: var(--rt-secondary-foreground);
+  opacity: 0.9;
+}
+
+.rt-chat-description p {
+  margin: 0 0 0.4rem;
+}
+
+.rt-chat-description p:last-child,
+.rt-chat-description ul:last-child,
+.rt-chat-description ol:last-child {
+  margin-bottom: 0;
+}
+
+.rt-chat-description ul,
+.rt-chat-description ol {
+  margin: 0 0 0.4rem;
+  padding-left: 1.25rem;
+}
+
+.rt-chat-description li {
+  margin: 0.1rem 0;
+}
+
+.rt-chat-description h1,
+.rt-chat-description h2,
+.rt-chat-description h3,
+.rt-chat-description h4 {
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-small-size);
+  line-height: var(--typo-label-small-leading);
+  font-weight: 700;
+  letter-spacing: var(--typo-label-tracking);
+  color: var(--rt-foreground);
+  margin: 0.35rem 0 0.25rem;
+}
+
+.rt-chat-description strong,
+.rt-chat-description b {
+  font-weight: 700;
+  color: var(--rt-foreground);
+}
+
+.rt-chat-description em,
+.rt-chat-description i {
+  font-style: italic;
+}
+
+.rt-chat-description blockquote {
+  margin: 0.25rem 0;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--rt-border);
+  color: var(--rt-muted);
+}
+
+.rt-chat-description a {
+  color: var(--rt-primary);
+}
+
+.rt-chat-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-weight: var(--typo-caption-weight);
+  color: var(--rt-muted);
+}
+
+.rt-chat-meta-value {
+  color: var(--rt-primary);
+  font-weight: 500;
+  font-family: var(--font-rt-mono);
+}
+
+.rt-dice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0.5rem 0;
+}
+
+.rt-die-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.125rem;
+  height: 2.125rem;
+  font-family: var(--typo-stat-family);
+  font-weight: 700;
+  font-size: var(--typo-stat-large-size);
+  line-height: var(--typo-stat-large-leading);
+}
+
+.rt-die-box--worst,
+.rt-die-box--bad,
+.rt-die-box--neutral,
+.rt-die-box--good,
+.rt-die-box--best {
+  background-color: color-mix(in oklch, var(--rt-die-color) 20%, transparent);
+  border: 1px solid var(--rt-die-color);
+  color: var(--rt-die-color);
+}
+
+.rt-die-box--worst {
+  --rt-die-color: var(--rt-gradation-worst);
+}
+
+.rt-die-box--bad {
+  --rt-die-color: var(--rt-gradation-bad);
+}
+
+.rt-die-box--neutral {
+  --rt-die-color: var(--rt-gradation-neutral);
+}
+
+.rt-die-box--good {
+  --rt-die-color: var(--rt-gradation-good);
+}
+
+.rt-die-box--best {
+  --rt-die-color: var(--rt-gradation-best);
+}
+
+.rt-success-bonus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.125rem;
+  height: 2.125rem;
+  padding: 0 0.35rem;
+  font-family: var(--typo-stat-family);
+  font-weight: 700;
+  font-size: var(--typo-stat-large-size);
+  line-height: var(--typo-stat-large-leading);
+}
+
+.rt-success-bonus--gain {
+  color: var(--rt-custom-green);
+  border: 1px dashed var(--rt-custom-green);
+  background-color: color-mix(in oklch, var(--rt-custom-green) 15%, transparent);
+}
+
+.rt-success-bonus--loss {
+  color: var(--rt-custom-red);
+  border: 1px dashed var(--rt-custom-red);
+  background-color: color-mix(in oklch, var(--rt-custom-red) 15%, transparent);
+}
+
+.rt-chat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-top: 1px solid var(--rt-border);
+  padding-top: 0.375rem;
+  margin-top: 0.25rem;
+}
+
+.rt-chat-total-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.rt-chat-total-label {
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-weight: var(--typo-caption-weight);
+  letter-spacing: var(--typo-caption-tracking);
+  color: var(--rt-muted);
+}
+
+.rt-chat-total-detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--typo-caption-small-size);
+  line-height: var(--typo-caption-small-leading);
+  font-weight: 600;
+  color: var(--rt-muted);
+  font-family: var(--typo-stat-family);
+}
+
+.rt-chat-success-part strong {
+  color: var(--rt-foreground);
+  font-weight: 700;
+}
+
+.rt-chat-total-sep {
+  color: var(--rt-border);
+}
+
+.rt-chat-total-value {
+  font-family: var(--typo-stat-family);
+  font-size: var(--typo-title-large-size);
+  line-height: var(--typo-title-large-leading);
+  font-weight: 700;
+  letter-spacing: var(--typo-title-tracking);
+  flex-shrink: 0;
+}
+
+.rt-chat-total-value--success {
+  color: var(--rt-custom-green);
+}
+
+.rt-chat-summary {
+  font-family: var(--typo-copy-family);
+  font-size: var(--typo-label-small-size);
+  line-height: var(--typo-label-small-leading);
+  font-weight: var(--typo-copy-weight);
+  color: var(--rt-secondary-foreground);
+}
+
+.rt-chat-summary--danger {
+  color: var(--rt-danger);
+  font-weight: 700;
+}
+
+.rt-chat-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-family: var(--typo-caption-family);
+  color: var(--rt-muted);
+}
+
+.rt-chat-weapon,
+.rt-chat-opposed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.rt-chat-weapon-name {
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-small-size);
+  line-height: var(--typo-label-small-leading);
+  font-weight: 700;
+  color: var(--rt-foreground);
+}
+
+.rt-chat-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding-top: 0.125rem;
+}
+
+.rt-chat-tag {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--typo-stat-family);
+  font-size: var(--typo-stat-small-size);
+  line-height: var(--typo-stat-small-leading);
+  font-weight: var(--typo-stat-weight);
+  padding: 0.2rem 0.35rem;
+  color: var(--rt-tag);
+  border: 1px solid var(--rt-tag);
+  border-radius: 0;
+  background: none;
+}
+
+.rt-chat-tag::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--rt-tag);
+  opacity: 0.1;
+}
+
+.rt-chat-tag--amber {
+  --rt-tag: var(--rt-custom-amber);
+}
+
+.rt-chat-tag--blue {
+  --rt-tag: var(--rt-custom-blue);
+}
+
+.rt-chat-tag--red {
+  --rt-tag: var(--rt-custom-red);
+}
+
+.rt-chat-tag--green {
+  --rt-tag: var(--rt-custom-green);
+}
+
+.rt-chat-tag--teal {
+  --rt-tag: var(--rt-custom-teal);
+}
+
+.rt-chat-tag--purple {
+  --rt-tag: var(--rt-custom-purple);
+}
+
+.rt-chat-tag--pink {
+  --rt-tag: var(--rt-custom-pink);
+}
+
+.rt-chat-tag--primary {
+  --rt-tag: var(--rt-primary);
+}
+
+.rt-chat-tag--default {
+  color: var(--rt-foreground);
+  border-color: var(--rt-border);
+  background-color: var(--rt-secondary);
+}
+
+.rt-chat-tag--default::before {
+  content: none;
+}
+
+.rt-chat-called {
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-small-size);
+  line-height: var(--typo-caption-small-leading);
+  color: var(--rt-custom-amber);
+}
+
+.rt-chat-target {
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-small-size);
+  line-height: var(--typo-label-small-leading);
+  font-weight: 700;
+  color: var(--rt-foreground);
+}
+
+.rt-chat-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-family: var(--typo-caption-family);
+}
+
+.rt-chat-breakdown-row {
+  line-height: 1.35;
+}
+
+.rt-chat-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-family: var(--typo-caption-family);
+  border-top: 1px solid var(--rt-border);
+  padding-top: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.rt-chat-distribution-title {
+  font-family: var(--typo-caption-family);
+  font-size: var(--typo-caption-medium-size);
+  line-height: var(--typo-caption-medium-leading);
+  font-weight: var(--typo-caption-weight);
+  letter-spacing: var(--typo-caption-tracking);
+  color: var(--rt-primary);
+}
+
+.rt-chat-damage {
+  color: var(--rt-danger);
+  font-weight: 700;
+}
+
+.rt-chat-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.rt-chat-button {
+  cursor: pointer;
+  font-family: var(--typo-button-family);
+  font-size: var(--typo-button-large-size);
+  line-height: var(--typo-button-large-leading);
+  font-weight: var(--typo-button-weight);
+  letter-spacing: var(--typo-button-tracking);
+  color: var(--rt-primary-foreground);
+  background: var(--rt-primary);
+  border: 1px solid var(--rt-primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 0;
+}
+
+.rt-chat-button:hover {
+  filter: brightness(1.1);
+}
+
+.rt-chat-button--ghost {
+  color: var(--rt-primary);
+  background: transparent;
+}

@@ -1,0 +1,655 @@
+{
+  "TYPES": {
+    "Actor": {
+      "character": "Character",
+      "vessel": "Vessel",
+      "swarm": "Swarm",
+      "conflict": "Conflict",
+      "plot_event": "Plot Event"
+    },
+    "Combat": {
+      "robotech": "Encounter"
+    },
+    "Combatant": {
+      "robotech": "Combatant"
+    },
+    "Item": {
+      "career": "Career",
+      "race": "Race",
+      "gear": "Gear",
+      "skill": "Skill",
+      "talent": "Talent",
+      "equipment_suite": "Equipment Suite",
+      "weapon": "Weapon",
+      "feature": "Feature",
+      "upgrade": "Mecha Upgrade"
+    }
+  },
+  "ROBOTECH": {
+    "Title": "Robotech: Macross Saga",
+    "Sheet": {
+      "Actor": "Robotech Actor Sheet",
+      "Item": "Robotech Item Sheet",
+      "Name": "Name",
+      "NamePlaceholder": "Name",
+      "Open": "Open sheet",
+      "NoPermission": "You do not have permission to update that actor."
+    },
+    "Editor": {
+      "ShowToolbar": "Show formatting toolbar",
+      "HideToolbar": "Hide formatting toolbar",
+      "ToggleToolbar": "Toggle formatting toolbar"
+    },
+    "Tabs": {
+      "AriaLabel": "Sections",
+      "Stats": "Stats",
+      "Skills": "Skills",
+      "Talents": "Talents",
+      "Equipment": "Equipment",
+      "Vessel": "Vessel",
+      "Crew": "Crew",
+      "Data": "Data",
+      "Description": "Description"
+    },
+    "Character": {
+      "ChangePortrait": "Change portrait",
+      "Level": "Level",
+      "Experience": "Experience",
+      "BuildPoints": "Build Points",
+      "Armor": "Armor",
+      "Race": "Race",
+      "Career": "Career",
+      "Element": "Element",
+      "Nature": "Nature",
+      "Disposition": "Disposition",
+      "Demeanor": "Demeanor",
+      "Rank": "Rank",
+      "RankTitle": "Rank Title",
+      "Fame": "Fame",
+      "FameTitle": "Fame Title",
+      "Burnout": "Burnout",
+      "Speed": "Speed",
+      "Wealth": "Wealth",
+      "Miscellaneous": "Misc",
+      "Proficiencies": "Proficiencies",
+      "ProficienciesPlaceholder": "Special weapons, vehicle proficiencies, specialized training...",
+      "DragDropCareer": "Drag & Drop a Career here",
+      "DragDropRace": "Drag & Drop a Race here",
+      "AddCareer": "Add Career",
+      "AddRace": "Add Race",
+      "AddGenericSkills": "Add Generic Skills"
+    },
+    "Race": {
+      "Form": "Form",
+      "FormPlaceholder": "e.g. Humanoid, Giant, Micronized, Macronized, etc.",
+      "Micronized": "Humanoid / Micronized",
+      "Macronized": "Giant / Macronized"
+    },
+    "Wounds": {
+      "Title": "Vitals",
+      "Brawl": "Brawl Wounds",
+      "Critical": "Critical Wounds",
+      "BrawlAbbr": "B",
+      "CriticalAbbr": "C",
+      "Box": "{type} {n}",
+      "Settings": "Vitals Settings",
+      "Max": "Max {max}",
+      "Min": "Min {min}",
+      "MechaClass": "Mecha Class",
+      "MechaClassWounds": "Mecha Class Wounds",
+      "Triumvirate": "Triumvirate"
+    },
+    "Stress": {
+      "Stress": "Stress",
+      "Burnout": "Burnout",
+      "Drama": "Drama",
+      "DramaN": "Drama {n}",
+      "DramaPlaceholder": "Drama description...",
+      "Box": "Stress {n}: {state}",
+      "Fatigue": "Fatigue",
+      "Empty": "Empty"
+    },
+    "HeroicMove": {
+      "Title": "Heroic Move",
+      "Abbr": "HM",
+      "Used": "Used",
+      "Ready": "Ready"
+    },
+    "Talents": {
+      "Category": {
+        "Leadership": "Leadership",
+        "Piloting": "Piloting",
+        "Social": "Social",
+        "Tactical": "Tactical",
+        "Technical": "Technical"
+      }
+    },
+    "Vessel": {
+      "Title": "Vessel",
+      "Type": "Vessel Type",
+      "TypeInfantry": "Infantry",
+      "TypeVehicle": "Vehicle",
+      "TypeMecha": "Mecha",
+      "TypeNaval": "Naval",
+      "Classification": "Classification",
+      "ClassificationPlaceholder": "e.g. Aerial, Power Armor...",
+      "Designation": "Designation",
+      "DesignationPlaceholder": "e.g. VF/A-6H, VHT-1...",
+      "Faction": "Faction",
+      "RequiredRank": "Required Rank",
+      "Transformable": "Transformable",
+      "Mode": "Mode",
+      "Fighter": "Fighter",
+      "Guardian": "Guardian",
+      "Battloid": "Battloid",
+      "Structure": "Structure",
+      "Armor": "Armor",
+      "Crew": "Crew",
+      "Capacity": "Capacity",
+      "HardwarePoints": "Hardware Points",
+      "SpeedTitle": "Speed & Movement",
+      "Units": "Units",
+      "GameUnits": "Game Units",
+      "Ground": "Ground",
+      "Planetary": "Planetary",
+      "Space": "Space",
+      "GroundUnits": "Ground Units",
+      "PlanetaryUnits": "Planetary Units",
+      "SpaceUnits": "Space Units",
+      "UnitConversionHint": "10 Ground Units = 1 Planetary Unit | 10 Planetary Units = 1 Space Unit",
+      "FrameworkTitle": "Framework",
+      "SystemsTitle": "Systems",
+      "Total": "Total",
+      "Left": "Left",
+      "Basic": "Basic",
+      "BasicStructure": "Basic Structure",
+      "Suite": "Suite",
+      "Sensors": "Sensors",
+      "Targeting": "Targeting",
+      "Thrusters": "Thrusters",
+      "Engines": "Engines",
+      "SystemLevels": {
+        "advantage": "Advantage",
+        "edge": "Edge",
+        "nominal": "Nominal",
+        "hindrance": "Hindrance",
+        "disadvantage": "Disadvantage"
+      }
+    },
+    "Damage": {
+      "Title": "Damage Resolution",
+      "DistributeTitle": "Distribute Damage",
+      "DistributeHint": "{damage} {type} damage to {name}",
+      "Assigned": "{assigned} / {total} assigned.",
+      "Soaked": "{soaked} soaked by armor.",
+      "Capacity": "{remaining} left",
+      "HardwareSection": "Hardware",
+      "Assign": {
+        "Structure": "Structure",
+        "Armor": "Armor",
+        "Wounds": "Wounds",
+        "Hardware": "Hardware"
+      },
+      "Distribution": {
+        "Title": "Damage dealt",
+        "Structure": "Structure",
+        "Armor": "Armor",
+        "Wounds": "Wounds",
+        "Hardware": "{name}",
+        "HardwareUnit": "hardware",
+        "Unassigned": "unassigned"
+      },
+      "Defended": "Attack negated by defense.",
+      "ArmorAbsorbed": "Attack absorbed by target armor.",
+      "ImmuneLightVsNaval": "Immune! Light damage cannot harm Naval structure.",
+      "DirectHit": "Direct hit! Inflicts {damage} {type} damage.",
+      "OverkillSuccess": "OVERKILL ATTACK! Inflicts {damage} {type} damage!",
+      "DamageClass": {
+        "light": "Light Class",
+        "mecha": "Mecha Class",
+        "naval": "Naval Class"
+      },
+      "Breakdown": {
+        "Opposed": "{attack} Attack − {defend} Defend = {net} hits",
+        "MultiplierApplied": "×{value} vs {type} applied → {hits} hits",
+        "MultiplierSkipped": "×{value} vs {type} skipped (target is {target})",
+        "Armor": "Armor {armor} − Penetration {ap} = {effective} soak",
+        "ArmorSkipped": "Armor {armor} soak (Penetration {ap} ignored vs {target})",
+        "HitsOverArmor": "{hits} hits over armor",
+        "SwarmArmor": "Penetration {ap} applied against each vessel's armor",
+        "SwarmArmorSkipped": "Penetration {ap} ignored vs {target} armor on each vessel",
+        "ClassSame": "{attack} vs {target}: damage is 1 for 1",
+        "ClassReduce": "{attack} vs {target}: every 10 hits become 1 damage",
+        "ClassOverkill": "{attack} vs {target}: each hit is 10 damage",
+        "ClassOverkillHeavy": "{attack} vs {target}: each hit is 100 damage",
+        "ClassImmune": "{attack} vs {target}: no damage"
+      }
+    },
+    "Item": {
+      "Name": "Name",
+      "NamePlaceholder": "Item Name",
+      "TagCount": "{name} ({current}/{total})",
+      "ItemNotAllowed": "{itemType} cannot be added to {actorType}.",
+      "Career": "Career",
+      "CareerPl": "Careers",
+      "Race": "Race",
+      "RacePl": "Races",
+      "Gear": "Gear",
+      "GearPl": "Gear",
+      "Skill": "Skill",
+      "SkillPl": "Skills",
+      "Talent": "Talent",
+      "TalentPl": "Talents",
+      "Weapon": "Weapon",
+      "WeaponPl": "Weapons",
+      "Feature": "Feature",
+      "FeaturePl": "Features",
+      "EquipmentSuite": "Equipment Suite",
+      "EquipmentSuitePl": "Equipment Suites",
+      "Upgrade": "Mecha Upgrade",
+      "UpgradePl": "Upgrades",
+      "Quantity": "Quantity",
+      "Value": "Value",
+      "Uses": "Uses",
+      "Unlimited": "Unlimited",
+      "HardwarePoints": "Hardware Points",
+      "Category": "Category",
+      "Damage": "Damage",
+      "Prerequisites": "Prerequisites",
+      "SlotType": "Slot Type",
+      "Element": "Element",
+      "RankTitle": "Rank Title",
+      "FameTitle": "Fame Title",
+      "Equipment": "Equipment",
+      "ElementPlaceholder": "Career element...",
+      "TalentPlaceholder": "Career talent...",
+      "RankTitlePlaceholder": "Rank title...",
+      "FameTitlePlaceholder": "Fame title...",
+      "EquipmentPlaceholder": "Granted equipment...",
+      "PrerequisitePlaceholder": "",
+      "Benefit": "Benefit",
+      "Cost": "Cost",
+      "Condition": "Condition",
+      "Bonus": "Bonus",
+      "Properties": "Weapon Properties",
+      "Ranges": {
+        "Me": "Melee",
+        "S": "Short",
+        "M": "Medium",
+        "L": "Long",
+        "EX": "Extreme"
+      },
+      "Property": {
+        "Damage": {
+          "name": "Damage",
+          "tag": "D={val}"
+        },
+        "Ammunition": {
+          "name": "Ammunition"
+        },
+        "DamageLight": {
+          "name": "Light"
+        },
+        "DamageMecha": {
+          "name": "Mecha"
+        },
+        "DamageNaval": {
+          "name": "Naval"
+        },
+        "Range": {
+          "name": "Range",
+          "tag": "R={val}"
+        },
+        "Extended": {
+          "name": "Extended",
+          "tag": "E"
+        },
+        "Melee": {
+          "name": "Melee",
+          "tag": "M"
+        },
+        "Water": {
+          "name": "Water",
+          "tag": "W"
+        },
+        "Blast": {
+          "name": "Blast",
+          "tag": "B{val}"
+        },
+        "Line": {
+          "name": "Line",
+          "tag": "L{val}"
+        },
+        "Cone": {
+          "name": "Cone",
+          "tag": "C"
+        },
+        "Sniper": {
+          "name": "Sniper",
+          "tag": "S"
+        },
+        "Incendiary": {
+          "name": "Incendiary",
+          "tag": "In"
+        },
+        "Corrosive": {
+          "name": "Corrosive",
+          "tag": "Co"
+        },
+        "Bulky": {
+          "name": "Bulky",
+          "tag": "Bu"
+        },
+        "Parry": {
+          "name": "Parry",
+          "tag": "Pr"
+        },
+        "Missile": {
+          "name": "Missile",
+          "tag": "Ms"
+        },
+        "Quiet": {
+          "name": "Quiet",
+          "tag": "Q"
+        },
+        "Hardware": {
+          "name": "Hardware",
+          "tag": "H"
+        },
+        "Penetration": {
+          "name": "Penetration",
+          "tag": "P{val}"
+        },
+        "Multiplier": {
+          "name": "Multiplier",
+          "tag": "{typeLetter}x{mult}",
+          "light": "L",
+          "mecha": "M",
+          "naval": "N"
+        }
+      }
+    },
+    "LinkedCharacter": {
+      "DropHint": "Assign a character",
+      "Clear": "Clear",
+      "OpenSheet": "Open character sheet",
+      "WrongType": "Drop a character actor, not a vessel or swarm.",
+      "Missing": "Linked character is missing"
+    },
+    "Crew": {
+      "DragDropHint": "Drag & Drop characters to add them to the crew",
+      "OverCapacity": "Assigned crew ({count}) exceeds capacity ({capacity})",
+      "Empty": "No crew assigned.",
+      "AlreadyAssigned": "That character is already in the crew.",
+      "InheritedFromVessels": "Assign crew on a vessel sheet. Swarm crew is inherited from member vessels."
+    },
+    "Roll": {
+      "Actions": {
+        "Assist": {
+          "name": "Assist",
+          "hint": "Grant the successes you receive to an ally."
+        },
+        "Inhibit": {
+          "name": "Inhibit",
+          "hint": "Hinder an opponent’s attempts to take Action."
+        },
+        "Observe": {
+          "name": "Observe",
+          "hint": "Search the nearby area for obscured threats or interesting elements."
+        },
+        "Obscure": {
+          "name": "Obscure",
+          "hint": "Hide yourself, an ally, or an object."
+        },
+        "Attack": {
+          "name": "Attack",
+          "hint": "Apply successes to damage a target."
+        },
+        "Defend": {
+          "name": "Defend",
+          "hint": "Apply successes to defend yourself, an ally, or an object in range."
+        },
+        "Redirect": {
+          "name": "Redirect",
+          "hint": "Create an effect that moves yourself or an opponent’s position."
+        },
+        "Interact": {
+          "name": "Interact",
+          "hint": "Apply successes toward a goal in the world."
+        },
+        "HeroicMove": {
+          "name": "Heroic Move",
+          "hint": "Attempt an extraordinary, once-per-session feat."
+        },
+        "Initiative": {
+          "name": "Initiative",
+          "hint": "Roll to determine turn order before the encounter."
+        }
+      },
+      "Phases": {
+        "Phase": "Phase",
+        "Support": "Support Phase",
+        "Ops": "Ops Phase",
+        "Cinematic": "Cinematic Phase",
+        "Any": "Any"
+      },
+      "Modifiers": {
+        "Disadvantage": "Disadvantage (-2)",
+        "Hindrance": "Hindrance (-1)",
+        "Nominal": "Nominal (0)",
+        "Edge": "Edge (+1)",
+        "Advantage": "Advantage (+2)"
+      },
+      "Title": "Action Center",
+      "Action": "Action",
+      "Roll": "Roll",
+      "RollButton": "Roll Dice",
+      "SelectSkill1": "First Skill",
+      "SelectSkill2": "Second Skill",
+      "SelectSuite": "Equipment Suite",
+      "Modifier": "Modifier",
+      "Successes": "Successes",
+      "NoSuccesses": "No Successes",
+      "ManualDice": "Bonus Dice",
+      "ManualSuccesses": "Added Successes",
+      "TotalDice": "Total Dice Pool",
+      "DicePool": "Dice Pool",
+      "TotalSuccesses": "Total Successes",
+      "Added": "Added",
+      "Rolled": "Rolled",
+      "None": "None",
+      "Weapon": "Weapon",
+      "DamageClass": "Damage Class",
+      "ArmorPenetration": "Armor Penetration",
+      "Multiplier": "Multiplier",
+      "MultiplierValue": "{value}x vs {type}",
+      "IncomingAttack": "Incoming Attack",
+      "AttackSuccesses": "Attack Successes",
+      "DefendSuccesses": "Defend Successes",
+      "DefendButton": "Defend",
+      "ApplyDamage": "Apply Damage",
+      "CalledShot": "Called Shot",
+      "CalledShotYes": "Called Shot: Assign damage to a system or hardware",
+      "CalledShotHint": "Called Shot: {damage} {type} damage. Assign it to a system or hardware on the target.",
+      "RollTitle": "{name} — {action}",
+      "HeightenedTitle": "{name} — Heightened {action}",
+      "NoVesselCrew": "Assign a crew member to this vessel before using the Action Center.",
+      "NoSwarmVessels": "Add vessels to this swarm before using the Action Center.",
+      "SwarmVessels": "Swarm Dice Pool",
+      "SwarmVesselsHint": "Each vessel adds 1 die. Reduce this count to split the swarm into separate action pools.",
+      "OptionWithSource": "{name} [{value}] ({source})",
+      "OptionNameWithSource": "{name} ({source})",
+      "SelectOneToken": "Select exactly one token you control.",
+      "NoPermission": "You do not have permission to apply damage to that actor."
+    },
+    "Wealth": {
+      "Low": "Low",
+      "Standard": "Standard",
+      "High": "High",
+      "Ultra": "Ultra"
+    },
+    "Buttons": {
+      "Add": "Add",
+      "Delete": "Delete",
+      "Edit": "Edit",
+      "Roll": "Roll",
+      "Use": "Use",
+      "Save": "Save",
+      "Cancel": "Cancel",
+      "Decrement": "Decrease",
+      "Increment": "Increase",
+      "Equip": "Equip",
+      "Unequip": "Unequip"
+    },
+    "List": {
+      "HeaderName": "Name",
+      "HeaderAction": "Action",
+      "HeaderHardware": "Hardware",
+      "HeaderUses": "Uses",
+      "HeaderAmmo": "Ammo",
+      "HeaderSkill": "Skill",
+      "HeaderQty": "Qty",
+      "HeaderDestroyed": "Destroyed",
+      "HardwareSlot": "Hardware {current}/{total}",
+      "HeaderManage": "Manage",
+      "HeaderValue": "Value",
+      "Empty": "No items",
+      "NewItem": "New {type}"
+    },
+    "Swarm": {
+      "Title": "Swarm",
+      "Tabs": {
+        "Members": "Members"
+      },
+      "Stats": {
+        "TotalVessels": "Total Vessels",
+        "TotalStructure": "Total Structure",
+        "SpeedRange": "Speed Range"
+      },
+      "Members": {
+        "Title": "Swarm Members",
+        "DragDropHint": "Drag & Drop vessels to add them to the swarm",
+        "Count": "Count",
+        "Armor": "Armor",
+        "Structure": "Structure",
+        "Speed": "Speed",
+        "ReducedStructureHint": "Every part of 3 structure grants 1 structure: 3 becomes 1, 4 becomes 2."
+      }
+    },
+    "Conflict": {
+      "Title": "Conflict",
+      "Type": "Type",
+      "TypeSwarm": "Swarm",
+      "TypeBoss": "Boss",
+      "TypeNavalVessel": "Naval Vessel",
+      "TypeSocial": "Social",
+      "TypeEnvironmental": "Environmental",
+      "Recognition": "Recognition",
+      "RecognitionResolved": "Resolved",
+      "RecognitionVerified": "Verified",
+      "RecognitionReported": "Reported",
+      "RecognitionObscured": "Obscured",
+      "RecognitionHidden": "Hidden",
+      "Threat": "Threat",
+      "ThreatAlpha": "Alpha",
+      "ThreatBeta": "Beta",
+      "ThreatEpsilon": "Epsilon",
+      "ThreatOmega": "Omega",
+      "Pool": "Pool",
+      "Armor": "Armor",
+      "Tracker": "Tracker",
+      "Ticks": "Ticks",
+      "TrackerBox": "Tracker box {n}",
+      "Actors": "Conflict Actors",
+      "ActorsHint": "Drag & Drop characters, vessels, or swarms",
+      "AlreadyAssigned": "That actor is already in this conflict.",
+      "WrongActorType": "Drop a character, vessel, or swarm.",
+      "PlotEvent": "Plot Event",
+      "PlotEventEmpty": "No Plot Event",
+      "AlreadyLinked": "This conflict is already linked to that Plot Event.",
+      "MissingPlotEvent": "Linked Plot Event is missing",
+      "MissingActor": "Linked actor is missing",
+      "EmptyPool": "Set the Conflict Pool above 0 before rolling.",
+      "PoolRollTitle": "{name} — Conflict Pool"
+    },
+    "PlotEvent": {
+      "Title": "Plot Event",
+      "Level": "Level",
+      "Rounds": "Rounds",
+      "RisingAction": "Rising Action",
+      "Climax": "Climax",
+      "Conclusion": "Conclusion",
+      "SetActivePhase": "Mark {phase} as the active round phase",
+      "Conflicts": "Conflicts",
+      "ConflictsHint": "Drag & Drop conflicts to add them to this event",
+      "AlreadyAssigned": "That conflict is already in this Plot Event.",
+      "WrongType": "Drop a Conflict actor.",
+      "MissingConflict": "Linked conflict is missing",
+      "HeaderType": "Type",
+      "HeaderThreat": "Threat",
+      "HeaderRecognition": "Recognition"
+    },
+    "Status": {
+      "Defeated": "Defeated",
+      "Slowed": "Slowed"
+    },
+    "Combat": {
+      "Create": "Create encounter",
+      "Settings": "Tracker settings",
+      "Menu": "Encounter options",
+      "NoEncounter": "No encounter",
+      "NotStarted": "Not started",
+      "Round": "Round {n}",
+      "EmptyTurns": "Add tokens to this encounter.",
+      "Start": "Start encounter",
+      "PreviousTurn": "Previous Turn",
+      "NextTurn": "Next Turn",
+      "PreviousRound": "Previous Round",
+      "NextRound": "Next Round",
+      "Initiative": "Initiative",
+      "Unrolled": "—",
+      "Speed": "Speed {speed}",
+      "Pool": "Pool {pool}",
+      "RoundPhase": "Round {n}: {phase} Phase.",
+      "ConflictResolved": "Conflict resolved!",
+      "RollInitiative": "Roll Initiative",
+      "ActionLeft": "{n} action left",
+      "ActionsLeft": "{n} actions left",
+      "Heightened": "Heightened",
+      "TakenAction": "{phase}: {action}",
+      "TakenHeightened": "{phase}: {heightened} {action}",
+      "TakeAction": "Take Action",
+      "Hidden": "Hidden",
+      "NotInCombat": "That actor is not in the current encounter.",
+      "ActionBudget": "Only two actions may be chosen each round.",
+      "WaitForPhase": "Wait for the GM to advance the phase.",
+      "Phases": {
+        "Communication": "Comms",
+        "Support": "Support",
+        "Ops": "Ops",
+        "Cinematic": "Cinematic"
+      }
+    },
+    "Settings": {
+      "TokenDefaults": {
+        "Name": "Apply recommended token settings",
+        "Hint": "When creating a new Actor, set token resource bars to wounds or structure."
+      },
+      "Theme": {
+        "Name": "Color Theme",
+        "Hint": "Select the color theme for the system sheets.",
+        "Dark": "Deep Space",
+        "Orange": "Volcanic Ash",
+        "Green": "Night Vision",
+        "Blue": "Underwater Research",
+        "Light": "Mecha Workshop",
+        "Sky": "Cloudy Skies",
+        "Brown": "Desert Storm",
+        "Groups": {
+          "Dark": "Dark Themes",
+          "Light": "Light Themes"
+        }
+      }
+    }
+  }
+}

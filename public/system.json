@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json.schemastore.org/foundryvtt-system-manifest.json",
+  "id": "robotech",
+  "version": "1.4.6",
+  "license": "MIT",
+  "title": "Robotech RPG",
+  "description": "Robotech: The Roleplaying Game by Strange Machine Games",
+  "authors": [
+    {
+      "name": "Phenomen",
+      "discord": "phenomen",
+      "email": "x@phenomen.dev"
+    }
+  ],
+  "compatibility": {
+    "minimum": 14,
+    "verified": 14,
+    "maximum": 14
+  },
+  "esmodules": ["robotech.js"],
+  "styles": ["robotech.css"],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": ["description"]
+      },
+      "vessel": {
+        "htmlFields": ["description"]
+      },
+      "swarm": {
+        "htmlFields": ["description"]
+      },
+      "conflict": {
+        "htmlFields": ["description"]
+      },
+      "plot_event": {
+        "htmlFields": ["description"]
+      }
+    },
+    "Combat": {
+      "robotech": {}
+    },
+    "Combatant": {
+      "robotech": {}
+    },
+    "ActiveEffect": {
+      "condition": {},
+      "enchantment": {}
+    },
+    "Item": {
+      "career": {
+        "htmlFields": ["description"]
+      },
+      "race": {
+        "htmlFields": ["description"]
+      },
+      "gear": {
+        "htmlFields": ["description"]
+      },
+      "skill": {
+        "htmlFields": ["description"]
+      },
+      "talent": {
+        "htmlFields": ["description"]
+      },
+      "equipment_suite": {
+        "htmlFields": ["description"]
+      },
+      "weapon": {
+        "htmlFields": ["description"]
+      },
+      "feature": {
+        "htmlFields": ["description"]
+      },
+      "upgrade": {
+        "htmlFields": ["description"]
+      }
+    }
+  },
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true,
+  "grid": {
+    "type": 1,
+    "distance": 1,
+    "units": "units",
+    "diagonals": 0
+  },
+  "packs": [],
+  "relationships": {
+    "recommends": [
+      {
+        "id": "dice-so-nice",
+        "manifest": "https://gitlab.com/riccisi/foundryvtt-dice-so-nice/-/raw/master/module/module.json"
+      }
+    ]
+  },
+  "media": [
+    {
+      "type": "setup",
+      "url": "systems/robotech/assets/official/robotech-background.webp",
+      "thumbnail": "systems/robotech/assets/official/robotech-thumbnail.webp"
+    }
+  ],
+  "background": "systems/robotech/assets/official/robotech-background.webp",
+  "url": "https://github.com/phenomen/robotech-fvtt",
+  "bugs": "https://github.com/phenomen/robotech-fvtt/issues",
+  "manifest": "https://github.com/phenomen/robotech-fvtt/releases/download/release/system.json",
+  "download": "https://github.com/phenomen/robotech-fvtt/releases/download/release/robotech.zip",
+  "readme": "https://raw.githubusercontent.com/phenomen/robotech-fvtt/refs/heads/main/README.md"
+}
