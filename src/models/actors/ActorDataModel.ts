@@ -8,7 +8,7 @@ type PreCreateOptions = Parameters<TypeDataModelBase["_preCreate"]>[1];
 type PreCreateUser = Parameters<TypeDataModelBase["_preCreate"]>[2];
 
 const TOKEN_BARS: Record<ActorType, { bar1: string | null; bar2: string | null }> = {
-  character: { bar1: "vitals.wounds", bar2: "vitals.stress" },
+  character: { bar1: "vitals.wounds", bar2: null },
   vessel: { bar1: "structure", bar2: null },
   swarm: { bar1: "structure", bar2: "vessels" },
   conflict: { bar1: "tracker", bar2: null },
