@@ -493,8 +493,8 @@
 .rt-chat-button {
   cursor: pointer;
   font-family: var(--typo-mono-family);
-  font-size: var(--typo-mono-large-size);
-  line-height: var(--typo-mono-large-leading);
+  font-size: var(--typo-mono-medium-size);
+  line-height: var(--typo-mono-medium-leading);
   font-weight: var(--typo-mono-weight);
   letter-spacing: var(--typo-mono-tracking);
   color: var(--rt-primary-foreground);

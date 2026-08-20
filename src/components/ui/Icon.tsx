@@ -2,10 +2,12 @@ import React from "react";
 
 import { cn } from "@/utils";
 
+export type IconTone = "default" | "primary" | "muted" | "danger" | "current" | "green" | "teal" | "blue" | "amber";
+
 interface IconProps {
   name: string;
   size?: "small" | "medium" | "large";
-  tone?: "default" | "primary" | "muted" | "danger" | "current" | "green" | "teal" | "blue" | "amber";
+  tone?: IconTone;
   title?: string;
 }
 

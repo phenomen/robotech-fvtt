@@ -36,25 +36,6 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
           </Text>
         </Stack>
       </CardHeader>
-
-      <Stack direction="row" gap={2} align="center" justify="between">
-        <Label icon="armor" iconTone="primary">
-          {game.i18n.localize("ROBOTECH.Vessel.Armor")}
-        </Label>
-        <Stack direction="row" gap={2} shrink>
-          <NumberInput
-            min={0}
-            value={armor.max}
-            onValueChange={(val) => onFieldChange("system.armor.max", Math.max(0, val ?? 0))}
-          />
-          <NumberInput
-            min={0}
-            value={armor.value}
-            onValueChange={(val) => onFieldChange("system.armor.value", Math.max(0, val ?? 0))}
-          />
-        </Stack>
-      </Stack>
-
       <Stack direction="row" gap={2} align="center" justify="between">
         <Label icon="structure" iconTone="green">
           {game.i18n.localize("ROBOTECH.Vessel.Structure")}
@@ -69,6 +50,24 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
             min={0}
             value={structure.value}
             onValueChange={(val) => onFieldChange("system.structure.value", Math.max(0, val ?? 0))}
+          />  
+        </Stack>
+      </Stack>
+
+      <Stack direction="row" gap={2} align="center" justify="between">
+        <Label icon="armor" iconTone="teal">
+          {game.i18n.localize("ROBOTECH.Vessel.Armor")}
+        </Label>
+        <Stack direction="row" gap={2} shrink>
+          <NumberInput
+            min={0}
+            value={armor.max}
+            onValueChange={(val) => onFieldChange("system.armor.max", Math.max(0, val ?? 0))}
+          />
+          <NumberInput
+            min={0}
+            value={armor.value}
+            onValueChange={(val) => onFieldChange("system.armor.value", Math.max(0, val ?? 0))}
           />
         </Stack>
       </Stack>

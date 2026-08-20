@@ -126,6 +126,7 @@ function SinkRow({ sink, amounts, onChange }: SinkRowProps): JSX.Element {
   return (
     <Field
       icon={sink.icon}
+      iconTone={sink.iconTone}
       orientation="horizontal"
       label={
         <>
@@ -156,7 +157,7 @@ function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): 
 
   return (
     <Stack direction="row" gap={2} align="start" justify="between">
-      <Label icon={sink.icon}>{label}</Label>
+      <Label icon={sink.icon} iconTone={sink.iconTone}>{label}</Label>
       <Stack direction="row" gap={1} align="center" justify="end" wrap shrink>
         {slots.map((wasDestroyed, index) => {
           const assigned = selected.includes(index);

@@ -1,6 +1,7 @@
 import { cloneElement, useId, type JSX, type ReactElement, type ReactNode } from "react";
 
 import { Checkbox } from "@/components/ui/Checkbox";
+import { type IconTone } from "@/components/ui/Icon";
 import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { cn } from "@/utils";
@@ -10,7 +11,7 @@ export type FieldOrientation = "vertical" | "horizontal";
 interface FieldProps {
   label: ReactNode;
   icon?: string;
-  iconTone?: "default" | "primary" | "muted" | "danger" | "current" | "green" | "teal" | "blue" | "amber";
+  iconTone?: IconTone;
   title?: string;
   orientation?: FieldOrientation;
   grow?: boolean;

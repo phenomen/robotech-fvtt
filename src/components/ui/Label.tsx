@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Icon } from "@/components/ui/Icon";
+import { Icon, type IconTone } from "@/components/ui/Icon";
 import { typoClass, type TextSize } from "@/components/ui/typo";
 import { cn } from "@/utils";
 
@@ -8,7 +8,7 @@ export type LabelSize = TextSize;
 
 export interface LabelProps extends Omit<React.LabelHTMLAttributes<HTMLLabelElement>, "className"> {
   icon?: string;
-  iconTone?: "default" | "primary" | "muted" | "danger" | "current" | "green" | "teal" | "blue" | "amber";
+  iconTone?: IconTone;
   size?: LabelSize;
 }
 

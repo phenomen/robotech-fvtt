@@ -1,5 +1,6 @@
 import type Actor from "@client/documents/actor.mjs";
 
+import type { IconTone } from "@/components/ui/Icon";
 import type { DamageTypeValue } from "@/config/choices";
 import type { ActorOf } from "@/models";
 import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
@@ -33,6 +34,7 @@ export interface DamageSink {
   labelKey: string;
   name?: string;
   icon: string;
+  iconTone: IconTone;
   capacity: number;
   maxAssign: number;
   destroyed?: boolean[];
@@ -81,6 +83,7 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
         kind: "wounds",
         labelKey: "ROBOTECH.Damage.Assign.Wounds",
         icon: "brawl-wound",
+        iconTone: "danger",
         capacity: emptyWoundBoxes(actor),
         maxAssign: damage,
       },
@@ -93,6 +96,7 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
         kind: "structure",
         labelKey: "ROBOTECH.Damage.Assign.Structure",
         icon: "structure",
+        iconTone: "green",
         capacity: actor.system.structure.value,
         maxAssign: damage,
       },
@@ -105,6 +109,7 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
         kind: "structure",
         labelKey: "ROBOTECH.Damage.Assign.Structure",
         icon: "structure",
+        iconTone: "green",
         capacity: actor.system.structure.value,
         maxAssign: actor.system.structure.value,
       },
@@ -113,6 +118,7 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
         kind: "armor",
         labelKey: "ROBOTECH.Damage.Assign.Armor",
         icon: "armor",
+        iconTone: "teal",
         capacity: actor.system.armor.value,
         maxAssign: actor.system.armor.value,
       },
@@ -130,6 +136,7 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
         labelKey: "ROBOTECH.Damage.Assign.Hardware",
         name: item.name,
         icon: "hardware-point",
+        iconTone: "amber",
         capacity,
         maxAssign: capacity,
         destroyed,
