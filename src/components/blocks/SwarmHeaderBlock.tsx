@@ -53,19 +53,19 @@ export function SwarmHeaderBlock({ actor }: SwarmHeaderBlockProps): JSX.Element 
         <Stack direction="row" gap={2}>
           <Stack align="center" justify="center" grow>
             <Label>{game.i18n.localize("ROBOTECH.Swarm.Stats.TotalVessels")}</Label>
-            <Text variant="mono" color="primary">
+            <Text variant="mono" color="primary" size="large">
               {system.vessels.value} / {system.vessels.max}
             </Text>
           </Stack>
           <Stack align="center" justify="center" grow>
             <Label>{game.i18n.localize("ROBOTECH.Swarm.Stats.TotalStructure")}</Label>
-            <Text variant="mono" color="primary">
+            <Text variant="mono" color="primary" size="large">
               {system.structure.value} / {system.structure.max}
             </Text>
           </Stack>
           <Stack align="center" justify="center" grow>
             <Label>{game.i18n.localize("ROBOTECH.Swarm.Stats.SpeedRange")}</Label>
-            <Text variant="mono" color="primary" truncate>
+            <Text variant="mono" color="primary" size="large">
               {speedDisplay}
             </Text>
           </Stack>

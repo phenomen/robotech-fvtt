@@ -31,7 +31,7 @@
   --typo-mono-small-leading: 0.875rem;
   --typo-mono-medium-size: 0.75rem;
   --typo-mono-medium-leading: 1rem;
-  --typo-mono-large-size: 0.875rem;
+  --typo-mono-large-size: 1rem;
   --typo-mono-large-leading: 1.25rem;
 
   --typo-copy-family: var(--rt-font-sans);
