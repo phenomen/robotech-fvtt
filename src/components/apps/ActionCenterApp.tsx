@@ -334,12 +334,16 @@ function AttackOptions({
 
 function IncomingSummary({ incoming }: { incoming: IncomingAttack }): JSX.Element {
   return (
-    <Card>
+    <Card tone="secondary" bordered pad={2} gap={1}>
       <Stack gap={1}>
-        <Label>{game.i18n.localize("ROBOTECH.Roll.IncomingAttack")}</Label>
-        <Text variant="label">
-          {game.i18n.localize("ROBOTECH.Roll.AttackSuccesses")}: {incoming.attackSuccesses}
-        </Text>
+        <Stack direction="row" gap={1} align="center" justify="between">
+          <Label icon="alert" iconTone="danger">
+            {game.i18n.localize("ROBOTECH.Roll.IncomingAttack")}
+          </Label>
+          <Text variant="label">
+            {game.i18n.localize("ROBOTECH.Roll.AttackSuccesses")}: {incoming.attackSuccesses}
+          </Text>
+        </Stack>
         <Text variant="label">{incoming.weaponName}</Text>
         {incoming.tags?.length ? (
           <Stack direction="row" gap={1} wrap>

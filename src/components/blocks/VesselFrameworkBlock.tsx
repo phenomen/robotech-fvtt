@@ -50,7 +50,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
             min={0}
             value={structure.value}
             onValueChange={(val) => onFieldChange("system.structure.value", Math.max(0, val ?? 0))}
-          />  
+          />
         </Stack>
       </Stack>
 

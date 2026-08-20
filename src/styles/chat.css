@@ -346,6 +346,13 @@
   gap: 0.125rem;
 }
 
+.rt-chat-weapon {
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--rt-background);
+  border: 1px solid var(--rt-border);
+}
+
 .rt-chat-weapon-name {
   font-family: var(--typo-label-family);
   font-size: var(--typo-label-small-size);
