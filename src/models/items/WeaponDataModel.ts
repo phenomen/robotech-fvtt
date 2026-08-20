@@ -86,11 +86,11 @@ export class WeaponDataModel extends ItemDataModel {
         water: new fields.BooleanField({ initial: false }),
         blast: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
-          value: new fields.NumberField({ initial: 10, integer: true, min: 0 }),
+          value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
         }),
         line: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
-          value: new fields.NumberField({ initial: 10, integer: true, min: 0 }),
+          value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
         }),
         cone: new fields.BooleanField({ initial: false }),
         sniper: new fields.BooleanField({ initial: false }),
@@ -106,7 +106,7 @@ export class WeaponDataModel extends ItemDataModel {
         }),
         penetration: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+          value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
         }),
         multiplier: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),

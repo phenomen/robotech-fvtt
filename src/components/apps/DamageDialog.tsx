@@ -32,7 +32,7 @@ interface DamageDialogContentProps {
 export function DamageDialogContent({ preview, onClose }: DamageDialogContentProps): JSX.Element {
   const damage = preview.cascade.damageInflicted;
   const { sinks } = preview;
-  const [amounts, setAmounts] = useState<DamageAmounts>(() => initialAmountsOf(sinks, damage));
+  const [amounts, setAmounts] = useState<DamageAmounts>(initialAmountsOf);
 
   const incoming = preview.breakdown.multipliedHits;
   const assigned = assignedDamageOf(amounts);

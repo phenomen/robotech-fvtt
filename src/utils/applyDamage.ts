@@ -140,11 +140,8 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
   return [];
 }
 
-export function initialAmountsOf(sinks: DamageSink[], damage: number): DamageAmounts {
-  const amounts = emptyDamageAmounts();
-  const primary = sinks[0];
-  if (!primary) return amounts;
-  return writeAmount(amounts, primary, Math.min(damage, primary.maxAssign));
+export function initialAmountsOf(): DamageAmounts {
+  return emptyDamageAmounts();
 }
 
 function writeAmount(amounts: DamageAmounts, sink: DamageSink, value: number): DamageAmounts {

@@ -10,6 +10,7 @@ import { Divider } from "@/components/ui/Divider";
 import { Field } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
 import { Label } from "@/components/ui/Label";
+import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Tag } from "@/components/ui/Tag";
@@ -24,7 +25,7 @@ import {
   type ActionValue,
   type SystemRatingValue,
 } from "@/config/choices";
-import type { ActorOf, ItemOf, ItemType } from "@/models";
+import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
 import type { AppOptions, CloseOptions } from "@/types/application";
 import { postActionCard, type IncomingAttack } from "@/utils/actionChat";
 import { evaluateAd6Roll, calcDieSuccess } from "@/utils/AD6Roll";
@@ -39,7 +40,7 @@ import {
 } from "@/utils/combat";
 import { filterItemsOf, isActorOf, resolveLinkedCharacters, memberVesselsOf } from "@/utils/documents";
 import { isFullyDestroyed } from "@/utils/hardwareUtils";
-import { weaponAttackStats } from "@/utils/weaponUtils";
+import { weaponAttackStats, type WeaponTag } from "@/utils/weaponUtils";
 
 export interface ActionCenterPrefill {
   action?: ActionValue;
@@ -89,6 +90,9 @@ export function ActionCenterContent({
   const [suiteId, setSuiteId] = useState<string>("");
   const [weaponId, setWeaponId] = useState<string>(weaponItems[0]?.key ?? "");
   const [calledShot, setCalledShot] = useState<boolean>(false);
+  const initialPenetration = weaponPenetrationOf(weaponItems[0]?.item);
+  const [penetrationActive, setPenetrationActive] = useState(initialPenetration.active);
+  const [penetrationValue, setPenetrationValue] = useState(initialPenetration.value);
   const [modifier, setModifier] = useState<SystemRatingValue>("nominal");
   const [manualDice, setManualDice] = useState<number>(0);
   const [manualSuccesses, setManualSuccesses] = useState<number>(0);
@@ -99,6 +103,13 @@ export function ActionCenterContent({
   const skill2 = skillItems.find((skill) => skill.key === skill2Id);
   const suite = suiteItems.find((item) => item.key === suiteId);
   const weapon = weaponItems.find((item) => item.key === weaponId);
+
+  const handleWeaponChange = (nextId: string): void => {
+    setWeaponId(nextId);
+    const next = weaponPenetrationOf(weaponItems.find((item) => item.key === nextId)?.item);
+    setPenetrationActive(next.active);
+    setPenetrationValue(next.value);
+  };
 
   const diceCount =
     swarmDice +
@@ -136,7 +147,10 @@ export function ActionCenterContent({
       if (!applied) return;
     }
 
-    const incomingAttack = incomingAttackOf(action, successes, incoming, weapon?.item, contextActor, calledShot);
+    const incomingAttack = incomingAttackOf(action, successes, incoming, weapon?.item, contextActor, calledShot, {
+      active: penetrationActive,
+      value: penetrationValue,
+    });
 
     await postActionCard({
       actor: contextActor,
@@ -188,17 +202,19 @@ export function ActionCenterContent({
         />
       </Stack>
       <SuiteSelect value={suiteId} suites={suiteItems} onChange={setSuiteId} />
-      {action === "attack" && <WeaponSelect value={weaponId} weapons={weaponItems} onChange={setWeaponId} />}
-
-      {/**  action === "attack" && (
-        <Checkbox
-          checked={calledShot}
-          onCheckedChange={setCalledShot}
-          label={game.i18n.localize("ROBOTECH.Roll.CalledShot")}
-          title={game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}
+      {action === "attack" && <WeaponSelect value={weaponId} weapons={weaponItems} onChange={handleWeaponChange} />}
+      {action === "attack" && (
+        <AttackOptions
+          calledShot={calledShot}
+          onCalledShotChange={setCalledShot}
+          penetrationActive={penetrationActive}
+          penetrationValue={penetrationValue}
+          onPenetrationActiveChange={setPenetrationActive}
+          onPenetrationValueChange={setPenetrationValue}
         />
       )}
-       */}
+
+      <Divider orientation="horizontal" />
 
       <ModifierRow modifier={modifier} onChange={setModifier} />
       {livingVessels > 0 && <SwarmDiceRow value={swarmDice} max={livingVessels} onChange={setSwarmDice} />}
@@ -270,6 +286,48 @@ function ActionSelect({
       <Text variant="label" color="muted">
         {selected ? game.i18n.localize(selected.hintKey) : null}
       </Text>
+    </Stack>
+  );
+}
+
+function AttackOptions({
+  calledShot,
+  onCalledShotChange,
+  penetrationActive,
+  penetrationValue,
+  onPenetrationActiveChange,
+  onPenetrationValueChange,
+}: {
+  calledShot: boolean;
+  onCalledShotChange: (value: boolean) => void;
+  penetrationActive: boolean;
+  penetrationValue: number;
+  onPenetrationActiveChange: (value: boolean) => void;
+  onPenetrationValueChange: (value: number) => void;
+}): JSX.Element {
+  return (
+    <Stack direction="row" gap={2} align="center">
+      <Checkbox
+        checked={calledShot}
+        onCheckedChange={onCalledShotChange}
+        label={game.i18n.localize("ROBOTECH.Roll.CalledShot")}
+        title={game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}
+      />
+      <Divider orientation="vertical" />
+      <Stack direction="row" gap={2} align="center">
+        <Checkbox
+          checked={penetrationActive}
+          onCheckedChange={onPenetrationActiveChange}
+          label={game.i18n.localize("ROBOTECH.Roll.ArmorPenetration")}
+        />
+        <NumberInput
+          min={0}
+          value={penetrationValue}
+          disabled={!penetrationActive}
+          aria-label={game.i18n.localize("ROBOTECH.Roll.ArmorPenetration")}
+          onValueChange={(value) => onPenetrationValueChange(value ?? 0)}
+        />
+      </Stack>
     </Stack>
   );
 }
@@ -540,32 +598,50 @@ function incomingAttackOf(
   weapon: ItemOf<"weapon"> | undefined,
   contextActor: Actor,
   calledShot: boolean,
+  penetration: WeaponAmount,
 ): IncomingAttack | undefined {
   if (action === "defend") return incoming;
   if (action !== "attack") return undefined;
   if (weapon) {
-    return { ...weaponAttackStats(weapon), attackSuccesses: successes, calledShot };
+    return { ...weaponAttackStats(weapon, penetration), attackSuccesses: successes, calledShot };
   }
   if (isActorOf(contextActor, "swarm")) {
     const damageType = contextActor.system.damageClass;
+    const tags: WeaponTag[] = [
+      {
+        id: "damage",
+        label: game.i18n.localize(`ROBOTECH.Damage.DamageClass.${damageType}`),
+        color: "red",
+      },
+    ];
+    if (penetration.active) {
+      tags.push({
+        id: "penetration",
+        label: game.i18n.localize("ROBOTECH.Item.Property.Penetration.tag", { val: penetration.value }),
+        color: "amber",
+        title: game.i18n.localize("ROBOTECH.Item.Property.Penetration.name"),
+      });
+    }
     return {
       weaponName: contextActor.name,
       damageType,
-      armorPenetration: 0,
+      armorPenetration: penetration.active ? penetration.value : 0,
       multiplier: 1,
       multiplierTargetType: null,
-      tags: [
-        {
-          id: "damage",
-          label: game.i18n.localize(`ROBOTECH.Damage.DamageClass.${damageType}`),
-          color: "red",
-        },
-      ],
+      tags,
       attackSuccesses: successes,
       calledShot,
     };
   }
   return undefined;
+}
+
+function weaponPenetrationOf(weapon: ItemOf<"weapon"> | undefined): WeaponAmount {
+  const penetration = weapon?.system.properties.penetration;
+  return {
+    active: penetration?.active ?? false,
+    value: penetration?.value ?? 0,
+  };
 }
 
 function combatantFromPrefill(prefill: ActionCenterPrefill | undefined): Combatant | undefined {

@@ -1,7 +1,7 @@
 import { type TagColor } from "@/components/ui/Tag";
 import type { DamageTypeValue } from "@/config/choices";
 import { WEAPON_PROPERTIES } from "@/config/weaponProperties";
-import type { ItemOf, WeaponProperties } from "@/models";
+import type { ItemOf, WeaponAmount, WeaponProperties } from "@/models";
 
 export interface WeaponTag {
   id: string;
@@ -19,17 +19,18 @@ export interface WeaponAttackStats {
   tags: WeaponTag[];
 }
 
-export function weaponAttackStats(weapon: ItemOf<"weapon">): WeaponAttackStats {
+export function weaponAttackStats(weapon: ItemOf<"weapon">, penetration?: WeaponAmount): WeaponAttackStats {
   const properties = weapon.system.properties;
-  const penetration = properties.penetration;
+  const nextPenetration = penetration ?? properties.penetration;
+  const tagged: WeaponProperties = { ...properties, penetration: nextPenetration };
   const multiplier = properties.multiplier;
   return {
     weaponName: weapon.name,
     damageType: properties.damage.type,
-    armorPenetration: penetration.active ? penetration.value : 0,
+    armorPenetration: nextPenetration.active ? nextPenetration.value : 0,
     multiplier: multiplier.active ? multiplier.value : 1,
     multiplierTargetType: multiplier.active ? multiplier.targetType : null,
-    tags: weaponPropertyTags(properties),
+    tags: weaponPropertyTags(tagged),
   };
 }
 
