@@ -91,7 +91,7 @@ Use https://foundryvtt.com/api/ only as a fallback when the local sources do not
 
 - Register data models and sheets only inside `Hooks.once("init", …)`.
 - Declare every Actor/Item subtype in `public/system.json` `documentTypes` **and** on `CONFIG.Actor.dataModels` / `CONFIG.Item.dataModels`. Keys must match.
-- List HTML fields under `htmlFields` in the manifest so the server sanitizes them. Back them with `HTMLField` in the schema. Enrich for chat with `enrichHtml()`; do not `escapeHtml` enriched HTML.
+- List HTML fields under `htmlFields` in the manifest so the server sanitizes them. Back them with `HTMLField` in the schema. Enrich for chat with `enrichHtml()`; do not `escapeHtml` enriched HTML. Use `escapeHtml` only for user-controlled strings (document names) interpolated into HTML templates, not i18n labels or numbers.
 - Persist with `document.update()`, `createEmbeddedDocuments`, `deleteEmbeddedDocuments`. Never assign through `actor.system.foo =` from UI code.
 - Use dotted update paths: `{ "system.armor": 4 }`. For arrays/objects that must be replaced as a whole, pass the next value (do not mutate the live array in place and then update).
 - Derived combat/sheet numbers belong in `prepareDerivedData()` or getters on the data model. `prepareDerivedData` may write derived fields; UI must not invent a second source of truth.

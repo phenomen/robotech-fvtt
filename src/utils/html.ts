@@ -8,6 +8,7 @@ const HTML_ESCAPES: Record<string, string> = {
 
 type EnrichHtmlOptions = NonNullable<Parameters<(typeof foundry.applications.ux.TextEditor)["enrichHTML"]>[1]>;
 
+/** Escape user-controlled strings interpolated into HTML. Skip i18n labels and numbers. */
 export function escapeHtml(value: string | number | null | undefined): string {
   return String(value ?? "").replace(/[&<>"']/g, (char) => HTML_ESCAPES[char] ?? char);
 }

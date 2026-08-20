@@ -48,6 +48,7 @@ export interface ActionCardInput {
   skillNames: string[];
   incoming?: IncomingAttack;
   heightened?: boolean;
+  speed?: number;
 }
 
 export function actionFlagsOf(message: foundry.documents.ChatMessage): ActionChatFlags | null {
@@ -172,6 +173,7 @@ function actionCardHtml(input: ActionCardInput, kind: ActionChatKind): string {
   const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier");
   const dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
   const skills = input.skillNames.map((name) => `<div class="rt-chat-skill">${escapeHtml(name)}</div>`).join("");
+  const speedHtml = initiativeSpeedHtml(input);
 
   const diceHtml = input.dice
     .map((result) => {
@@ -187,8 +189,9 @@ function actionCardHtml(input: ActionCardInput, kind: ActionChatKind): string {
       <div class="${headerClass}">${escapeHtml(input.title)}</div>
       ${skills ? `<div class="rt-chat-skills">${skills}</div>` : ""}
       <div class="rt-chat-meta">
-        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${escapeHtml(input.modifier)}</strong></span>
+        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${input.modifier}</strong></span>
         <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${input.diceCount}d6</strong></span>
+        ${speedHtml}
       </div>
       ${weaponBlockHtml(input.incoming)}
       ${opposedBlockHtml(kind, input)}
@@ -197,6 +200,12 @@ function actionCardHtml(input: ActionCardInput, kind: ActionChatKind): string {
       ${actionButtonsHtml(kind)}
     </div>
   `;
+}
+
+function initiativeSpeedHtml(input: ActionCardInput): string {
+  if (input.action !== "initiative" || input.speed === undefined) return "";
+  const speedLabel = game.i18n.localize("ROBOTECH.Roll.Speed");
+  return `<span>${speedLabel}: <strong class="rt-chat-meta-value">${input.speed}</strong></span>`;
 }
 
 function poolCardHtml(input: PoolCardInput): string {
@@ -214,7 +223,7 @@ function poolCardHtml(input: PoolCardInput): string {
     <div class="rt-chat-card">
       <div class="rt-chat-header">${escapeHtml(input.title)}</div>
       <div class="rt-chat-meta">
-        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${escapeHtml(modifierName)}</strong></span>
+        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierName}</strong></span>
         <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${input.diceCount}d6</strong></span>
       </div>
       <div class="rt-dice-grid">${diceHtml}</div>
@@ -228,7 +237,7 @@ function bonusChipHtml(bonus: number): string {
   const signed = bonus > 0 ? `+${bonus}` : String(bonus);
   const label = game.i18n.localize("ROBOTECH.Roll.ManualSuccesses");
   const tone = bonus > 0 ? "rt-success-bonus--gain" : "rt-success-bonus--loss";
-  return `<span class="rt-success-bonus ${tone}" title="${escapeHtml(label)}">${escapeHtml(signed)}</span>`;
+  return `<span class="rt-success-bonus ${tone}" title="${label}">${signed}</span>`;
 }
 
 function successFooterHtml(total: number, rolled: number, bonus: number): string {
@@ -237,7 +246,7 @@ function successFooterHtml(total: number, rolled: number, bonus: number): string
   const detail = bonus === 0 ? "" : `<span class="rt-chat-total-detail">${successDetailHtml(rolled, bonus)}</span>`;
   return `<div class="rt-chat-footer">
     <span class="rt-chat-total-copy">
-      <span class="rt-chat-total-label">${escapeHtml(totalLabel)}:</span>
+      <span class="rt-chat-total-label">${totalLabel}:</span>
       ${detail}
     </span>
     <span class="rt-chat-total-value ${successClass}">${total}</span>
@@ -252,13 +261,13 @@ function successDetailHtml(rolled: number, bonus: number): string {
 }
 
 function successPartHtml(label: string, value: string): string {
-  return `<span class="rt-chat-success-part">${escapeHtml(label)} <strong>${escapeHtml(value)}</strong></span>`;
+  return `<span class="rt-chat-success-part">${label} <strong>${value}</strong></span>`;
 }
 
 function weaponBlockHtml(incoming?: IncomingAttack): string {
   if (!incoming) return "";
   const called = incoming.calledShot
-    ? `<div class="rt-chat-called">${escapeHtml(game.i18n.localize("ROBOTECH.Roll.CalledShotYes"))}</div>`
+    ? `<div class="rt-chat-called">${game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}</div>`
     : "";
   return `<div class="rt-chat-weapon">
     <div class="rt-chat-weapon-name">${escapeHtml(incoming.weaponName)}</div>
@@ -272,8 +281,8 @@ function weaponTagsHtml(tags: WeaponTag[] | undefined): string {
   const chips = tags
     .map((tag) => {
       const colorClass = TAG_COLOR_CLASS[tag.color] ?? TAG_COLOR_CLASS.default;
-      const title = tag.title ? ` title="${escapeHtml(tag.title)}"` : "";
-      return `<span class="rt-chat-tag ${colorClass}"${title}>${escapeHtml(tag.label)}</span>`;
+      const title = tag.title ? ` title="${tag.title}"` : "";
+      return `<span class="rt-chat-tag ${colorClass}"${title}>${tag.label}</span>`;
     })
     .join("");
   return `<div class="rt-chat-tags">${chips}</div>`;
@@ -288,7 +297,7 @@ function damageCardHtml(breakdown: DamageBreakdown): string {
   });
   const summaryClass = breakdown.isOverkill ? "rt-chat-summary rt-chat-summary--danger" : "rt-chat-summary";
   return `<div class="rt-chat-card">
-    <div class="rt-chat-header">${escapeHtml(game.i18n.localize("ROBOTECH.Damage.Title"))}</div>
+    <div class="rt-chat-header">${game.i18n.localize("ROBOTECH.Damage.Title")}</div>
     <div class="rt-chat-target">${escapeHtml(breakdown.targetName)}</div>
     <div class="rt-chat-breakdown">${damageRowsHtml(breakdown)}</div>
     <div class="${summaryClass}">${escapeHtml(summary)}</div>
@@ -393,7 +402,7 @@ function classLabel(type: DamageTypeValue): string {
 }
 
 function damageRow(key: string, data: Record<string, string | number>): string {
-  return `<div class="rt-chat-breakdown-row">${escapeHtml(game.i18n.localize(key, data))}</div>`;
+  return `<div class="rt-chat-breakdown-row">${game.i18n.localize(key, data)}</div>`;
 }
 
 function distributionHtml(distribution: DamageDistribution | undefined): string {
@@ -409,24 +418,22 @@ function distributionHtml(distribution: DamageDistribution | undefined): string 
       }),
     ),
     distribution.unassigned > 0
-      ? `<div class="rt-chat-breakdown-row">${signedDamage(distribution.unassigned)} ${escapeHtml(
-          game.i18n.localize("ROBOTECH.Damage.Distribution.Unassigned"),
+      ? `<div class="rt-chat-breakdown-row">${signedDamage(distribution.unassigned)} ${game.i18n.localize(
+          "ROBOTECH.Damage.Distribution.Unassigned",
         )}</div>`
       : "",
   ].filter(Boolean);
   if (rows.length === 0) return "";
   return `<div class="rt-chat-distribution">
-    <div class="rt-chat-distribution-title">${escapeHtml(
-      game.i18n.localize("ROBOTECH.Damage.Distribution.Title"),
-    )}</div>
+    <div class="rt-chat-distribution-title">${game.i18n.localize("ROBOTECH.Damage.Distribution.Title")}</div>
     ${rows.join("")}
   </div>`;
 }
 
 function assignedRow(key: string, amount: number, data?: { name?: string; suffixKey?: string }): string {
-  const label = escapeHtml(game.i18n.localize(key, { name: data?.name ?? "" }));
-  const suffix = data?.suffixKey ? ` ${escapeHtml(game.i18n.localize(data.suffixKey))}` : "";
-  return `<div class="rt-chat-breakdown-row">${label} ${signedDamage(amount)}${suffix}</div>`;
+  const interpolated = data?.name ? escapeHtml(game.i18n.localize(key, { name: data.name })) : game.i18n.localize(key);
+  const suffix = data?.suffixKey ? ` ${game.i18n.localize(data.suffixKey)}` : "";
+  return `<div class="rt-chat-breakdown-row">${interpolated} ${signedDamage(amount)}${suffix}</div>`;
 }
 
 function signedDamage(amount: number): string {
@@ -444,20 +451,20 @@ function opposedBlockHtml(kind: ActionChatKind, input: ActionCardInput): string 
 function actionButtonsHtml(kind: ActionChatKind): string {
   if (kind !== "attack" && kind !== "defend") return "";
 
-  const apply = `<button type="button" class="rt-chat-button" data-rt-action="apply-damage">${escapeHtml(
-    game.i18n.localize("ROBOTECH.Roll.ApplyDamage"),
+  const apply = `<button type="button" class="rt-chat-button" data-rt-action="apply-damage">${game.i18n.localize(
+    "ROBOTECH.Roll.ApplyDamage",
   )}</button>`;
 
   if (kind === "defend") return `<div class="rt-chat-actions">${apply}</div>`;
 
-  const defend = `<button type="button" class="rt-chat-button rt-chat-button--ghost" data-rt-action="defend">${escapeHtml(
-    game.i18n.localize("ROBOTECH.Roll.DefendButton"),
+  const defend = `<button type="button" class="rt-chat-button rt-chat-button--ghost" data-rt-action="defend">${game.i18n.localize(
+    "ROBOTECH.Roll.DefendButton",
   )}</button>`;
   return `<div class="rt-chat-actions">${defend}${apply}</div>`;
 }
 
 function metaRow(labelKey: string, value: string): string {
-  return `<div class="rt-chat-meta"><span>${escapeHtml(game.i18n.localize(labelKey))}: <strong class="rt-chat-meta-value">${escapeHtml(value)}</strong></span></div>`;
+  return `<div class="rt-chat-meta"><span>${game.i18n.localize(labelKey)}: <strong class="rt-chat-meta-value">${value}</strong></span></div>`;
 }
 
 function isChatFlags(value: unknown): value is ActionChatFlags {

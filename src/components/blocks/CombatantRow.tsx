@@ -6,7 +6,6 @@ import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { Button } from "@/components/ui/Button";
 import { CardHeader } from "@/components/ui/Card";
 import { CombatantFrame } from "@/components/ui/CombatantFrame";
-//import { Divider } from "@/components/ui/Divider";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
@@ -40,7 +39,6 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
   const left = remainingSlots(combatant.system.slots);
   const slowed = isSlowed(actor);
   const mentalBreak = isMentalBreak(actor);
-  // const speed = actorSpeed(actor);
   const portrait = combatant.img ?? actor?.img ?? CONST.DEFAULT_TOKEN;
   const rolled = Number.isFinite(combatant.initiative);
   const canAct = canEdit && !!actor && left > 0 && !inComms && !combatant.isDefeated;
@@ -132,22 +130,9 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
       ) : null}
 
       <Stack gap={2}>
-        <Stack direction="row" gap={1} align="center" justify="between">
-          <Text variant="label" color="muted">
-            {game.i18n.localize(left === 1 ? "ROBOTECH.Combat.ActionLeft" : "ROBOTECH.Combat.ActionsLeft", { n: left })}
-          </Text>
-          {/* TODO: need to display is somehow else
-          <Stack direction="row" gap={1} align="center">
-            <Text variant="label" color="muted">
-              {game.i18n.localize("ROBOTECH.Combat.Pool", { pool: combatant.system.pool })}
-            </Text>
-            <Divider orientation="vertical" />
-            <Text variant="label" color="muted">
-              {game.i18n.localize("ROBOTECH.Combat.Speed", { speed })}
-            </Text>
-          </Stack>
-          */}
-        </Stack>
+        <Text variant="label" color="muted">
+          {game.i18n.localize(left === 1 ? "ROBOTECH.Combat.ActionLeft" : "ROBOTECH.Combat.ActionsLeft", { n: left })}
+        </Text>
 
         {slots.map((slot, slotIndex) => (
           <Text key={`taken-${slotIndex}`} variant="label" color={slot.heightened ? "danger" : "foreground"}>

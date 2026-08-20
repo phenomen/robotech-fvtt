@@ -29,6 +29,7 @@ import type { AppOptions, CloseOptions } from "@/types/application";
 import { postActionCard, type IncomingAttack } from "@/utils/actionChat";
 import { evaluateAd6Roll, calcDieSuccess } from "@/utils/AD6Roll";
 import {
+  actorSpeed,
   applyInitiative,
   combatantOf,
   combatPhaseOf,
@@ -151,6 +152,7 @@ export function ActionCenterContent({
       skillNames: sourcedMethodNames(skill1, skill2, suite, swarmDice, contextActor),
       incoming: incomingAttack,
       heightened,
+      speed: action === "initiative" ? actorSpeed(contextActor) : undefined,
     });
 
     if (consumeSlot && combatant && isConflictAction(action)) {

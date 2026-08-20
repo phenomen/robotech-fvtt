@@ -165,8 +165,10 @@
 
 .rt-chat-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 0.25rem 0.5rem;
   font-family: var(--typo-label-family);
   font-size: var(--typo-label-medium-size);
   line-height: var(--typo-label-medium-leading);
