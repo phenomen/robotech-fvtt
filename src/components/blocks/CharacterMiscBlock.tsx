@@ -49,12 +49,7 @@ export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Elem
         <Field icon="speed" iconTone="blue" label={game.i18n.localize("ROBOTECH.Character.Speed")}>
           <NumberInput value={system.speed} onValueChange={(val) => handleFieldChange("system.speed", val ?? 0)} />
         </Field>
-        <Field
-          icon="star"
-          iconTone="amber"
-          title={game.i18n.localize("ROBOTECH.HeroicMove.Title")}
-          label={game.i18n.localize("ROBOTECH.HeroicMove.Abbr")}
-        >
+        <Field icon="star" iconTone="amber" label={game.i18n.localize("ROBOTECH.HeroicMove.Title")}>
           <Checkbox
             size="large"
             checked={system.heroicMove.used}

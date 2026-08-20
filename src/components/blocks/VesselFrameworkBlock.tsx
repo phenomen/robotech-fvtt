@@ -28,10 +28,10 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
           />
         </Stack>
         <Stack direction="row" gap={2} shrink>
-          <Text variant="caption" color="muted" align="center" width="num">
+          <Text variant="label" color="muted" align="center" width="num">
             {game.i18n.localize("ROBOTECH.Vessel.Total")}
           </Text>
-          <Text variant="caption" color="muted" align="center" width="num">
+          <Text variant="label" color="muted" align="center" width="num">
             {game.i18n.localize("ROBOTECH.Vessel.Left")}
           </Text>
         </Stack>

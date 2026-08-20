@@ -88,7 +88,7 @@ function CrewRow({ member, onDelete }: { member: CrewPreview; onDelete: (uuid: s
     <TableRow>
       <TableCell width="grow">
         {member.missing ? (
-          <Text variant="caption" color="muted">
+          <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.LinkedCharacter.Missing")}
           </Text>
         ) : (

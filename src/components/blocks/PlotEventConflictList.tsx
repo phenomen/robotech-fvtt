@@ -62,22 +62,22 @@ export function PlotEventConflictList({ actor }: PlotEventConflictListProps): JS
           <TableHeader>
             <TableRow>
               <TableCell width="grow">
-                <Text variant="caption" color="muted">
+                <Text variant="label" color="muted">
                   {game.i18n.localize("ROBOTECH.List.HeaderName")}
                 </Text>
               </TableCell>
               <TableCell width="hug" align="center">
-                <Text variant="caption" color="muted" align="center">
+                <Text variant="label" color="muted" align="center">
                   {game.i18n.localize("ROBOTECH.PlotEvent.HeaderType")}
                 </Text>
               </TableCell>
               <TableCell width="hug" align="center">
-                <Text variant="caption" color="muted" align="center">
+                <Text variant="label" color="muted" align="center">
                   {game.i18n.localize("ROBOTECH.PlotEvent.HeaderThreat")}
                 </Text>
               </TableCell>
               <TableCell width="hug" align="center">
-                <Text variant="caption" color="muted" align="center">
+                <Text variant="label" color="muted" align="center">
                   {game.i18n.localize("ROBOTECH.PlotEvent.HeaderRecognition")}
                 </Text>
               </TableCell>
@@ -106,7 +106,7 @@ function ConflictRow({
     <TableRow>
       <TableCell width="grow">
         {conflict.missing ? (
-          <Text variant="caption" color="muted" truncate>
+          <Text variant="label" color="muted" truncate>
             {game.i18n.localize("ROBOTECH.PlotEvent.MissingConflict")}
           </Text>
         ) : (
@@ -122,17 +122,17 @@ function ConflictRow({
         )}
       </TableCell>
       <TableCell width="hug" align="center">
-        <Text variant="stat" color="primary" align="center">
+        <Text variant="mono" color="primary" align="center">
           {conflict.conflictType}
         </Text>
       </TableCell>
       <TableCell width="hug" align="center">
-        <Text variant="stat" color="primary" align="center">
+        <Text variant="mono" color="primary" align="center">
           {conflict.threat}
         </Text>
       </TableCell>
       <TableCell width="hug" align="center">
-        <Text variant="stat" color="primary" align="center">
+        <Text variant="mono" color="primary" align="center">
           {conflict.recognition}
         </Text>
       </TableCell>

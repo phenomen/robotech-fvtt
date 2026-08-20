@@ -169,24 +169,26 @@ export function ActionCenterContent({
         onChange={setAction}
       />
       {incoming && <IncomingSummary incoming={incoming} />}
-
-      <SkillSelect
-        labelKey="ROBOTECH.Roll.SelectSkill1"
-        value={skill1Id}
-        skills={skillItems}
-        allowNone
-        onChange={setSkill1Id}
-      />
-      <SkillSelect
-        labelKey="ROBOTECH.Roll.SelectSkill2"
-        value={skill2Id}
-        skills={skillItems.filter((skill) => skill.key !== skill1Id)}
-        allowNone
-        onChange={setSkill2Id}
-      />
+      <Stack direction="row" gap={2}>
+        <SkillSelect
+          labelKey="ROBOTECH.Roll.SelectSkill1"
+          value={skill1Id}
+          skills={skillItems}
+          allowNone
+          onChange={setSkill1Id}
+        />
+        <SkillSelect
+          labelKey="ROBOTECH.Roll.SelectSkill2"
+          value={skill2Id}
+          skills={skillItems.filter((skill) => skill.key !== skill1Id)}
+          allowNone
+          onChange={setSkill2Id}
+        />
+      </Stack>
       <SuiteSelect value={suiteId} suites={suiteItems} onChange={setSuiteId} />
       {action === "attack" && <WeaponSelect value={weaponId} weapons={weaponItems} onChange={setWeaponId} />}
-      {action === "attack" && (
+
+      {/**  action === "attack" && (
         <Checkbox
           checked={calledShot}
           onCheckedChange={setCalledShot}
@@ -194,6 +196,7 @@ export function ActionCenterContent({
           title={game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}
         />
       )}
+       */}
 
       <ModifierRow modifier={modifier} onChange={setModifier} />
       {livingVessels > 0 && <SwarmDiceRow value={swarmDice} max={livingVessels} onChange={setSwarmDice} />}
@@ -262,7 +265,7 @@ function ActionSelect({
           ))}
         </Select>
       </Field>
-      <Text variant="caption" color="muted">
+      <Text variant="label" color="muted">
         {selected ? game.i18n.localize(selected.hintKey) : null}
       </Text>
     </Stack>
@@ -286,7 +289,7 @@ function IncomingSummary({ incoming }: { incoming: IncomingAttack }): JSX.Elemen
           </Stack>
         ) : null}
         {incoming.calledShot && (
-          <Text variant="caption" color="amber">
+          <Text variant="label" color="amber">
             {game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}
           </Text>
         )}
@@ -309,7 +312,7 @@ function SkillSelect({
   onChange: (value: string) => void;
 }): JSX.Element {
   return (
-    <Field label={game.i18n.localize(labelKey)}>
+    <Field label={game.i18n.localize(labelKey)} grow>
       <Select width="full" value={value} onChange={(event) => onChange(event.target.value)}>
         {allowNone && <option value="">— {game.i18n.localize("ROBOTECH.Roll.None")} —</option>}
         {skills.map((skill) => (
@@ -404,7 +407,7 @@ function ModifierRow({
             return (
               <Stack key={die} direction="row" gap={1} align="center">
                 <Icon name={`dice-${die}`} size="large" />
-                <Text variant="stat" color={dieTextColor(successes)}>
+                <Text variant="mono" size="large" color={dieTextColor(successes)}>
                   {successes}
                 </Text>
               </Stack>
@@ -497,7 +500,7 @@ function Stepper({
         >
           -
         </Button>
-        <Text variant="stat" color="primary" align="center">
+        <Text variant="mono" color="primary" align="center">
           {value}
         </Text>
         <Button
@@ -570,7 +573,7 @@ function combatantFromPrefill(prefill: ActionCenterPrefill | undefined): Combata
 }
 
 function defaultCombatAction(consumeSlot: boolean): ActionValue {
-  if (!consumeSlot || !game.combat) return "attack";
+  if (!consumeSlot || !game.combat) return "assist";
   const phase = combatPhaseOf(game.combat);
   return CONFLICT_ACTION_OPTIONS.find((option) => option.phase === phase)?.value ?? "attack";
 }

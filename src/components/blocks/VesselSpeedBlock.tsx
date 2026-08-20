@@ -61,7 +61,7 @@ export function VesselSpeedBlock({ actor }: VesselSpeedBlockProps): JSX.Element 
               )}]`
             : null}
         </CardTitle>
-        <Text variant="caption" color="muted">
+        <Text variant="label" color="muted" size="small">
           {game.i18n.localize("ROBOTECH.Vessel.UnitConversionHint")}
         </Text>
       </CardHeader>
@@ -71,7 +71,7 @@ export function VesselSpeedBlock({ actor }: VesselSpeedBlockProps): JSX.Element 
           <Label icon="speed" iconTone={tone}>
             {game.i18n.localize("ROBOTECH.Vessel.GameUnits")}:
           </Label>
-          <Text variant="stat" color={tone}>
+          <Text variant="mono" color={tone}>
             {system.speed}
           </Text>
         </Stack>

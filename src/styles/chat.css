@@ -22,11 +22,11 @@
 
 .chat-message.robotech .message-header {
   color: var(--rt-muted);
-  font-family: var(--typo-caption-family);
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-weight: var(--typo-caption-weight);
-  letter-spacing: var(--typo-caption-tracking);
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-weight: var(--typo-label-weight);
+  letter-spacing: var(--typo-label-tracking);
   border-bottom: 1px solid var(--rt-border);
   padding-bottom: 4px;
   margin-bottom: 6px;
@@ -167,10 +167,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: var(--typo-caption-family);
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-weight: var(--typo-caption-weight);
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-weight: var(--typo-label-weight);
   color: var(--rt-muted);
 }
 
@@ -193,10 +193,10 @@
   justify-content: center;
   width: 2.125rem;
   height: 2.125rem;
-  font-family: var(--typo-stat-family);
+  font-family: var(--typo-mono-family);
   font-weight: 700;
-  font-size: var(--typo-stat-large-size);
-  line-height: var(--typo-stat-large-leading);
+  font-size: var(--typo-mono-large-size);
+  line-height: var(--typo-mono-large-leading);
 }
 
 .rt-die-box--worst,
@@ -236,10 +236,10 @@
   min-width: 2.125rem;
   height: 2.125rem;
   padding: 0 0.35rem;
-  font-family: var(--typo-stat-family);
+  font-family: var(--typo-mono-family);
   font-weight: 700;
-  font-size: var(--typo-stat-large-size);
-  line-height: var(--typo-stat-large-leading);
+  font-size: var(--typo-mono-large-size);
+  line-height: var(--typo-mono-large-leading);
 }
 
 .rt-success-bonus--gain {
@@ -272,11 +272,11 @@
 }
 
 .rt-chat-total-label {
-  font-family: var(--typo-caption-family);
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-weight: var(--typo-caption-weight);
-  letter-spacing: var(--typo-caption-tracking);
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-weight: var(--typo-label-weight);
+  letter-spacing: var(--typo-label-tracking);
   color: var(--rt-muted);
 }
 
@@ -285,11 +285,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
-  font-size: var(--typo-caption-small-size);
-  line-height: var(--typo-caption-small-leading);
+  font-size: var(--typo-label-small-size);
+  line-height: var(--typo-label-small-leading);
   font-weight: 600;
   color: var(--rt-muted);
-  font-family: var(--typo-stat-family);
+  font-family: var(--typo-mono-family);
 }
 
 .rt-chat-success-part strong {
@@ -302,7 +302,7 @@
 }
 
 .rt-chat-total-value {
-  font-family: var(--typo-stat-family);
+  font-family: var(--typo-mono-family);
   font-size: var(--typo-title-large-size);
   line-height: var(--typo-title-large-leading);
   font-weight: 700;
@@ -331,9 +331,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-family: var(--typo-caption-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-family: var(--typo-label-family);
   color: var(--rt-muted);
 }
 
@@ -364,10 +364,10 @@
   z-index: 0;
   display: inline-flex;
   align-items: center;
-  font-family: var(--typo-stat-family);
-  font-size: var(--typo-stat-small-size);
-  line-height: var(--typo-stat-small-leading);
-  font-weight: var(--typo-stat-weight);
+  font-family: var(--typo-mono-family);
+  font-size: var(--typo-mono-small-size);
+  line-height: var(--typo-mono-small-leading);
+  font-weight: var(--typo-mono-weight);
   padding: 0.2rem 0.35rem;
   color: var(--rt-tag);
   border: 1px solid var(--rt-tag);
@@ -428,9 +428,9 @@
 }
 
 .rt-chat-called {
-  font-family: var(--typo-caption-family);
-  font-size: var(--typo-caption-small-size);
-  line-height: var(--typo-caption-small-leading);
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-small-size);
+  line-height: var(--typo-label-small-leading);
   color: var(--rt-custom-amber);
 }
 
@@ -446,9 +446,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-family: var(--typo-caption-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-family: var(--typo-label-family);
 }
 
 .rt-chat-breakdown-row {
@@ -459,20 +459,20 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-family: var(--typo-caption-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-family: var(--typo-label-family);
   border-top: 1px solid var(--rt-border);
   padding-top: 0.4rem;
   margin-top: 0.15rem;
 }
 
 .rt-chat-distribution-title {
-  font-family: var(--typo-caption-family);
-  font-size: var(--typo-caption-medium-size);
-  line-height: var(--typo-caption-medium-leading);
-  font-weight: var(--typo-caption-weight);
-  letter-spacing: var(--typo-caption-tracking);
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-weight: var(--typo-label-weight);
+  letter-spacing: var(--typo-label-tracking);
   color: var(--rt-primary);
 }
 
@@ -490,11 +490,11 @@
 
 .rt-chat-button {
   cursor: pointer;
-  font-family: var(--typo-button-family);
-  font-size: var(--typo-button-large-size);
-  line-height: var(--typo-button-large-leading);
-  font-weight: var(--typo-button-weight);
-  letter-spacing: var(--typo-button-tracking);
+  font-family: var(--typo-mono-family);
+  font-size: var(--typo-mono-large-size);
+  line-height: var(--typo-mono-large-leading);
+  font-weight: var(--typo-mono-weight);
+  letter-spacing: var(--typo-mono-tracking);
   color: var(--rt-primary-foreground);
   background: var(--rt-primary);
   border: 1px solid var(--rt-primary);

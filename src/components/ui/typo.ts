@@ -1,15 +1,13 @@
 import { cn } from "@/utils";
 
-export type TextVariant = "title" | "label" | "caption" | "stat" | "copy" | "button";
+export type TextVariant = "title" | "label" | "mono" | "copy";
 export type TextSize = "small" | "medium" | "large";
 
 export const TYPO_VARIANT: Record<TextVariant, string> = {
   title: "typo-title",
   label: "typo-label",
-  caption: "typo-caption",
-  stat: "typo-stat",
+  mono: "typo-mono",
   copy: "typo-copy",
-  button: "typo-button",
 };
 
 export const TYPO_SIZE: Record<TextSize, string> = {

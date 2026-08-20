@@ -26,7 +26,7 @@ export function CombatTrackerApp({ combat }: CombatTrackerAppProps): JSX.Element
       <SheetBody>
         <Stack gap={2} pad={2}>
           {combat && turns.length === 0 ? (
-            <Text variant="caption" color="muted">
+            <Text variant="label" color="muted">
               {game.i18n.localize("ROBOTECH.Combat.EmptyTurns")}
             </Text>
           ) : null}

@@ -111,7 +111,6 @@
     },
     "HeroicMove": {
       "Title": "Heroic Move",
-      "Abbr": "HM",
       "Used": "Used",
       "Ready": "Ready"
     },
@@ -451,7 +450,7 @@
       "Successes": "Successes",
       "NoSuccesses": "No Successes",
       "ManualDice": "Bonus Dice",
-      "ManualSuccesses": "Added Successes",
+      "ManualSuccesses": "Successes",
       "TotalDice": "Total Dice Pool",
       "DicePool": "Dice Pool",
       "TotalSuccesses": "Total Successes",

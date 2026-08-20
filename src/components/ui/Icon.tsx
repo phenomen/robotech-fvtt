@@ -12,7 +12,7 @@ interface IconProps {
 const SIZE_CLASS = {
   small: "size-3",
   medium: "size-4",
-  large: "size-5",
+  large: "size-6",
 } as const;
 
 const TONE_CLASS = {

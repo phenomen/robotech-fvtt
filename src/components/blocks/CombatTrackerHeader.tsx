@@ -73,7 +73,7 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
         ) : null}
       </Stack>
 
-      <Text variant="caption" align="center">
+      <Text variant="label" align="center">
         {combat
           ? combat.started
             ? game.i18n.localize("ROBOTECH.Combat.Round", { n: combat.round })

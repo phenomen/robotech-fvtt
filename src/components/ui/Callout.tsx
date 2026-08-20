@@ -27,7 +27,7 @@ export function Callout({ children, icon, tone = "default" }: CalloutProps): JSX
     >
       <Stack direction="row" gap={2} align="center" justify="center" pad={2}>
         {icon ? <Icon name={icon} tone={tone === "danger" ? "danger" : "primary"} /> : null}
-        <Text variant="button" color={tone === "danger" ? "danger" : "muted"} align="center">
+        <Text variant="mono" color={tone === "danger" ? "danger" : "muted"} align="center">
           {children}
         </Text>
       </Stack>

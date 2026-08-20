@@ -133,16 +133,16 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
 
       <Stack gap={2}>
         <Stack direction="row" gap={1} align="center" justify="between">
-          <Text variant="caption" color="muted">
+          <Text variant="label" color="muted">
             {game.i18n.localize(left === 1 ? "ROBOTECH.Combat.ActionLeft" : "ROBOTECH.Combat.ActionsLeft", { n: left })}
           </Text>
           {/* TODO: need to display is somehow else
           <Stack direction="row" gap={1} align="center">
-            <Text variant="caption" color="muted">
+            <Text variant="label" color="muted">
               {game.i18n.localize("ROBOTECH.Combat.Pool", { pool: combatant.system.pool })}
             </Text>
             <Divider orientation="vertical" />
-            <Text variant="caption" color="muted">
+            <Text variant="label" color="muted">
               {game.i18n.localize("ROBOTECH.Combat.Speed", { speed })}
             </Text>
           </Stack>
@@ -156,14 +156,7 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
         ))}
 
         {canAct ? (
-          <Button
-            type="button"
-            variant="primary"
-            size="small"
-            full
-            title={game.i18n.localize("ROBOTECH.Combat.TakeAction")}
-            onClick={handleAct}
-          >
+          <Button type="button" variant="secondary" size="small" full onClick={handleAct}>
             {game.i18n.localize("ROBOTECH.Combat.TakeAction")}
           </Button>
         ) : null}

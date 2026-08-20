@@ -172,7 +172,7 @@ function MemberCrewList({ actorUuid }: { actorUuid: string }): JSX.Element {
     <Stack gap={2}>
       <Label>{game.i18n.localize("ROBOTECH.Tabs.Crew")}</Label>
       {crew.length === 0 ? (
-        <Text variant="caption" color="muted">
+        <Text variant="label" color="muted">
           {game.i18n.localize("ROBOTECH.Crew.Empty")}
         </Text>
       ) : (
@@ -189,7 +189,7 @@ function MemberCrewList({ actorUuid }: { actorUuid: string }): JSX.Element {
 function CrewChip({ member }: { member: CrewPreview }): JSX.Element {
   if (member.missing) {
     return (
-      <Text variant="caption" color="muted">
+      <Text variant="label" color="muted">
         {game.i18n.localize("ROBOTECH.LinkedCharacter.Missing")}
       </Text>
     );

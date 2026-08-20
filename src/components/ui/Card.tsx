@@ -71,7 +71,7 @@ export const CardTitle = React.memo(function CardTitle({
   return (
     <h3
       className={cn(
-        typoClass("stat"),
+        typoClass("mono"),
         "text-rt-primary border-rt-primary m-0 min-w-0 truncate border-l-2 pl-2 tracking-wider! uppercase",
       )}
     >

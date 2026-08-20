@@ -70,7 +70,7 @@ function ActorRow({ member, onDelete }: { member: ActorPreview; onDelete: (uuid:
     <TableRow>
       <TableCell width="grow">
         {member.missing ? (
-          <Text variant="caption" color="muted">
+          <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.Conflict.MissingActor")}
           </Text>
         ) : (

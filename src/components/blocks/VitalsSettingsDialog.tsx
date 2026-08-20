@@ -47,7 +47,7 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
         label={
           <>
             {game.i18n.localize("ROBOTECH.Wounds.Brawl")}{" "}
-            <Text variant="caption" color="muted" as="span">
+            <Text variant="label" color="muted" as="span">
               ({game.i18n.localize("ROBOTECH.Wounds.Max", { max: MAX_BRAWL_WOUNDS })})
             </Text>
           </>
@@ -66,7 +66,7 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
         label={
           <>
             {game.i18n.localize("ROBOTECH.Wounds.Critical")}{" "}
-            <Text variant="caption" color="muted" as="span">
+            <Text variant="label" color="muted" as="span">
               ({game.i18n.localize("ROBOTECH.Wounds.Max", { max: MAX_CRITICAL_WOUNDS })})
             </Text>
           </>

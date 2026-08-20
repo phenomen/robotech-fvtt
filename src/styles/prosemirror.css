@@ -57,11 +57,11 @@
   border: 1px solid var(--rt-border);
   border-radius: 2px;
   padding: 2px 6px;
-  font-family: var(--typo-button-family);
-  font-size: var(--typo-button-small-size);
-  line-height: var(--typo-button-small-leading);
-  font-weight: var(--typo-button-weight);
-  letter-spacing: var(--typo-button-tracking);
+  font-family: var(--typo-mono-family);
+  font-size: var(--typo-mono-small-size);
+  line-height: var(--typo-mono-small-leading);
+  font-weight: var(--typo-mono-weight);
+  letter-spacing: var(--typo-mono-tracking);
 }
 
 .prosemirror-react-wrapper prose-mirror menu.editor-menu button:hover,

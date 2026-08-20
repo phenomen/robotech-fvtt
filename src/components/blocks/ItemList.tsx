@@ -47,7 +47,7 @@ function SkillCells({ item, onRoll }: { item: ItemOf<"skill">; onRoll: () => voi
   return (
     <>
       <TableCell width="stat" align="center">
-        <Text variant="stat" color="primary" align="center">
+        <Text variant="mono" color="primary" align="center">
           {item.system.value}
         </Text>
       </TableCell>
@@ -88,7 +88,7 @@ function SuiteUsesValue({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Elem
   const { value, max } = item.system.uses;
   if (max === null) {
     return (
-      <Text variant="caption" color="muted" align="center">
+      <Text variant="label" color="muted" align="center">
         {game.i18n.localize("ROBOTECH.Item.Unlimited")}
       </Text>
     );
@@ -103,10 +103,10 @@ function SuiteUsesValue({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Elem
         onValueChange={(val) => void item.update({ "system.uses.value": Math.max(0, val ?? 0) })}
         width="small"
       />
-      <Text variant="caption" color="muted">
+      <Text variant="label" color="muted">
         /
       </Text>
-      <Text variant="stat" color="muted" align="center">
+      <Text variant="mono" color="muted" align="center">
         {max}
       </Text>
     </Stack>
@@ -116,7 +116,7 @@ function SuiteUsesValue({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Elem
 function SuiteSkillCell({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Element {
   return (
     <TableCell width="stat" align="center">
-      <Text variant="stat" color="primary" align="center">
+      <Text variant="mono" color="primary" align="center">
         {item.system.skill}
       </Text>
     </TableCell>
@@ -137,10 +137,10 @@ function AmmoCell({
       {active ? (
         <Stack direction="row" gap={1} align="center" justify="center">
           <NumberInput value={current} min={0} max={value} onValueChange={onUpdateAmmo} width="small" />
-          <Text variant="caption" color="muted">
+          <Text variant="label" color="muted">
             /
           </Text>
-          <Text variant="stat" color="muted" align="center">
+          <Text variant="mono" color="muted" align="center">
             {value}
           </Text>
         </Stack>
@@ -227,7 +227,7 @@ async function spendUse(item: UsableItem): Promise<void> {
 function NameHeader(): JSX.Element {
   return (
     <TableCell width="grow">
-      <Text variant="caption" color="muted">
+      <Text variant="label" color="muted">
         {game.i18n.localize("ROBOTECH.List.HeaderName")}
       </Text>
     </TableCell>
@@ -245,7 +245,7 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
         <NameHeader />
         {hasHardwareColumn(itemType) && (
           <TableCell width="hug" align="center">
-            <Text variant="caption" color="muted" align="center">
+            <Text variant="label" color="muted" align="center">
               {game.i18n.localize("ROBOTECH.List.HeaderHardware")}
             </Text>
           </TableCell>
@@ -253,12 +253,12 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
         {itemType === "skill" && (
           <>
             <TableCell width="stat" align="center">
-              <Text variant="caption" color="muted" align="center">
+              <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderValue")}
               </Text>
             </TableCell>
             <TableCell width="action" align="center">
-              <Text variant="caption" color="muted" align="center">
+              <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderAction")}
               </Text>
             </TableCell>
@@ -267,12 +267,12 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
         {isUsable(itemType) && (
           <>
             <TableCell width="action" align="center">
-              <Text variant="caption" color="muted" align="center">
+              <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderAction")}
               </Text>
             </TableCell>
             <TableCell width="stat" align="center">
-              <Text variant="caption" color="muted" align="center">
+              <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderUses")}
               </Text>
             </TableCell>
@@ -280,14 +280,14 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
         )}
         {isWeapon(itemType) && (
           <TableCell width="ammo" align="center">
-            <Text variant="caption" color="muted" align="center">
+            <Text variant="label" color="muted" align="center">
               {game.i18n.localize("ROBOTECH.List.HeaderAmmo")}
             </Text>
           </TableCell>
         )}
         {isSuite(itemType) && (
           <TableCell width="stat" align="center">
-            <Text variant="caption" color="muted" align="center">
+            <Text variant="label" color="muted" align="center">
               {game.i18n.localize("ROBOTECH.List.HeaderSkill")}
             </Text>
           </TableCell>
@@ -321,7 +321,7 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
             {item.name}
           </Text>
           {isItemOf(item, "skill") && skillDetailsOf(item) && (
-            <Text variant="caption" color="muted" truncate>
+            <Text variant="label" color="muted" truncate>
               [ {skillDetailsOf(item)} ]
             </Text>
           )}

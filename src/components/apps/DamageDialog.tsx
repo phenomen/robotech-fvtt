@@ -59,7 +59,7 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
   return (
     <Stack pad={4} gap={4}>
       <Stack gap={1}>
-        <Text variant="caption" color="primary">
+        <Text variant="label" color="primary">
           {game.i18n.localize("ROBOTECH.Damage.DistributeHint", {
             damage: incoming,
             type: typeLabel,
@@ -67,17 +67,17 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
           })}
         </Text>
         {preview.incoming.calledShot && (
-          <Text variant="caption" color="amber">
+          <Text variant="label" color="amber">
             {game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}
           </Text>
         )}
         <Stack direction="row" gap={2} wrap>
           {soaked > 0 && (
-            <Text variant="caption" color="muted">
+            <Text variant="label" color="muted">
               {game.i18n.localize("ROBOTECH.Damage.Soaked", { soaked })}
             </Text>
           )}
-          <Text variant="caption" color={remaining > 0 ? "amber" : "green"}>
+          <Text variant="label" color={remaining > 0 ? "amber" : "green"}>
             {game.i18n.localize("ROBOTECH.Damage.Assigned", { assigned, total: damage })}
           </Text>
         </Stack>
@@ -92,7 +92,7 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
       {hardware.length > 0 && (
         <Stack gap={3}>
           <Divider />
-          <Text variant="caption" color="primary">
+          <Text variant="label" color="primary">
             {game.i18n.localize("ROBOTECH.Damage.HardwareSection")}
           </Text>
           {hardware.map((sink) => (
@@ -130,7 +130,7 @@ function SinkRow({ sink, amounts, onChange }: SinkRowProps): JSX.Element {
       label={
         <>
           {label}{" "}
-          <Text variant="caption" color="muted" as="span">
+          <Text variant="label" color="muted" as="span">
             ({game.i18n.localize("ROBOTECH.Damage.Capacity", { remaining: sink.capacity })})
           </Text>
         </>

@@ -53,7 +53,7 @@ function TabNavInner<T extends string = string>({ activeTab, onTabChange, tabs }
               aria-selected={isActive}
               tabIndex={isActive ? 0 : -1}
               className={cn(
-                typoClass("button"),
+                typoClass("mono"),
                 "font-rt-mono relative flex h-10! min-h-0! cursor-pointer items-center justify-center px-3! tracking-wider! uppercase",
                 "border-none! bg-transparent! shadow-none!",
                 isActive ? "text-rt-primary" : "text-rt-muted hover:text-rt-primary",

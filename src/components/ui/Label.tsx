@@ -24,7 +24,7 @@ export const Label = React.memo(function Label({
   return (
     <Component
       htmlFor={htmlFor}
-      className={cn(typoClass("caption", size), "text-rt-secondary-foreground inline-flex items-center gap-1")}
+      className={cn(typoClass("label", size), "text-rt-secondary-foreground inline-flex items-center gap-1")}
       {...props}
     >
       {icon && <Icon name={icon} tone={iconTone} />}

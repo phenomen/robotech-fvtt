@@ -26,7 +26,7 @@ export function LabelRow({ label, children }: LabelRowProps): JSX.Element {
     <>
       <div className="min-w-0">
         {typeof label === "string" ? (
-          <Text variant="caption" truncate>
+          <Text variant="label" truncate>
             {label}
           </Text>
         ) : (

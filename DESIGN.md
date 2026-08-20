@@ -2,7 +2,7 @@
 
 Robotech sheets are composed from primitives. Layout files do not style themselves.
 
-Visual language: [Geist Grid](https://vercel.com/geist/grid) (visible guides, solid cells, crosses) and a compact type scale (title / label / caption / stat / copy / button). Colors stay on `--rt-*` theme tokens. Corners are always square.
+Visual language: [Geist Grid](https://vercel.com/geist/grid) (visible guides, solid cells, crosses) and a compact type scale (title / label / mono / copy). Colors stay on `--rt-*` theme tokens. Corners are always square.
 
 ## Rules
 
@@ -23,18 +23,16 @@ Roles combine `font-family`, `font-size`, `line-height`, `letter-spacing`, and `
 
 Tokens and utilities live in `src/styles/typography.css`. Each role is `typo-{role}`; pair it with `typo-small`, `typo-medium`, or `typo-large`. Controls that take a `size` prop apply the matching modifier (a small `Input` uses small label text). Do not add variants just to change type size.
 
-| Role      | Use                                                         |
-| --------- | ----------------------------------------------------------- |
-| `title`   | Emphasized figures and page-level names in `Text`           |
-| `label`   | Default UI text. Menus, field values, row names             |
-| `caption` | Tertiary text, field labels, table headers, dense chrome    |
-| `stat`    | Dice, ratings, ids, ammunition. Tabular mono. Not sentences |
-| `copy`    | Reading text (notes, descriptions)                          |
-| `button`  | Compact uppercase mono. Same role as `Button` / `TabNav`    |
+| Role    | Use                                                            |
+| ------- | -------------------------------------------------------------- |
+| `title` | Large headings and titles                                      |
+| `label` | All one-liners                                                 |
+| `mono`  | Number fields, buttons, and other places that need a mono font |
+| `copy`  | Multiline and prose text                                       |
 
-`Button` (and `TabNav`) use `button`: Geist Mono, uppercase except `ghost`. Layout never sets button type. Rating rows pass `gradation` (`best` … `worst`); `variant="primary"` is the selected step.
+`Button` (and `TabNav`) use `mono` plus uppercase chrome except `ghost`. Layout never sets button type. Rating rows pass `gradation` (`best` … `worst`); `variant="primary"` is the selected step.
 
-Geist Sans is the default. Geist Mono is `stat`, `CardTitle`, and `button`. If a look is missing, change a role or size in `ui/`; do not invent a one-off size.
+Geist Sans is the default. Geist Mono is `mono` (including `CardTitle` and buttons). If a look is missing, change a role or size in `ui/`; do not invent a one-off size.
 
 ## Grid
 
@@ -97,7 +95,7 @@ Do not invent half-steps.
 | `Divider`                                                                                                                                | 1px rule                                                                                    |
 | `Callout`                                                                                                                                | Hint, warning, or empty slot                                                                |
 | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`                                                                             | Tabular rows. Cell `width` is `grow` \| `hug` \| `stat` \| `action` \| `ammo` \| `controls` |
-| `Card`, `CardHeader`, `CardTitle`                                                                                                        | Off-grid surface; title is compact uppercase `stat`; header is a fixed 36px row             |
+| `Card`, `CardHeader`, `CardTitle`                                                                                                        | Off-grid surface; title is compact uppercase `mono`; header is a fixed 36px row             |
 | `Button`, `Input`, `NumberInput`, `Select`, `Textarea`, `Field`, `Label`, `Checkbox`, `Tag`, `TabNav`, `ToggleGroup`, `ProseMirrorField` | Controls with baked type roles                                                              |
 | `TrackerHex`                                                                                                                             | Game-specific hex input                                                                     |
 
@@ -106,7 +104,7 @@ Layout-facing primitives do not accept `className`. Add a variant instead (`full
 ### Adding a variant
 
 1. Confirm no existing variant covers it.
-2. Name it after the intent (`title`, `stat`, `dashed`), not the CSS (`text2xl`).
+2. Name it after the intent (`title`, `mono`, `dashed`), not the CSS (`text2xl`).
 3. Implement in `ui/`. Update this table if you add a primitive.
 
 ## Color
