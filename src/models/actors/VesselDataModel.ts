@@ -1,10 +1,10 @@
 import {
+  ROLL_MODIFIER_VALUES,
   SPEED_UNIT_VALUES,
-  SYSTEM_RATING_VALUES,
   VESSEL_MODE_VALUES,
   VESSEL_TYPE_VALUES,
+  type RollModifierValue,
   type SpeedUnitValue,
-  type SystemRatingValue,
   type VesselModeValue,
   type VesselTypeValue,
 } from "@/config/choices";
@@ -25,13 +25,13 @@ export interface VesselGauge {
 }
 
 export interface VesselSystems {
-  sensors: SystemRatingValue;
-  targeting: SystemRatingValue;
-  thrusters: SystemRatingValue;
+  sensors: RollModifierValue;
+  targeting: RollModifierValue;
+  thrusters: RollModifierValue;
   engines: number;
 }
 
-/** Systems whose level is expressed as a rating rather than a numeric step. */
+/** Systems whose level is a roll modifier rather than a numeric step. */
 export type VesselSystemName = Exclude<keyof VesselSystems, "engines">;
 
 /** Transformable mecha track a speed set per mode; everything else uses the general set. */
@@ -69,8 +69,7 @@ export class VesselDataModel extends ActorDataModel {
         space: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       });
 
-    const ratingField = () =>
-      new fields.StringField({ initial: SYSTEM_RATING_VALUES[2], choices: SYSTEM_RATING_VALUES });
+    const ratingField = () => new fields.StringField({ initial: "nominal", choices: ROLL_MODIFIER_VALUES });
 
     return {
       ...super.defineSchema(),

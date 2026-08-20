@@ -1,8 +1,8 @@
 import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
 
-import { dieSuccessGradation } from "@/config";
-import type { ActionValue, DamageTypeValue, SystemRatingValue } from "@/config/choices";
+import { dieSuccessGradation, modifierLabelOf } from "@/config";
+import type { ActionValue, DamageTypeValue, RollModifierValue } from "@/config/choices";
 import type { Ad6DieResult } from "@/utils/AD6Roll";
 import { enrichHtml, escapeHtml } from "@/utils/html";
 import type { WeaponAttackStats, WeaponTag } from "@/utils/weaponUtils";
@@ -38,7 +38,7 @@ export interface ActionCardInput {
   actor: Actor;
   action: ActionValue;
   title: string;
-  modifier: SystemRatingValue;
+  modifier: RollModifierValue;
   diceCount: number;
   dice: Ad6DieResult[];
   rolledSuccesses: number;
@@ -80,7 +80,7 @@ export async function postActionCard(input: ActionCardInput): Promise<void> {
 export interface PoolCardInput {
   actor: Actor;
   title: string;
-  modifier: SystemRatingValue;
+  modifier: RollModifierValue;
   diceCount: number;
   dice: Ad6DieResult[];
   successes: number;
@@ -189,7 +189,7 @@ function actionCardHtml(input: ActionCardInput, kind: ActionChatKind): string {
       <div class="${headerClass}">${escapeHtml(input.title)}</div>
       ${skills ? `<div class="rt-chat-skills">${skills}</div>` : ""}
       <div class="rt-chat-meta">
-        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${input.modifier}</strong></span>
+        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierLabelOf(input.modifier)}</strong></span>
         <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${input.diceCount}d6</strong></span>
         ${speedHtml}
       </div>
@@ -211,7 +211,7 @@ function initiativeSpeedHtml(input: ActionCardInput): string {
 function poolCardHtml(input: PoolCardInput): string {
   const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier");
   const dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
-  const modifierName = game.i18n.localize("ROBOTECH.Roll.Modifiers.Nominal");
+  const modifierName = modifierLabelOf(input.modifier);
   const diceHtml = input.dice
     .map((result) => {
       const variant = dieSuccessGradation(result.successes).dieClass;

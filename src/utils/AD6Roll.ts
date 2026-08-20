@@ -1,8 +1,8 @@
-import type { SystemRatingValue } from "@/config/choices";
+import type { RollModifierValue } from "@/config/choices";
 
 export interface RollOptions {
   diceCount: number;
-  modifier: SystemRatingValue;
+  modifier: RollModifierValue;
 }
 
 export interface Ad6DieResult {
@@ -16,7 +16,7 @@ export interface Ad6RollResult {
   dice: Ad6DieResult[];
 }
 
-export function calcDieSuccess(die: number, modifier: SystemRatingValue): number {
+export function calcDieSuccess(die: number, modifier: RollModifierValue): number {
   if (modifier === "disadvantage") {
     return die === 6 ? 1 : 0;
   }

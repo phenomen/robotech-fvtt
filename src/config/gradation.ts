@@ -1,4 +1,4 @@
-export const GRADATION_KEYS = ["best", "good", "neutral", "bad", "worst"] as const;
+export const GRADATION_KEYS = ["worst", "bad", "neutral", "good", "best"] as const;
 export type GradationKey = (typeof GRADATION_KEYS)[number];
 
 export const GRADATION = {

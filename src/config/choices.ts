@@ -87,15 +87,23 @@ export const VESSEL_MODE_OPTIONS = [
 export const VESSEL_MODE_VALUES = toValues(VESSEL_MODE_OPTIONS);
 export type VesselModeValue = (typeof VESSEL_MODE_VALUES)[number];
 
-export const SYSTEM_RATING_OPTIONS = [
-  { value: "disadvantage", labelKey: "ROBOTECH.Roll.Modifiers.Disadvantage" },
-  { value: "hindrance", labelKey: "ROBOTECH.Roll.Modifiers.Hindrance" },
-  { value: "nominal", labelKey: "ROBOTECH.Roll.Modifiers.Nominal" },
-  { value: "edge", labelKey: "ROBOTECH.Roll.Modifiers.Edge" },
-  { value: "advantage", labelKey: "ROBOTECH.Roll.Modifiers.Advantage" },
-] as const satisfies readonly ChoiceOption[];
-export const SYSTEM_RATING_VALUES = toValues(SYSTEM_RATING_OPTIONS);
-export type SystemRatingValue = (typeof SYSTEM_RATING_VALUES)[number];
+export const ROLL_MODIFIER_OPTIONS = [
+  { value: "disadvantage", labelKey: "ROBOTECH.Roll.Modifiers.Disadvantage", shift: -2 },
+  { value: "hindrance", labelKey: "ROBOTECH.Roll.Modifiers.Hindrance", shift: -1 },
+  { value: "nominal", labelKey: "ROBOTECH.Roll.Modifiers.Nominal", shift: 0 },
+  { value: "edge", labelKey: "ROBOTECH.Roll.Modifiers.Edge", shift: 1 },
+  { value: "advantage", labelKey: "ROBOTECH.Roll.Modifiers.Advantage", shift: 2 },
+] as const satisfies readonly (ChoiceOption & { shift: number })[];
+export const ROLL_MODIFIER_VALUES = toValues(ROLL_MODIFIER_OPTIONS);
+export type RollModifierValue = (typeof ROLL_MODIFIER_VALUES)[number];
+
+export function modifierLabelOf(modifier: RollModifierValue): string {
+  const option = ROLL_MODIFIER_OPTIONS.find((entry) => entry.value === modifier);
+  if (!option) return modifier;
+  const name = game.i18n.localize(option.labelKey);
+  const shift = option.shift > 0 ? `+${option.shift}` : String(option.shift);
+  return `${name} (${shift})`;
+}
 
 export const COMBAT_PHASE_OPTIONS = [
   { value: "communication", labelKey: "ROBOTECH.Combat.Phases.Communication" },

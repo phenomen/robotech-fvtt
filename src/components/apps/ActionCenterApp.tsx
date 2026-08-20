@@ -19,11 +19,12 @@ import {
   ACTION_OPTIONS,
   ACTION_PHASE_OPTIONS,
   CONFLICT_ACTION_OPTIONS,
-  SYSTEM_RATING_OPTIONS,
+  ROLL_MODIFIER_OPTIONS,
   isChoiceValue,
   isConflictAction,
+  modifierLabelOf,
   type ActionValue,
-  type SystemRatingValue,
+  type RollModifierValue,
 } from "@/config/choices";
 import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
 import type { AppOptions, CloseOptions } from "@/types/application";
@@ -93,7 +94,7 @@ export function ActionCenterContent({
   const initialPenetration = weaponPenetrationOf(weaponItems[0]?.item);
   const [penetrationActive, setPenetrationActive] = useState(initialPenetration.active);
   const [penetrationValue, setPenetrationValue] = useState(initialPenetration.value);
-  const [modifier, setModifier] = useState<SystemRatingValue>("nominal");
+  const [modifier, setModifier] = useState<RollModifierValue>("nominal");
   const [manualDice, setManualDice] = useState<number>(0);
   const [manualSuccesses, setManualSuccesses] = useState<number>(0);
   const livingVessels = livingSwarmCount(contextActor);
@@ -442,8 +443,8 @@ function ModifierRow({
   modifier,
   onChange,
 }: {
-  modifier: SystemRatingValue;
-  onChange: (value: SystemRatingValue) => void;
+  modifier: RollModifierValue;
+  onChange: (value: RollModifierValue) => void;
 }): JSX.Element {
   return (
     <Stack direction="row" gap={3}>
@@ -451,14 +452,14 @@ function ModifierRow({
         <Select
           value={modifier}
           onChange={(event) => {
-            if (isChoiceValue(SYSTEM_RATING_OPTIONS, event.target.value)) {
+            if (isChoiceValue(ROLL_MODIFIER_OPTIONS, event.target.value)) {
               onChange(event.target.value);
             }
           }}
         >
-          {SYSTEM_RATING_OPTIONS.map((option) => (
+          {ROLL_MODIFIER_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
-              {game.i18n.localize(option.labelKey)}
+              {modifierLabelOf(option.value)}
             </option>
           ))}
         </Select>

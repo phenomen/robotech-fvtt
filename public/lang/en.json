@@ -81,9 +81,7 @@
     },
     "Race": {
       "Form": "Form",
-      "FormPlaceholder": "e.g. Humanoid, Giant, Micronized, Macronized, etc.",
-      "Micronized": "Humanoid / Micronized",
-      "Macronized": "Giant / Macronized"
+      "FormPlaceholder": "e.g. Humanoid, Giant, Micronized, Macronized, etc."
     },
     "Wounds": {
       "Title": "Vitals",
@@ -166,14 +164,7 @@
       "Sensors": "Sensors",
       "Targeting": "Targeting",
       "Thrusters": "Thrusters",
-      "Engines": "Engines",
-      "SystemLevels": {
-        "advantage": "Advantage",
-        "edge": "Edge",
-        "nominal": "Nominal",
-        "hindrance": "Hindrance",
-        "disadvantage": "Disadvantage"
-      }
+      "Engines": "Engines"
     },
     "Damage": {
       "Title": "Damage Resolution",
@@ -418,11 +409,11 @@
         },
         "HeroicMove": {
           "name": "Heroic Move",
-          "hint": "Attempt an extraordinary, once-per-session feat."
+          "hint": "Attempt an extraordinary feat."
         },
         "Initiative": {
           "name": "Initiative",
-          "hint": "Roll to determine turn order before the encounter."
+          "hint": "Determine a turn order before a conflict."
         }
       },
       "Phases": {
@@ -433,11 +424,11 @@
         "Any": "Any"
       },
       "Modifiers": {
-        "Disadvantage": "Disadvantage (-2)",
-        "Hindrance": "Hindrance (-1)",
-        "Nominal": "Nominal (0)",
-        "Edge": "Edge (+1)",
-        "Advantage": "Advantage (+2)"
+        "Disadvantage": "Disadvantage",
+        "Hindrance": "Hindrance",
+        "Nominal": "Nominal",
+        "Edge": "Edge",
+        "Advantage": "Advantage"
       },
       "Title": "Action Center",
       "Action": "Action",
