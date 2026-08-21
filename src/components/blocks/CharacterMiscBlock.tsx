@@ -21,7 +21,7 @@ export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Elem
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Character.Miscellaneous")}</CardTitle>
       </CardHeader>

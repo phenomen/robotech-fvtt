@@ -34,7 +34,7 @@ export function ConflictTrackerBlock({ actor }: ConflictTrackerBlockProps): JSX.
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Conflict.Tracker")}</CardTitle>
         <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Conflict.Ticks")}>

@@ -50,7 +50,7 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
       //{ value: "system.systems.thrusters", labelKey: "ROBOTECH.Vessel.Thrusters" },
       //{ value: "system.systems.engines", labelKey: "ROBOTECH.Vessel.Engines" },
       { value: "system.hardwarePoints", labelKey: "ROBOTECH.Vessel.HardwarePoints" },
-      { value: "system.crew", labelKey: "ROBOTECH.Vessel.Capacity" },
+      { value: "system.crew", labelKey: "ROBOTECH.Vessel.Crew" },
       { value: "system.speedModes.general.ground", labelKey: "ROBOTECH.Vessel.Ground" },
       { value: "system.speedModes.general.planetary", labelKey: "ROBOTECH.Vessel.Planetary" },
       { value: "system.speedModes.general.space", labelKey: "ROBOTECH.Vessel.Space" },

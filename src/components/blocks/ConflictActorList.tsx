@@ -45,7 +45,7 @@ export function ConflictActorList({ actor }: ConflictActorListProps): JSX.Elemen
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Conflict.Actors")}</CardTitle>
       </CardHeader>

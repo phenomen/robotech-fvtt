@@ -20,7 +20,7 @@ export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element 
   const effects = actorEffects(actor);
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Effects")}</CardTitle>
         <Button

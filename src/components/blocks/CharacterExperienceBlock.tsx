@@ -18,7 +18,7 @@ export function CharacterExperienceBlock({ actor }: CharacterExperienceBlockProp
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Character.Experience")}</CardTitle>
       </CardHeader>

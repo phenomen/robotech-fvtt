@@ -54,7 +54,7 @@ export function SwarmMemberListBlock({ actor }: SwarmMemberListBlockProps): JSX.
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Swarm.Members.Title")}</CardTitle>
       </CardHeader>

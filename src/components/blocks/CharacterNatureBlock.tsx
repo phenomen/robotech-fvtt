@@ -18,7 +18,7 @@ export function CharacterNatureBlock({ actor }: CharacterNatureBlockProps): JSX.
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Character.Nature")}</CardTitle>
       </CardHeader>

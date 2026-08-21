@@ -17,7 +17,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
   const { armor, structure, isBasic } = actor.system;
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <Stack direction="row" gap={4} align="center">
           <CardTitle>{game.i18n.localize("ROBOTECH.Vessel.FrameworkTitle")}</CardTitle>

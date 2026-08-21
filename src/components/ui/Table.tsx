@@ -37,10 +37,17 @@ export function Table({ children }: TableProps): JSX.Element {
   );
 }
 
-export function TableHeader({ children }: TableProps): JSX.Element {
+export interface TableHeaderProps {
+  hidden?: boolean;
+  children?: ReactNode;
+}
+
+export function TableHeader({ hidden = false, children }: TableHeaderProps): JSX.Element {
   return (
     <InHeaderContext.Provider value={true}>
-      <thead className="font-rt-mono items-center bg-transparent!">{children}</thead>
+      <thead hidden={hidden} className={cn("font-rt-mono items-center bg-transparent!", hidden && "hidden!")}>
+        {children}
+      </thead>
     </InHeaderContext.Provider>
   );
 }

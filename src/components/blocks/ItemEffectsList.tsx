@@ -19,7 +19,7 @@ export function ItemEffectsList({ item }: ItemEffectsListProps): JSX.Element {
   const effects = Array.from(item.effects);
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Effects")}</CardTitle>
         <Button
@@ -36,7 +36,7 @@ export function ItemEffectsList({ item }: ItemEffectsListProps): JSX.Element {
         <Callout>{game.i18n.localize("ROBOTECH.Effect.Empty")}</Callout>
       ) : (
         <Table>
-          <TableHeader>
+          <TableHeader hidden>
             <TableRow>
               <TableCell width="grow">
                 <Text variant="label" color="muted">

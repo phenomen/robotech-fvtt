@@ -59,7 +59,7 @@ export function VesselSystemsBlock({ actor, onFieldChange }: VesselSystemsBlockP
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Vessel.SystemsTitle")}</CardTitle>
       </CardHeader>

@@ -87,7 +87,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
   const stackedRows = renderedFields ? 2 : 1;
 
   const descriptionBlock = (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Description")}</CardTitle>
       </CardHeader>

@@ -398,7 +398,7 @@ export function ItemList({
   };
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <Stack direction="row" gap={1} align="center">

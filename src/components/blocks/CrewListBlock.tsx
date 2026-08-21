@@ -51,7 +51,7 @@ export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Crew")}</CardTitle>
         <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Vessel.Capacity")}>

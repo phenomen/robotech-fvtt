@@ -50,7 +50,7 @@ export function PlotEventConflictList({ actor }: PlotEventConflictListProps): JS
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.PlotEvent.Conflicts")}</CardTitle>
       </CardHeader>

@@ -51,7 +51,7 @@ export function VesselSpeedBlock({ actor }: VesselSpeedBlockProps): JSX.Element 
   };
 
   return (
-    <Stack gap={3}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>
           {game.i18n.localize("ROBOTECH.Vessel.SpeedTitle")}

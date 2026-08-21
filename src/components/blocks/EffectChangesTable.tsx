@@ -30,7 +30,7 @@ export function EffectChangesTable({ effect }: EffectChangesTableProps): JSX.Ele
   const changes = effect.system.changes;
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Effect.Modifiers")}</CardTitle>
         <Button

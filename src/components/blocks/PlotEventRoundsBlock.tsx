@@ -59,7 +59,7 @@ export function PlotEventRoundsBlock({ actor }: PlotEventRoundsBlockProps): JSX.
   };
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.PlotEvent.Rounds")}</CardTitle>
       </CardHeader>
