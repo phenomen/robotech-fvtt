@@ -640,15 +640,18 @@
       "RoundPhase": "Round {n}: {phase} Phase.",
       "ConflictResolved": "Conflict resolved!",
       "RollInitiative": "Roll Initiative",
-      "ActionLeft": "{n} action left",
-      "ActionsLeft": "{n} actions left",
+      "RoundBudget": "Skills: {skills} | Equipment Suite: {suite}",
+      "SuiteAvailable": "Available",
+      "SuiteSpent": "Used",
+      "SkillBudget": "Only two Skills may be used each round.",
+      "SuiteBudget": "Only one Equipment Suite may be used each round.",
+      "SuiteRequiresSkill": "An Equipment Suite must be associated with a Skill",
       "Heightened": "Heightened",
       "TakenAction": "{phase}: {action}",
       "TakenHeightened": "{phase}: {heightened} {action}",
       "TakeAction": "Take Action",
       "Hidden": "Hidden",
       "NotInCombat": "That actor is not in the current Conflict.",
-      "ActionBudget": "Only two actions may be chosen each round.",
       "WaitForPhase": "Wait for the GM to advance the phase.",
       "Phases": {
         "Communication": "Comms",
@@ -658,6 +661,10 @@
       }
     },
     "Settings": {
+      "SimpleActions": {
+        "Name": "Simple Actions",
+        "Hint": "Optional Rule: An equipment suite must be associated with one of the Skill Actions. In this case you would have a total of 2 Actions including the Equipment Suite, instead of 3."
+      },
       "TokenDefaults": {
         "Name": "Apply recommended token settings",
         "Hint": "When creating a new Actor, set token resource bars to wounds or structure."

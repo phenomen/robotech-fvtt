@@ -125,6 +125,17 @@ function registerSystemSettings(): void {
     default: true,
   });
 
+  game.settings.register("robotech", "simpleActions", {
+    key: "simpleActions",
+    namespace: "robotech",
+    name: "ROBOTECH.Settings.SimpleActions.Name",
+    hint: "ROBOTECH.Settings.SimpleActions.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   game.settings.register("robotech", "theme", {
     key: "theme",
     namespace: "robotech",

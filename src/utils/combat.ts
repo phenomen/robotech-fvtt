@@ -13,7 +13,13 @@ import {
   type SlotPhaseValue,
 } from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID, SLOWED_STATUS_ID } from "@/config/statuses";
-import { ACTION_SLOT_COUNT, emptySlot, emptySlots, type ActionSlot } from "@/models/combat";
+import {
+  SKILL_USES_PER_ROUND,
+  SUITE_USES_PER_ROUND,
+  type ActionLogEntry,
+  type ActionUsage,
+  type RoundUsage,
+} from "@/models/combat";
 import { isActorOf } from "@/utils/documents";
 
 export { SLOWED_STATUS_ID };
@@ -75,27 +81,24 @@ export function isHeightened(action: ConflictActionValue, phase: SlotPhaseValue)
   return phaseIndex(homePhaseOf(action)) > phaseIndex(phase);
 }
 
-export function slotFromAction(action: ConflictActionValue, currentPhase: SlotPhaseValue): ActionSlot {
-  return {
-    action,
-    phase: currentPhase,
-    heightened: isHeightened(action, currentPhase),
-    used: false,
-  };
+export function remainingSkills(usage: RoundUsage): number {
+  return Math.max(0, SKILL_USES_PER_ROUND - usage.skillsUsed);
 }
 
-export function usedCount(slots: ActionSlot[]): number {
-  return slots.filter((slot) => slot.used).length;
+/** Optional rule: an equipment suite must be associated with a skill Action. */
+export function simpleActionsEnabled(): boolean {
+  return game.settings?.get("robotech", "simpleActions") === true;
 }
 
-export function remainingSlots(slots: ActionSlot[]): number {
-  return Math.max(0, ACTION_SLOT_COUNT - usedCount(slots));
+export function remainingSuites(usage: RoundUsage): number {
+  return Math.max(0, SUITE_USES_PER_ROUND - (usage.suiteUsed ? 1 : 0));
 }
 
-function paddedSlots(slots: ActionSlot[]): ActionSlot[] {
-  const next = slots.map((slot) => ({ ...slot }));
-  while (next.length < ACTION_SLOT_COUNT) next.push(emptySlot());
-  return next;
+/** Returns the i18n key of the first round-budget rule this usage would break, or null when allowed. */
+export function actionBudgetError(used: RoundUsage, next: ActionUsage): string | null {
+  if (next.skills > remainingSkills(used)) return "ROBOTECH.Combat.SkillBudget";
+  if (next.suite && remainingSuites(used) < 1) return "ROBOTECH.Combat.SuiteBudget";
+  return null;
 }
 
 export function compareCombatants(a: Combatant, b: Combatant): number {
@@ -173,7 +176,12 @@ export async function applyInitiative(actor: Actor, successes: number, pool: num
   return true;
 }
 
-export async function takeCombatAction(combatant: Combatant, action: ConflictActionValue): Promise<boolean> {
+/** Spend skill and equipment-suite uses for this round on a combatant, logging the taken action. */
+export async function spendRoundUses(
+  combatant: Combatant,
+  action: ConflictActionValue,
+  usage: ActionUsage,
+): Promise<boolean> {
   const combat = game.combat;
   if (!combat) {
     ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.NotInCombat"));
@@ -183,15 +191,18 @@ export async function takeCombatAction(combatant: Combatant, action: ConflictAct
   const currentPhase = combatPhaseOf(combat);
   if (currentPhase === "communication") return false;
 
-  const slots = paddedSlots(combatant.system.slots);
-  const index = slots.findIndex((slot) => !slot.used);
-  if (index < 0) {
-    ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.ActionBudget"));
+  const used: RoundUsage = combatant.system;
+  const errorKey = actionBudgetError(used, usage);
+  if (errorKey) {
+    ui.notifications.warn(game.i18n.localize(errorKey));
     return false;
   }
 
-  slots[index] = { ...slotFromAction(action, currentPhase), used: true };
-  await combatant.update({ "system.slots": slots });
+  await combatant.update({
+    "system.skillsUsed": used.skillsUsed + usage.skills,
+    "system.suiteUsed": used.suiteUsed || usage.suite,
+    "system.log": [...used.log, { action, phase: currentPhase, heightened: isHeightened(action, currentPhase) }],
+  });
   return true;
 }
 
@@ -201,10 +212,12 @@ export async function changePhase(combat: Combat, phase: CombatPhaseValue): Prom
   await combat.update({ "system.phase": phase, turn });
 }
 
-export async function clearRoundSlots(combat: Combat): Promise<void> {
+export async function clearRoundUses(combat: Combat): Promise<void> {
   const updates = combat.combatants.map((combatant) => ({
     _id: combatant.id,
-    "system.slots": emptySlots(),
+    "system.skillsUsed": 0,
+    "system.suiteUsed": false,
+    "system.log": [],
     "system.sort": null,
   }));
   if (!updates.length) return;
@@ -225,12 +238,6 @@ export async function writeTurnOrder(combat: Combat, orderedIds: string[]): Prom
   await combat.updateEmbeddedDocuments("Combatant", updates);
 }
 
-export function actionLabelOf(action: string): string {
-  const option = ACTION_OPTIONS.find((entry) => entry.value === action);
-  if (!option) return action;
-  return game.i18n.localize(option.labelKey);
-}
-
 export function phaseLabelOf(phase: CombatPhaseValue | SlotPhaseValue | ""): string {
   if (!phase) return "";
   const option = COMBAT_PHASE_OPTIONS.find((entry) => entry.value === phase);
@@ -238,17 +245,18 @@ export function phaseLabelOf(phase: CombatPhaseValue | SlotPhaseValue | ""): str
   return game.i18n.localize(option.labelKey);
 }
 
-export function takenActionLabel(slot: ActionSlot): string {
-  const phase = phaseLabelOf(slot.phase);
-  const action = actionLabelOf(slot.action);
-  if (slot.heightened) {
+export function takenActionLabel(entry: ActionLogEntry): string {
+  const phase = phaseLabelOf(entry.phase);
+  const action = ACTION_OPTIONS.find((option) => option.value === entry.action)?.labelKey ?? entry.action;
+  const actionLabel = game.i18n.localize(action);
+  if (entry.heightened) {
     return game.i18n.localize("ROBOTECH.Combat.TakenHeightened", {
       phase,
-      action,
+      action: actionLabel,
       heightened: game.i18n.localize("ROBOTECH.Combat.Heightened"),
     });
   }
-  return game.i18n.localize("ROBOTECH.Combat.TakenAction", { phase, action });
+  return game.i18n.localize("ROBOTECH.Combat.TakenAction", { phase, action: actionLabel });
 }
 
 export function announceRoundPhase(round: number, phase: string): void {

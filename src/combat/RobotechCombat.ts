@@ -5,7 +5,7 @@ import {
   announceRoundPhase,
   applyCombatType,
   clearManualSort,
-  clearRoundSlots,
+  clearRoundUses,
   combatPhaseOf,
   compareCombatants,
   firstLivingIndex,
@@ -102,7 +102,7 @@ export class RobotechCombat extends foundry.documents.Combat {
 
   override async nextRound(): Promise<this> {
     if (!game.user?.isGM) return this;
-    await clearRoundSlots(this);
+    await clearRoundUses(this);
     const nextRound = this.round + 1;
     const updateData = { round: nextRound, turn: null, "system.phase": "communication" };
     const advanceTime = this.getTimeDelta(this.round, this.turn, nextRound, null);
@@ -114,7 +114,7 @@ export class RobotechCombat extends foundry.documents.Combat {
 
   override async previousRound(): Promise<this> {
     if (!game.user?.isGM || this.round === 0) return this;
-    await clearRoundSlots(this);
+    await clearRoundUses(this);
     const previousRound = this.round - 1;
     const updateData = { round: previousRound, turn: null, "system.phase": "communication" };
     const advanceTime = this.getTimeDelta(this.round, this.turn, previousRound, null);

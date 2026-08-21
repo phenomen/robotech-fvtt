@@ -27,17 +27,19 @@ import {
   type RollModifierValue,
 } from "@/config/options";
 import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
+import type { ActionUsage } from "@/models/combat";
 import type { AppOptions, CloseOptions } from "@/types/application";
 import { postActionCard, type IncomingAttack } from "@/utils/actionChat";
 import { evaluateAd6Roll, calcDieSuccess } from "@/utils/AD6Roll";
 import {
   actorSpeed,
+  actionBudgetError,
   applyInitiative,
   combatantOf,
   combatPhaseOf,
   isHeightened,
-  remainingSlots,
-  takeCombatAction,
+  simpleActionsEnabled,
+  spendRoundUses,
 } from "@/utils/combat";
 import { filterItemsOf, isActorOf, resolveLinkedCharacters, memberVesselsOf } from "@/utils/documents";
 import { isFullyDestroyed } from "@/utils/hardwareUtils";
@@ -116,6 +118,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
 
   const needsWeapon = action === "attack" && !isActorOf(contextActor, "swarm");
   const canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon));
+  const usage: ActionUsage = { skills: (skill1 ? 1 : 0) + (skill2 ? 1 : 0), suite: Boolean(suite) };
 
   const handleRoll = async () => {
     if (!canRoll) return;
@@ -126,11 +129,16 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     }
 
     if (consumeSlot && combatant) {
-      if (remainingSlots(combatant.system.slots) < 1) {
-        ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.ActionBudget"));
+      if (!isConflictAction(action)) return;
+      if (simpleActionsEnabled() && usage.suite && usage.skills < 1) {
+        ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill"));
         return;
       }
-      if (!isConflictAction(action)) return;
+      const errorKey = actionBudgetError(combatant.system, usage);
+      if (errorKey) {
+        ui.notifications.warn(game.i18n.localize(errorKey));
+        return;
+      }
     }
 
     const result = await evaluateAd6Roll({ diceCount, modifier });
@@ -166,7 +174,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     });
 
     if (consumeSlot && combatant && isConflictAction(action)) {
-      await takeCombatAction(combatant, action);
+      await spendRoundUses(combatant, action, usage);
     }
 
     onClose();
@@ -198,6 +206,11 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
         />
       </Stack>
       <SuiteSelect value={suiteId} suites={suiteItems} onChange={setSuiteId} />
+      {consumeSlot && simpleActionsEnabled() ? (
+        <Text variant="label" color="muted">
+          {game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill")}
+        </Text>
+      ) : null}
       {action === "attack" && <WeaponSelect value={weaponId} weapons={weaponItems} onChange={handleWeaponChange} />}
       {action === "attack" && (
         <AttackOptions

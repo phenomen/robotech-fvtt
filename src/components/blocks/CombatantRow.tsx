@@ -15,7 +15,8 @@ import {
   combatPhaseOf,
   isMentalBreak,
   isSlowed,
-  remainingSlots,
+  remainingSkills,
+  remainingSuites,
   takenActionLabel,
   writeTurnOrder,
 } from "@/utils/combat";
@@ -35,13 +36,14 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
   const inComms = phase === "communication";
   const active = combat.started && !inComms && combat.turn === index;
   const actor = combatant.actor;
-  const slots = combatant.system.slots.filter((slot) => slot.action);
-  const left = remainingSlots(combatant.system.slots);
+  const usage = combatant.system;
+  const skillsLeft = remainingSkills(usage);
+  const suiteLeft = remainingSuites(usage);
   const slowed = isSlowed(actor);
   const mentalBreak = isMentalBreak(actor);
   const portrait = combatant.img ?? actor?.img ?? CONST.DEFAULT_TOKEN;
   const rolled = Number.isFinite(combatant.initiative);
-  const canAct = canEdit && !!actor && left > 0 && !inComms && !combatant.isDefeated;
+  const canAct = canEdit && !!actor && (skillsLeft > 0 || !usage.suiteUsed) && !inComms && !combatant.isDefeated;
 
   const handleInitiative = (value: number | null) => {
     if (!isGM) return;
@@ -131,12 +133,15 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
 
       <Stack gap={2}>
         <Text variant="label" color="muted">
-          {game.i18n.localize(left === 1 ? "ROBOTECH.Combat.ActionLeft" : "ROBOTECH.Combat.ActionsLeft", { n: left })}
+          {game.i18n.localize("ROBOTECH.Combat.RoundBudget", {
+            skills: skillsLeft,
+            suite: game.i18n.localize(suiteLeft > 0 ? "ROBOTECH.Combat.SuiteAvailable" : "ROBOTECH.Combat.SuiteSpent"),
+          })}
         </Text>
 
-        {slots.map((slot, slotIndex) => (
-          <Text key={`taken-${slotIndex}`} variant="label" color={slot.heightened ? "danger" : "foreground"}>
-            {takenActionLabel(slot)}
+        {usage.log.map((entry, entryIndex) => (
+          <Text key={`taken-${entryIndex}`} variant="label" color={entry.heightened ? "danger" : "foreground"}>
+            {takenActionLabel(entry)}
           </Text>
         ))}
 
