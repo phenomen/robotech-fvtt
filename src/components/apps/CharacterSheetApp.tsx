@@ -1,6 +1,7 @@
 ﻿import { useState, type JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
+import { ActorEffectsList } from "@/components/blocks/ActorEffectsList";
 import { DramaTracker } from "@/components/blocks/CharacterDramaTracker";
 import { CharacterExperienceBlock } from "@/components/blocks/CharacterExperienceBlock";
 import { Header } from "@/components/blocks/CharacterHeader";
@@ -23,7 +24,7 @@ import { GENERIC_SKILL_LABEL_KEYS } from "@/config/choices";
 import type { ActorOf, FieldValue, ItemOf } from "@/models";
 import { filterItemsOf } from "@/utils";
 
-export type ActorTabType = "stats" | "skills" | "talents" | "equipment" | "description";
+export type ActorTabType = "stats" | "skills" | "talents" | "equipment" | "description" | "effects";
 
 interface ActorSheetAppProps {
   actor: ActorOf<"character">;
@@ -49,6 +50,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
     { key: "talents", label: game.i18n.localize("ROBOTECH.Tabs.Talents") },
     { key: "equipment", label: game.i18n.localize("ROBOTECH.Tabs.Equipment") },
     { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
+    { key: "effects", label: game.i18n.localize("ROBOTECH.Tabs.Effects") },
   ];
 
   const system = actor.system;
@@ -180,6 +182,16 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
                     minHeight="tall"
                   />
                 </Stack>
+              </GridCell>
+            </Grid>
+          </GridSystem>
+        )}
+
+        {activeTab === "effects" && (
+          <GridSystem guideWidth={1}>
+            <Grid columns={1} rows={1}>
+              <GridCell solid pad={3}>
+                <ActorEffectsList actor={actor} />
               </GridCell>
             </Grid>
           </GridSystem>

@@ -1,4 +1,7 @@
+export * from "./ActorEffectsList";
 export * from "./DragDropSlots";
+export * from "./EffectChangesTable";
+export * from "./ItemEffectsList";
 export * from "./CharacterDramaTracker";
 export * from "./CharacterExperienceBlock";
 export * from "./CharacterHeader";

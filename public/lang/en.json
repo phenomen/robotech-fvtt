@@ -30,6 +30,7 @@
     "Sheet": {
       "Actor": "Robotech Actor Sheet",
       "Item": "Robotech Item Sheet",
+      "Effect": "Robotech Effect Sheet",
       "Name": "Name",
       "NamePlaceholder": "Name",
       "Open": "Open sheet",
@@ -49,7 +50,38 @@
       "Vessel": "Vessel",
       "Crew": "Crew",
       "Data": "Data",
+      "Effects": "Effects",
       "Description": "Description"
+    },
+    "Effect": {
+      "Title": "Active Effect",
+      "Name": "Name",
+      "NamePlaceholder": "Effect Name",
+      "New": "New Effect",
+      "Add": "Add Effect",
+      "Empty": "No effects yet.",
+      "OpenSheet": "Open effect sheet",
+      "Source": "Source",
+      "Disabled": "Disabled",
+      "Modifiers": "Modifiers",
+      "AddModifier": "Add Modifier",
+      "NoModifiers": "No modifiers yet.",
+      "Key": "Key",
+      "KeyPlaceholder": "system.armor",
+      "Type": "Type",
+      "Value": "Value",
+      "ChangeType": {
+        "Add": "Add",
+        "Subtract": "Subtract",
+        "Upgrade": "Upgrade",
+        "Downgrade": "Downgrade",
+        "Multiply": "Multiply",
+        "Override": "Override"
+      },
+      "Attribute": {
+        "Header": "Attribute",
+        "Custom": "Custom"
+      }
     },
     "Character": {
       "ChangePortrait": "Change portrait",

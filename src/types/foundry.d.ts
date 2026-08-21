@@ -4,12 +4,38 @@
  * fields this system relies on are merged onto the shipped document classes here.
  */
 
+import type ActiveEffect from "@client/documents/active-effect.mjs";
 import type Actor from "@client/documents/actor.mjs";
 import type Combatant from "@client/documents/combatant.mjs";
+import type Item from "@client/documents/item.mjs";
 import type EmbeddedCollection from "@common/abstract/embedded-collection.mjs";
 
-import type { ActorSystem, ActorType, CombatantType, CombatType, ItemSystem, ItemType, RobotechItem } from "@/models";
+import type {
+  ActorSystem,
+  ActorType,
+  CombatantType,
+  CombatType,
+  EffectChange,
+  ItemSystem,
+  ItemType,
+  RobotechItem,
+} from "@/models";
 import type { CombatantDataModel, CombatDataModel } from "@/models/combat";
+
+declare module "@client/documents/active-effect.mjs" {
+  export default interface ActiveEffect {
+    name: string;
+    img: string;
+    disabled: boolean;
+    transfer: boolean;
+    description: string;
+    system: { changes: EffectChange[] };
+    sheet: foundry.applications.api.ApplicationV2 | null;
+    readonly actor: Actor | null;
+    readonly item: Item | null;
+    readonly isOwner: boolean;
+  }
+}
 
 declare module "@client/documents/actor.mjs" {
   export default interface Actor {
@@ -18,6 +44,8 @@ declare module "@client/documents/actor.mjs" {
     type: ActorType;
     system: ActorSystem;
     items: EmbeddedCollection<RobotechItem>;
+    effects: EmbeddedCollection<ActiveEffect>;
+    allApplicableEffects(): Generator<ActiveEffect, void, void>;
     prototypeToken: foundry.data.PrototypeToken;
     sheet: foundry.applications.api.ApplicationV2 | null;
     readonly isOwner: boolean;
@@ -35,6 +63,7 @@ declare module "@client/documents/item.mjs" {
     img: string;
     type: ItemType;
     system: ItemSystem;
+    effects: EmbeddedCollection<ActiveEffect>;
     sheet: foundry.applications.api.ApplicationV2 | null;
   }
 }

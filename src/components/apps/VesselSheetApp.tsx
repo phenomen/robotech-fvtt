@@ -1,5 +1,6 @@
 ﻿import { useState, type JSX } from "react";
 
+import { ActorEffectsList } from "@/components/blocks/ActorEffectsList";
 import { CrewListBlock } from "@/components/blocks/CrewListBlock";
 import { EquipmentSuitesBlock } from "@/components/blocks/EquipmentSuitesBlock";
 import { ItemList } from "@/components/blocks/ItemList";
@@ -23,7 +24,7 @@ interface VesselSheetAppProps {
   actor: ActorOf<"vessel">;
 }
 
-export type VesselTabType = "stats" | "equipment" | "crew" | "description";
+export type VesselTabType = "stats" | "equipment" | "crew" | "description" | "effects";
 
 export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<VesselTabType>("stats");
@@ -41,6 +42,7 @@ export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
     { key: "equipment", label: game.i18n.localize("ROBOTECH.Tabs.Equipment") },
     { key: "crew", label: game.i18n.localize("ROBOTECH.Tabs.Crew") },
     { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
+    { key: "effects", label: game.i18n.localize("ROBOTECH.Tabs.Effects") },
   ];
 
   return (
@@ -143,6 +145,16 @@ export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
                     minHeight="tall"
                   />
                 </Stack>
+              </GridCell>
+            </Grid>
+          </GridSystem>
+        )}
+
+        {activeTab === "effects" && (
+          <GridSystem guideWidth={1}>
+            <Grid columns={1} rows={1}>
+              <GridCell solid pad={3}>
+                <ActorEffectsList actor={actor} />
               </GridCell>
             </Grid>
           </GridSystem>

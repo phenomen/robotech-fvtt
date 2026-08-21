@@ -21,6 +21,7 @@ import {
   WeaponDataModel,
 } from "@/models/items";
 import { RobotechActorSheet } from "@/sheets/RobotechActorSheet";
+import { RobotechEffectSheet } from "@/sheets/RobotechEffectSheet";
 import { RobotechItemSheet } from "@/sheets/RobotechItemSheet";
 import { bindChatButtons } from "@/utils/chatActions";
 
@@ -64,6 +65,26 @@ function registerSystemSheets(): void {
   foundry.documents.collections.Items.registerSheet("robotech", RobotechItemSheet, {
     makeDefault: true,
     label: "ROBOTECH.Sheet.Item",
+  });
+
+  registerEffectSheet();
+}
+
+/**
+ * DocumentSheetConfig documents its sheet parameter as `typeof Application|typeof ApplicationV2`,
+ * which no DocumentSheetV2 subclass satisfies — not even Foundry's own ActiveEffectConfig.
+ */
+type RegisterableSheet = Parameters<typeof foundry.applications.apps.DocumentSheetConfig.registerSheet>[2];
+
+function registerEffectSheet(): void {
+  const sheetConfig = foundry.applications.apps.DocumentSheetConfig;
+  const coreSheet = foundry.applications.sheets.ActiveEffectConfig as unknown as RegisterableSheet;
+  const systemSheet = RobotechEffectSheet as unknown as RegisterableSheet;
+
+  sheetConfig.unregisterSheet(foundry.documents.ActiveEffect, "core", coreSheet);
+  sheetConfig.registerSheet(foundry.documents.ActiveEffect, "robotech", systemSheet, {
+    makeDefault: true,
+    label: "ROBOTECH.Sheet.Effect",
   });
 }
 

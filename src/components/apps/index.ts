@@ -1,4 +1,5 @@
 export * from "./CharacterSheetApp";
+export * from "./EffectSheetApp";
 export * from "./ItemSheetApp";
 export * from "./ActionCenterApp";
 export * from "./VesselSheetApp";

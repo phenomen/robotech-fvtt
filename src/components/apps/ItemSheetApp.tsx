@@ -1,6 +1,7 @@
 import type Item from "@client/documents/item.mjs";
 import { useState, type ChangeEvent, type JSX } from "react";
 
+import { ItemEffectsList } from "@/components/blocks/ItemEffectsList";
 import {
   CareerSheetFields,
   EquipmentSuiteSheetFields,
@@ -20,11 +21,12 @@ import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
 import { TabNav, type TabItem } from "@/components/ui/TabNav";
 import { Text } from "@/components/ui/Text";
+import { itemHasEffects } from "@/config/effects";
 import { getLayoutMode } from "@/config/itemLayout";
 import type { FieldValue } from "@/models";
 import { isItemOf } from "@/utils";
 
-export type ItemTabType = "stats" | "description";
+export type ItemTabType = "stats" | "description" | "effects";
 
 interface ItemSheetAppProps {
   item: Item;
@@ -33,6 +35,7 @@ interface ItemSheetAppProps {
 export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<ItemTabType>("stats");
   const layoutMode = getLayoutMode(item.type);
+  const hasEffects = itemHasEffects(item.type);
   const system = item.system;
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +49,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
   const itemTabs: TabItem<ItemTabType>[] = [
     { key: "stats", label: game.i18n.localize("ROBOTECH.Tabs.Stats") },
     { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
+    ...(hasEffects ? [{ key: "effects" as const, label: game.i18n.localize("ROBOTECH.Tabs.Effects") }] : []),
   ];
 
   const renderItemFields = () => {
@@ -133,11 +137,22 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
                 </Grid>
               </GridSystem>
             )}
+
             {activeTab === "description" && (
               <GridSystem guideWidth={1}>
                 <Grid columns={1} rows={1}>
                   <GridCell solid pad={3}>
                     {descriptionBlock}
+                  </GridCell>
+                </Grid>
+              </GridSystem>
+            )}
+
+            {activeTab === "effects" && hasEffects && (
+              <GridSystem guideWidth={1}>
+                <Grid columns={1} rows={1}>
+                  <GridCell solid pad={3}>
+                    <ItemEffectsList item={item} />
                   </GridCell>
                 </Grid>
               </GridSystem>
