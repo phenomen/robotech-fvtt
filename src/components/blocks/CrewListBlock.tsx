@@ -1,4 +1,4 @@
-import { useState, useEffect, type JSX } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
@@ -11,34 +11,15 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { isActorOf } from "@/utils";
+import { useLinkedActors, type LinkedActor } from "@/utils";
+import { openActorSheet } from "@/utils";
 
 interface CrewListBlockProps {
   actor: ActorOf<"vessel">;
 }
 
-interface CrewPreview {
-  uuid: string;
-  name: string;
-  img: string;
-  missing: boolean;
-}
-
 export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
-  const uuids = actor.system.characterUuids;
-  const [crew, setCrew] = useState<CrewPreview[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void Promise.all(uuids.map((uuid) => previewOf(uuid))).then((resolved) => {
-      if (!cancelled) setCrew(resolved);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [uuids]);
+  const crew = useLinkedActors(actor.system.characterUuids, ["character"]);
 
   const handleCapacityChange = (val: number | null) => {
     void actor.update({ "system.crew": Math.max(0, val ?? 0) });
@@ -59,10 +40,10 @@ export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
         </Field>
       </CardHeader>
 
-      {uuids.length > actor.system.crew && (
+      {actor.system.characterUuids.length > actor.system.crew && (
         <Callout icon="alert" tone="danger">
           {game.i18n.localize("ROBOTECH.Crew.OverCapacity", {
-            count: uuids.length,
+            count: actor.system.characterUuids.length,
             capacity: actor.system.crew,
           })}
         </Callout>
@@ -83,30 +64,52 @@ export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
   );
 }
 
-function CrewRow({ member, onDelete }: { member: CrewPreview; onDelete: (uuid: string) => void }): JSX.Element {
-  return (
-    <TableRow>
-      <TableCell width="grow">
-        {member.missing ? (
+function CrewRow({
+  member,
+  onDelete,
+}: {
+  member: LinkedActor<"character">;
+  onDelete: (uuid: string) => void;
+}): JSX.Element {
+  if (!member.actor) {
+    return (
+      <TableRow>
+        <TableCell width="grow">
           <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.LinkedCharacter.Missing")}
           </Text>
-        ) : (
+        </TableCell>
+        <TableCell width="16" align="end">
           <Button
-            variant="ghost"
-            onClick={() => void openCrewSheet(member.uuid)}
-            title={game.i18n.localize("ROBOTECH.LinkedCharacter.OpenSheet")}
+            variant="danger"
+            size="icon"
+            onClick={() => onDelete(member.uuid)}
+            title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
           >
-            <Stack direction="row" gap={3} align="center">
-              <Portrait src={member.img} alt="" size="medium" />
-              <Text variant="label" truncate>
-                {member.name}
-              </Text>
-            </Stack>
+            <Icon name="x" />
           </Button>
-        )}
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  return (
+    <TableRow>
+      <TableCell width="grow">
+        <Button
+          variant="ghost"
+          onClick={() => void openActorSheet(member.uuid)}
+          title={game.i18n.localize("ROBOTECH.LinkedCharacter.OpenSheet")}
+        >
+          <Stack direction="row" gap={3} align="center">
+            <Portrait src={member.actor.img} alt="" size="medium" />
+            <Text variant="label" truncate>
+              {member.actor.name}
+            </Text>
+          </Stack>
+        </Button>
       </TableCell>
-      <TableCell width="controls" align="end">
+      <TableCell width="16" align="end">
         <Button
           variant="danger"
           size="icon"
@@ -118,17 +121,4 @@ function CrewRow({ member, onDelete }: { member: CrewPreview; onDelete: (uuid: s
       </TableCell>
     </TableRow>
   );
-}
-
-async function previewOf(uuid: string): Promise<CrewPreview> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor && isActorOf(document, "character")) {
-    return { uuid, name: document.name, img: document.img, missing: false };
-  }
-  return { uuid, name: "", img: "", missing: true };
-}
-
-async function openCrewSheet(uuid: string): Promise<void> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor) void document.sheet?.render(true);
 }

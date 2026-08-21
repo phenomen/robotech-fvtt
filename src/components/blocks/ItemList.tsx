@@ -46,12 +46,12 @@ function isWeapon(itemType: ListedItemType): boolean {
 function SkillCells({ item, onRoll }: { item: ItemOf<"skill">; onRoll: () => void }): JSX.Element {
   return (
     <>
-      <TableCell width="stat" align="center">
+      <TableCell width="10" align="center">
         <Text variant="mono" color="primary" align="center">
           {item.system.value}
         </Text>
       </TableCell>
-      <TableCell width="action">
+      <TableCell width="12">
         <Button size="small" variant="primary" onClick={onRoll} full>
           {game.i18n.localize("ROBOTECH.Buttons.Roll")}
         </Button>
@@ -63,12 +63,12 @@ function SkillCells({ item, onRoll }: { item: ItemOf<"skill">; onRoll: () => voi
 function UsesCells({ item, onUse }: { item: UsableItem; onUse: () => void }): JSX.Element {
   return (
     <>
-      <TableCell width="action">
+      <TableCell width="12">
         <Button size="small" variant="primary" onClick={onUse} full>
           {game.i18n.localize("ROBOTECH.Buttons.Use")}
         </Button>
       </TableCell>
-      <TableCell width="stat" align="center">
+      <TableCell width="10" align="center">
         {isItemOf(item, "equipment_suite") ? (
           <SuiteUsesValue item={item} />
         ) : (
@@ -115,7 +115,7 @@ function SuiteUsesValue({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Elem
 
 function SuiteSkillCell({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Element {
   return (
-    <TableCell width="stat" align="center">
+    <TableCell width="10" align="center">
       <Text variant="mono" color="primary" align="center">
         {item.system.skill}
       </Text>
@@ -133,7 +133,7 @@ function AmmoCell({
   const { active, value, current } = item.system.properties.ammunition;
 
   return (
-    <TableCell width="ammo" align="center">
+    <TableCell width="20" align="center">
       {active ? (
         <Stack direction="row" gap={1} align="center" justify="center">
           <NumberInput value={current} min={0} max={value} onValueChange={onUpdateAmmo} width="small" />
@@ -149,16 +149,19 @@ function AmmoCell({
   );
 }
 
-function WeaponTags({ item }: { item: ItemOf<"weapon"> }): JSX.Element | null {
+function WeaponTagsCell({ item }: { item: ItemOf<"weapon"> }): JSX.Element {
   const tags = weaponPropertyTags(item.system.properties);
-  if (tags.length === 0) return null;
 
   return (
-    <Stack direction="row" gap={1} wrap>
-      {tags.map((tag) => (
-        <Tag key={tag.id} label={tag.label} color={tag.color} size="small" title={tag.title} />
-      ))}
-    </Stack>
+    <TableCell width="grow">
+      {tags.length > 0 ? (
+        <Stack direction="row" gap={1} wrap>
+          {tags.map((tag) => (
+            <Tag key={tag.id} label={tag.label} color={tag.color} size="small" title={tag.title} />
+          ))}
+        </Stack>
+      ) : null}
+    </TableCell>
   );
 }
 
@@ -167,7 +170,7 @@ function HardwareSlotsCell({ item }: { item: ListedItem }): JSX.Element {
   const destroyed = slots && slots.value > 0 ? syncDestroyedSlots(slots.value, slots.destroyed) : [];
 
   return (
-    <TableCell width="hug" align="center">
+    <TableCell width="auto" align="center">
       {destroyed.length > 0 ? (
         <Stack direction="row" gap={1} align="center" justify="center">
           {destroyed.map((isDestroyed, index) => (
@@ -224,9 +227,9 @@ async function spendUse(item: UsableItem): Promise<void> {
   }
 }
 
-function NameHeader(): JSX.Element {
+function NameHeader({ itemType }: { itemType: ListedItemType }): JSX.Element {
   return (
-    <TableCell width="grow">
+    <TableCell width={isWeapon(itemType) ? "32" : "grow"}>
       <Text variant="label" color="muted">
         {game.i18n.localize("ROBOTECH.List.HeaderName")}
       </Text>
@@ -235,16 +238,23 @@ function NameHeader(): JSX.Element {
 }
 
 function ControlsHeader(): JSX.Element {
-  return <TableCell width="controls" />;
+  return <TableCell width="16" />;
 }
 
 function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element {
   return (
     <TableHeader>
       <TableRow>
-        <NameHeader />
+        <NameHeader itemType={itemType} />
+        {isWeapon(itemType) && (
+          <TableCell width="grow">
+            <Text variant="label" color="muted">
+              {game.i18n.localize("ROBOTECH.List.HeaderTags")}
+            </Text>
+          </TableCell>
+        )}
         {hasHardwareColumn(itemType) && (
-          <TableCell width="hug" align="center">
+          <TableCell width="auto" align="center">
             <Text variant="label" color="muted" align="center">
               {game.i18n.localize("ROBOTECH.List.HeaderHardware")}
             </Text>
@@ -252,12 +262,12 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
         )}
         {itemType === "skill" && (
           <>
-            <TableCell width="stat" align="center">
+            <TableCell width="10" align="center">
               <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderValue")}
               </Text>
             </TableCell>
-            <TableCell width="action" align="center">
+            <TableCell width="12" align="center">
               <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderAction")}
               </Text>
@@ -266,12 +276,12 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
         )}
         {isUsable(itemType) && (
           <>
-            <TableCell width="action" align="center">
+            <TableCell width="12" align="center">
               <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderAction")}
               </Text>
             </TableCell>
-            <TableCell width="stat" align="center">
+            <TableCell width="10" align="center">
               <Text variant="label" color="muted" align="center">
                 {game.i18n.localize("ROBOTECH.List.HeaderUses")}
               </Text>
@@ -279,14 +289,14 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
           </>
         )}
         {isWeapon(itemType) && (
-          <TableCell width="ammo" align="center">
+          <TableCell width="20" align="center">
             <Text variant="label" color="muted" align="center">
               {game.i18n.localize("ROBOTECH.List.HeaderAmmo")}
             </Text>
           </TableCell>
         )}
         {isSuite(itemType) && (
-          <TableCell width="stat" align="center">
+          <TableCell width="10" align="center">
             <Text variant="label" color="muted" align="center">
               {game.i18n.localize("ROBOTECH.List.HeaderSkill")}
             </Text>
@@ -315,7 +325,7 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
 
   return (
     <TableRow tone={isDestroyed ? "danger" : "default"}>
-      <TableCell width="grow">
+      <TableCell width={isItemOf(item, "weapon") ? "32" : "grow"}>
         <Stack direction="row" gap={2} align="center">
           <Text variant="label" color={isDestroyed ? "danger" : "foreground"} truncate title={item.name}>
             {item.name}
@@ -325,9 +335,10 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
               [ {skillDetailsOf(item)} ]
             </Text>
           )}
-          {isItemOf(item, "weapon") && <WeaponTags item={item} />}
         </Stack>
       </TableCell>
+
+      {isItemOf(item, "weapon") && <WeaponTagsCell item={item} />}
 
       {hasHardwareColumn(itemType) && <HardwareSlotsCell item={item} />}
 
@@ -344,7 +355,7 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
         />
       )}
 
-      <TableCell width="controls" align="end">
+      <TableCell width="16" align="end">
         <Stack direction="row" gap={1} align="center" justify="end">
           <Button
             size="icon"

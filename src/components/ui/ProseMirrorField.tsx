@@ -33,13 +33,19 @@ export const ProseMirrorField = React.memo(function ProseMirrorField({
   onChange,
 }: ProseMirrorFieldProps): React.JSX.Element {
   const editorRef = useRef<HTMLDivElement>(null);
+  const editorElRef = useRef<HTMLElement | null>(null);
   const [isToolbarOpen, setIsToolbarOpen] = useState(initialToolbarOpen);
+
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const emittedRef = useRef<string>("");
+  const syncingRef = useRef(false);
 
   useEffect(() => {
     if (!editorRef.current) return;
 
     if (typeof foundry !== "undefined" && foundry.applications?.elements?.HTMLProseMirrorElement?.create) {
-      const editorEl = foundry.applications.elements.HTMLProseMirrorElement.create({
+      const editorEl: HTMLElement = foundry.applications.elements.HTMLProseMirrorElement.create({
         name,
         value: value ?? "",
         enriched: enriched || value || "",
@@ -54,9 +60,14 @@ export const ProseMirrorField = React.memo(function ProseMirrorField({
 
       const handleSave = (event: Event) => {
         const target = event.target as HTMLInputElement;
-        if (onChange && target) {
-          onChange(target.value ?? "");
+        const next = target.value ?? "";
+        if (syncingRef.current) {
+          emittedRef.current = next;
+          return;
         }
+        if (!onChangeRef.current || next === emittedRef.current) return;
+        emittedRef.current = next;
+        onChangeRef.current(next);
       };
 
       editorEl.addEventListener("save", handleSave);
@@ -64,13 +75,28 @@ export const ProseMirrorField = React.memo(function ProseMirrorField({
 
       editorRef.current.innerHTML = "";
       editorRef.current.appendChild(editorEl);
+      editorElRef.current = editorEl;
+      emittedRef.current = value ?? "";
 
       return () => {
         editorEl.removeEventListener("save", handleSave);
         editorEl.removeEventListener("change", handleSave);
+        editorElRef.current = null;
       };
     }
   }, [name, toggled, disabled, documentUUID, collaborate, height, spellCheck]);
+
+  useEffect(() => {
+    const editorEl = editorElRef.current;
+    if (!editorEl || value === undefined || value === emittedRef.current) return;
+    emittedRef.current = value;
+    syncingRef.current = true;
+    try {
+      (editorEl as HTMLInputElement).value = value;
+    } finally {
+      syncingRef.current = false;
+    }
+  }, [value]);
 
   const handleToggleToolbar = useCallback(() => {
     setIsToolbarOpen((prev) => !prev);

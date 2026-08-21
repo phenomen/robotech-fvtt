@@ -1,9 +1,7 @@
-import type Actor from "@client/documents/actor.mjs";
-
 import type { ActorOf } from "@/models";
 import { postPoolCard } from "@/utils/actionChat";
 import { evaluateAd6Roll } from "@/utils/AD6Roll";
-import { isActorOf } from "@/utils/documents";
+import { actorFromUuid, isSceneActor } from "@/utils/documents";
 
 export async function linkPlotEvent(conflict: ActorOf<"conflict">, plotEventUuid: string): Promise<void> {
   if (!plotEventUuid) return;
@@ -88,7 +86,6 @@ export async function addConflictActor(conflict: ActorOf<"conflict">, uuid: stri
     ui.notifications.error(game.i18n.localize("ROBOTECH.Conflict.WrongActorType"));
     return;
   }
-
   await conflict.update({
     "system.actorUuids": [...conflict.system.actorUuids, uuid],
   });
@@ -125,22 +122,10 @@ async function detachFromEvent(conflict: ActorOf<"conflict">, plotEventUuid: str
   });
 }
 
-async function plotEventOf(uuid: string): Promise<ActorOf<"plot_event"> | null> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor && isActorOf(document, "plot_event")) {
-    return document;
-  }
-  return null;
+function plotEventOf(uuid: string): Promise<ActorOf<"plot_event"> | null> {
+  return actorFromUuid(uuid, ["plot_event"]);
 }
 
-async function conflictOf(uuid: string): Promise<ActorOf<"conflict"> | null> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor && isActorOf(document, "conflict")) {
-    return document;
-  }
-  return null;
-}
-
-function isSceneActor(actor: Actor): actor is ActorOf<"character" | "vessel" | "swarm"> {
-  return isActorOf(actor, "character") || isActorOf(actor, "vessel") || isActorOf(actor, "swarm");
+function conflictOf(uuid: string): Promise<ActorOf<"conflict"> | null> {
+  return actorFromUuid(uuid, ["conflict"]);
 }

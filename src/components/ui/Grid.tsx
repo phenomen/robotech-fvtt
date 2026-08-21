@@ -136,6 +136,21 @@ function findCrosses(grid: HTMLElement, lines: GridLines): { x: number; y: numbe
   return points;
 }
 
+function sameLines(a: GridLines, b: GridLines): boolean {
+  return (
+    a.width === b.width &&
+    a.height === b.height &&
+    a.vertical.length === b.vertical.length &&
+    a.horizontal.length === b.horizontal.length &&
+    a.vertical.every((stop, i) => stop === b.vertical[i]) &&
+    a.horizontal.every((stop, i) => stop === b.horizontal[i])
+  );
+}
+
+function sameCrosses(a: { x: number; y: number }[], b: { x: number; y: number }[]): boolean {
+  return a.length === b.length && a.every((point, i) => point.x === b[i]?.x && point.y === b[i]?.y);
+}
+
 export type HideGuides = "row" | "column";
 
 export interface GridProps {
@@ -161,14 +176,30 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
     if (!el) return;
     const update = (): void => {
       const next = readLines(el);
-      setLines(next);
-      setCrosses(hideGuides === undefined ? findCrosses(el, next) : []);
+      setLines((prev) => (sameLines(prev, next) ? prev : next));
+      if (hideGuides === undefined) {
+        const nextCrosses = findCrosses(el, next);
+        setCrosses((prev) => (sameCrosses(prev, nextCrosses) ? prev : nextCrosses));
+      } else {
+        setCrosses((prev) => (prev.length > 0 ? [] : prev));
+      }
+    };
+    let frame = 0;
+    const scheduleUpdate = (): void => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
     };
     update();
-    const observer = new ResizeObserver(update);
+    const observer = new ResizeObserver(scheduleUpdate);
     observer.observe(el);
-    return () => observer.disconnect();
-  }, [columns, rows, children, hideGuides]);
+    const mutation = new MutationObserver(scheduleUpdate);
+    mutation.observe(el, { childList: true, subtree: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      mutation.disconnect();
+    };
+  }, [columns, rows, hideGuides]);
 
   const style: CSSProperties = {
     gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,

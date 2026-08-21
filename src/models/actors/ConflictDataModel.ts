@@ -7,6 +7,7 @@ import {
   type ConflictTypeValue,
 } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
+import { syncBoxTracker } from "@/utils/trackers";
 
 export interface ConflictTracker {
   max: number;
@@ -54,17 +55,6 @@ export class ConflictDataModel extends ActorDataModel {
 
   override prepareDerivedData() {
     super.prepareDerivedData();
-    this.syncTracker();
-  }
-
-  private syncTracker(): void {
-    const tracker = this.tracker;
-    const max = Math.max(0, tracker.max);
-    tracker.max = max;
-    const previous = tracker.states;
-    if (previous.length !== max) {
-      tracker.states = Array.from({ length: max }, (_unused, index) => previous[index] ?? false);
-    }
-    tracker.value = tracker.states.filter(Boolean).length;
+    syncBoxTracker(this.tracker);
   }
 }

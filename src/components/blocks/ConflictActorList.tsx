@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
@@ -9,34 +9,15 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { isActorOf } from "@/utils";
+import { useLinkedActors, type LinkedActor } from "@/utils";
+import { openActorSheet, SCENE_ACTOR_TYPES } from "@/utils";
 
 interface ConflictActorListProps {
   actor: ActorOf<"conflict">;
 }
 
-interface ActorPreview {
-  uuid: string;
-  name: string;
-  img: string;
-  missing: boolean;
-}
-
 export function ConflictActorList({ actor }: ConflictActorListProps): JSX.Element {
-  const uuids = actor.system.actorUuids;
-  const [actors, setActors] = useState<ActorPreview[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void Promise.all(uuids.map((uuid) => previewOf(uuid))).then((resolved) => {
-      if (!cancelled) setActors(resolved);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [uuids]);
+  const actors = useLinkedActors(actor.system.actorUuids, SCENE_ACTOR_TYPES);
 
   const handleDelete = (uuid: string) => {
     void actor.update({
@@ -65,30 +46,52 @@ export function ConflictActorList({ actor }: ConflictActorListProps): JSX.Elemen
   );
 }
 
-function ActorRow({ member, onDelete }: { member: ActorPreview; onDelete: (uuid: string) => void }): JSX.Element {
-  return (
-    <TableRow>
-      <TableCell width="grow">
-        {member.missing ? (
+function ActorRow({
+  member,
+  onDelete,
+}: {
+  member: LinkedActor<"character" | "vessel" | "swarm">;
+  onDelete: (uuid: string) => void;
+}): JSX.Element {
+  if (!member.actor) {
+    return (
+      <TableRow>
+        <TableCell width="grow">
           <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.Conflict.MissingActor")}
           </Text>
-        ) : (
+        </TableCell>
+        <TableCell width="16" align="end">
           <Button
-            variant="ghost"
-            onClick={() => void openLinkedSheet(member.uuid)}
-            title={game.i18n.localize("ROBOTECH.Sheet.Open")}
+            variant="danger"
+            size="icon"
+            onClick={() => onDelete(member.uuid)}
+            title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
           >
-            <Stack direction="row" gap={3} align="center">
-              <Portrait src={member.img} alt="" size="medium" />
-              <Text variant="label" truncate>
-                {member.name}
-              </Text>
-            </Stack>
+            <Icon name="x" />
           </Button>
-        )}
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  return (
+    <TableRow>
+      <TableCell width="grow">
+        <Button
+          variant="ghost"
+          onClick={() => void openActorSheet(member.uuid)}
+          title={game.i18n.localize("ROBOTECH.Sheet.Open")}
+        >
+          <Stack direction="row" gap={3} align="center">
+            <Portrait src={member.actor.img} alt="" size="medium" />
+            <Text variant="label" truncate>
+              {member.actor.name}
+            </Text>
+          </Stack>
+        </Button>
       </TableCell>
-      <TableCell width="controls" align="end">
+      <TableCell width="16" align="end">
         <Button
           variant="danger"
           size="icon"
@@ -100,21 +103,4 @@ function ActorRow({ member, onDelete }: { member: ActorPreview; onDelete: (uuid:
       </TableCell>
     </TableRow>
   );
-}
-
-async function previewOf(uuid: string): Promise<ActorPreview> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor && isSceneActor(document)) {
-    return { uuid, name: document.name, img: document.img, missing: false };
-  }
-  return { uuid, name: "", img: "", missing: true };
-}
-
-function isSceneActor(actor: foundry.documents.Actor): actor is ActorOf<"character" | "vessel" | "swarm"> {
-  return isActorOf(actor, "character") || isActorOf(actor, "vessel") || isActorOf(actor, "swarm");
-}
-
-async function openLinkedSheet(uuid: string): Promise<void> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor) void document.sheet?.render(true);
 }

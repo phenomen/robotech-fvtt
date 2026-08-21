@@ -64,7 +64,7 @@ function ChangeHeaders(): JSX.Element {
   return (
     <TableHeader>
       <TableRow>
-        <TableCell width="hug">
+        <TableCell width="auto">
           <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.Effect.Attribute.Header")}
           </Text>
@@ -74,17 +74,17 @@ function ChangeHeaders(): JSX.Element {
             {game.i18n.localize("ROBOTECH.Effect.Key")}
           </Text>
         </TableCell>
-        <TableCell width="hug">
+        <TableCell width="auto">
           <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.Effect.Type")}
           </Text>
         </TableCell>
-        <TableCell width="ammo" align="center">
+        <TableCell width="20" align="center">
           <Text variant="label" color="muted" align="center">
             {game.i18n.localize("ROBOTECH.Effect.Value")}
           </Text>
         </TableCell>
-        <TableCell width="controls" align="end" />
+        <TableCell width="16" align="end" />
       </TableRow>
     </TableHeader>
   );
@@ -105,7 +105,7 @@ function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
 
   return (
     <TableRow>
-      <TableCell width="hug">
+      <TableCell width="auto">
         <Select
           id={attributeId}
           value={selectedAttribute}
@@ -137,7 +137,7 @@ function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
         />
       </TableCell>
 
-      <TableCell width="hug">
+      <TableCell width="auto">
         <Select
           id={typeId}
           value={change.type}
@@ -156,7 +156,7 @@ function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
         </Select>
       </TableCell>
 
-      <TableCell width="ammo" align="center">
+      <TableCell width="20" align="center">
         <Input
           id={valueId}
           value={change.value}
@@ -166,7 +166,7 @@ function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
         />
       </TableCell>
 
-      <TableCell width="controls" align="end">
+      <TableCell width="16" align="end">
         <Button
           size="icon"
           variant="danger"

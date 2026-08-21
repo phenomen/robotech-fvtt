@@ -14,6 +14,44 @@ export function isItemOf<T extends ItemType>(item: Item, type: T): item is ItemO
   return item.type === type;
 }
 
+/** Narrows an Actor to any of several subtypes. */
+export function isActorOfType<T extends ActorType>(actor: Actor, types: readonly T[]): actor is ActorOf<T> {
+  return types.some((type) => actor.type === type);
+}
+
+/** Narrows to the subtypes that can take part in a conflict: characters, vessels, and swarms. */
+export function isSceneActor(actor: Actor): actor is ActorOf<"character" | "vessel" | "swarm"> {
+  return isActorOfType(actor, SCENE_ACTOR_TYPES);
+}
+
+export const SCENE_ACTOR_TYPES = ["character", "vessel", "swarm"] as const;
+
+/** Resolves a UUID into one of the given Actor subtypes; null when missing or of another subtype. */
+export async function actorFromUuid<T extends ActorType>(
+  uuid: string,
+  types: readonly T[],
+): Promise<ActorOf<T> | null> {
+  const document = await foundry.utils.fromUuid(uuid);
+  return document instanceof foundry.documents.Actor && isActorOfType(document, types) ? document : null;
+}
+
+/** Synchronous variant of {@link actorFromUuid}; world documents and loaded compendium entries only. */
+export function actorFromUuidSync<T extends ActorType>(uuid: string, types: readonly T[]): ActorOf<T> | null {
+  const document = foundry.utils.fromUuidSync(uuid);
+  return document instanceof foundry.documents.Actor && isActorOfType(document, types) ? document : null;
+}
+
+/** Opens the sheet of the actor behind a UUID, if it resolves. */
+export async function openActorSheet(uuid: string): Promise<void> {
+  if (!uuid) return;
+  const document = await foundry.utils.fromUuid(uuid);
+  if (!(document instanceof foundry.documents.Actor)) {
+    ui.notifications.warn(game.i18n.localize("ROBOTECH.Sheet.MissingActor", { uuid }));
+    return;
+  }
+  void document.sheet?.render(true);
+}
+
 export function filterItemsOf<T extends ItemType>(actor: Actor, type: T): ItemOf<T>[] {
   const items: ItemOf<T>[] = [];
   for (const item of actor.items) {
@@ -36,10 +74,8 @@ export async function memberVesselsOf(swarm: ActorOf<"swarm">): Promise<ActorOf<
   for (const member of swarm.system.members) {
     if (!isMemberAlive(member) || !member.actorUuid || seen.has(member.actorUuid)) continue;
     seen.add(member.actorUuid);
-    const document = await foundry.utils.fromUuid(member.actorUuid);
-    if (document instanceof foundry.documents.Actor && isActorOf(document, "vessel")) {
-      vessels.push(document);
-    }
+    const vessel = await actorFromUuid(member.actorUuid, ["vessel"]);
+    if (vessel) vessels.push(vessel);
   }
   return vessels;
 }
@@ -61,10 +97,8 @@ async function resolveCrewActors(uuids: string[]): Promise<ActorOf<"character">[
   for (const uuid of uuids) {
     if (!uuid || seen.has(uuid)) continue;
     seen.add(uuid);
-    const document = await foundry.utils.fromUuid(uuid);
-    if (!(document instanceof foundry.documents.Actor)) continue;
-    if (!isActorOf(document, "character")) continue;
-    crew.push(document);
+    const character = await actorFromUuid(uuid, ["character"]);
+    if (character) crew.push(character);
   }
   return crew;
 }

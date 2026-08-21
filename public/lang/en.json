@@ -34,7 +34,8 @@
       "Name": "Name",
       "NamePlaceholder": "Name",
       "Open": "Open sheet",
-      "NoPermission": "You do not have permission to update that actor."
+      "NoPermission": "You do not have permission to update that actor.",
+      "MissingActor": "No actor found for {uuid}"
     },
     "Editor": {
       "ShowToolbar": "Show formatting toolbar",
@@ -529,6 +530,7 @@
     },
     "List": {
       "HeaderName": "Name",
+      "HeaderTags": "Tags",
       "HeaderAction": "Action",
       "HeaderHardware": "Hardware",
       "HeaderUses": "Uses",

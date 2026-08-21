@@ -43,7 +43,7 @@ export function ItemEffectsList({ item }: ItemEffectsListProps): JSX.Element {
                   {game.i18n.localize("ROBOTECH.Effect.Name")}
                 </Text>
               </TableCell>
-              <TableCell width="controls" align="end" />
+              <TableCell width="16" align="end" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -71,7 +71,7 @@ function ItemEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
           </Text>
         </Button>
       </TableCell>
-      <TableCell width="controls" align="end">
+      <TableCell width="16" align="end">
         <Button
           size="icon"
           variant="danger"

@@ -9,6 +9,7 @@ import {
 } from "@/config/wounds";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { findItemOf } from "@/utils/documents";
+import { countCheckedBoxes } from "@/utils/trackers";
 
 export interface WoundCategory {
   value: number;
@@ -243,7 +244,7 @@ function syncWoundCategory(category: WoundCategory, max: number) {
       return previous.length === 0 && index < category.value;
     });
   }
-  category.value = category.states.filter(Boolean).length;
+  category.value = countCheckedBoxes(category.states);
 }
 
 function syncStressBoxes(boxes: string[], value: number): string[] {

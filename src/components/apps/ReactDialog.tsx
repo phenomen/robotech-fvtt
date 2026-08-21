@@ -9,6 +9,7 @@ import { createSheetContainer } from "@/utils";
 export abstract class ReactDialog extends foundry.applications.api.ApplicationV2 {
   private reactRoot: Root | null = null;
   private container: HTMLElement | null = null;
+  private lastAutoHeight = -1;
 
   protected abstract renderContent(): JSX.Element;
 
@@ -32,7 +33,12 @@ export abstract class ReactDialog extends foundry.applications.api.ApplicationV2
 
   protected override async _onRender(context: RenderContext, options: RenderOptions): Promise<void> {
     await super._onRender(context, options);
-    this.setPosition({ height: "auto" });
+    const content = this.element?.querySelector(".window-content");
+    const scrollHeight = content instanceof HTMLElement ? content.scrollHeight : -1;
+    if (scrollHeight !== this.lastAutoHeight) {
+      this.lastAutoHeight = scrollHeight;
+      this.setPosition({ height: "auto" });
+    }
   }
 
   override _onClose(options: CloseOptions): void {

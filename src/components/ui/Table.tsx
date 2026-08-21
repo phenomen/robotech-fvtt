@@ -2,7 +2,7 @@ import { createContext, useContext, type JSX, type ReactNode } from "react";
 
 import { cn } from "@/utils";
 
-export type TableWidth = "grow" | "hug" | "stat" | "action" | "ammo" | "controls";
+export type TableWidth = "grow" | "auto" | "10" | "12" | "16" | "20" | "32";
 export type TableAlign = "start" | "center" | "end";
 export type TableTone = "default" | "danger";
 
@@ -10,11 +10,12 @@ const InHeaderContext = createContext(false);
 
 const WIDTH_CLASS: Record<TableWidth, string> = {
   grow: "w-full min-w-0",
-  hug: "w-px whitespace-nowrap",
-  stat: "w-10 whitespace-nowrap",
-  action: "w-12 whitespace-nowrap",
-  ammo: "w-20 whitespace-nowrap",
-  controls: "w-16 whitespace-nowrap",
+  auto: "w-px whitespace-nowrap",
+  "10": "w-10 whitespace-nowrap",
+  "12": "w-12 whitespace-nowrap",
+  "16": "w-16 whitespace-nowrap",
+  "20": "w-20 whitespace-nowrap",
+  "32": "w-32 min-w-32",
 };
 
 const ALIGN_CLASS: Record<TableAlign, string> = {

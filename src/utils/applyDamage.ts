@@ -15,6 +15,7 @@ import {
   markDestroyedSlots,
 } from "@/utils/hardwareUtils";
 import { applySwarmDamage } from "@/utils/swarmUtils";
+import { countCheckedBoxes } from "@/utils/trackers";
 import {
   appliedPenetrationOf,
   calcDamageCascade,
@@ -22,6 +23,7 @@ import {
   VESSEL_DAMAGE_CLASS,
   type CascadeResult,
 } from "@/utils/vesselUtils";
+import { flatWoundGroup, filledWoundStates } from "@/utils/woundUtils";
 
 interface DamageTarget {
   targetType: DamageTypeValue;
@@ -341,26 +343,19 @@ async function applyCharacterWounds(actor: ActorOf<"character">, damage: number)
   const boxes = actor.system.vitalsSettings.isTriumvirateWounds ? Math.floor(damage / 5) : damage;
   if (boxes <= 0) return;
 
-  const brawl = [...actor.system.wounds.brawl.states];
-  const critical = [...actor.system.wounds.critical.states];
-  let remaining = boxes;
-
-  for (let index = 0; index < brawl.length && remaining > 0; index += 1) {
-    if (brawl[index]) continue;
-    brawl[index] = true;
-    remaining -= 1;
-  }
-  for (let index = 0; index < critical.length && remaining > 0; index += 1) {
-    if (critical[index]) continue;
-    critical[index] = true;
-    remaining -= 1;
-  }
+  const { wounds } = actor.system;
+  const next = filledWoundStates(
+    flatWoundGroup(wounds.brawl.max, wounds.critical.max),
+    boxes,
+    wounds.brawl.states,
+    wounds.critical.states,
+  );
 
   await actor.update({
-    "system.wounds.brawl.states": brawl,
-    "system.wounds.brawl.value": brawl.filter(Boolean).length,
-    "system.wounds.critical.states": critical,
-    "system.wounds.critical.value": critical.filter(Boolean).length,
+    "system.wounds.brawl.states": next.brawl,
+    "system.wounds.brawl.value": countCheckedBoxes(next.brawl),
+    "system.wounds.critical.states": next.critical,
+    "system.wounds.critical.value": countCheckedBoxes(next.critical),
   });
 }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, type JSX } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
@@ -12,18 +12,14 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf, SwarmMember } from "@/models";
-import { isActorOf } from "@/utils";
+import { useLinkedActors } from "@/utils";
+import { openActorSheet } from "@/utils";
 
 interface SwarmMemberListBlockProps {
   actor: ActorOf<"swarm">;
 }
 
-interface CrewPreview {
-  uuid: string;
-  name: string;
-  img: string;
-  missing: boolean;
-}
+const NO_UUIDS: readonly string[] = [];
 
 /** A stack keeps structure on its lead vessel while any vessel is left, and none once emptied. */
 function withMemberPatch(member: SwarmMember, updates: Partial<SwarmMember>): SwarmMember {
@@ -154,19 +150,8 @@ function SwarmMemberRow({
 }
 
 function MemberCrewList({ actorUuid }: { actorUuid: string }): JSX.Element {
-  const [crew, setCrew] = useState<CrewPreview[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void loadVesselCrew(actorUuid).then((resolved) => {
-      if (!cancelled) setCrew(resolved);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [actorUuid]);
+  const [vesselLink] = useLinkedActors(actorUuid ? [actorUuid] : [], ["vessel"]);
+  const crew = useLinkedActors(vesselLink?.actor?.system.characterUuids ?? NO_UUIDS, ["character"]);
 
   return (
     <Stack gap={2}>
@@ -177,54 +162,25 @@ function MemberCrewList({ actorUuid }: { actorUuid: string }): JSX.Element {
         </Text>
       ) : (
         <Stack direction="row" gap={2} wrap>
-          {crew.map((member) => (
-            <CrewChip key={member.uuid} member={member} />
-          ))}
+          {crew.map((entry) =>
+            entry.actor ? <CrewChip key={entry.uuid} name={entry.actor.name} uuid={entry.uuid} /> : null,
+          )}
         </Stack>
       )}
     </Stack>
   );
 }
 
-function CrewChip({ member }: { member: CrewPreview }): JSX.Element {
-  if (member.missing) {
-    return (
-      <Text variant="label" color="muted">
-        {game.i18n.localize("ROBOTECH.LinkedCharacter.Missing")}
-      </Text>
-    );
-  }
-
+function CrewChip({ name, uuid }: { name: string; uuid: string }): JSX.Element {
   return (
     <Button
       variant="ghost"
-      onClick={() => void openActorSheet(member.uuid)}
+      onClick={() => void openActorSheet(uuid)}
       title={game.i18n.localize("ROBOTECH.LinkedCharacter.OpenSheet")}
     >
       <Text variant="label" truncate>
-        {member.name}
+        {name}
       </Text>
     </Button>
   );
-}
-
-async function loadVesselCrew(actorUuid: string): Promise<CrewPreview[]> {
-  if (!actorUuid) return [];
-  const document = await foundry.utils.fromUuid(actorUuid);
-  if (!(document instanceof foundry.documents.Actor) || !isActorOf(document, "vessel")) return [];
-  return Promise.all(document.system.characterUuids.filter(Boolean).map(previewOf));
-}
-
-async function previewOf(uuid: string): Promise<CrewPreview> {
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor && isActorOf(document, "character")) {
-    return { uuid, name: document.name, img: document.img, missing: false };
-  }
-  return { uuid, name: "", img: "", missing: true };
-}
-
-async function openActorSheet(uuid: string): Promise<void> {
-  if (!uuid) return;
-  const document = await foundry.utils.fromUuid(uuid);
-  if (document instanceof foundry.documents.Actor) void document.sheet?.render(true);
 }

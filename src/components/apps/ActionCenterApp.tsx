@@ -50,38 +50,33 @@ export interface ActionCenterPrefill {
   combatantId?: string;
 }
 
-interface SourcedOption<T extends ItemType> {
+export interface SourcedOption<T extends ItemType> {
   key: string;
   item: ItemOf<T>;
   sourceName: string;
   sourceUuid: string;
 }
 
+export interface ActionCenterItems {
+  skills: SourcedOption<"skill">[];
+  suites: SourcedOption<"equipment_suite">[];
+  weapons: SourcedOption<"weapon">[];
+}
+
 interface ActionCenterContentProps {
   contextActor: Actor;
-  crew: ActorOf<"character">[];
-  suiteActors: Actor[];
-  weaponActors: Actor[];
+  items: ActionCenterItems;
   prefill?: ActionCenterPrefill;
   onClose: () => void;
 }
 
-export function ActionCenterContent({
-  contextActor,
-  crew,
-  suiteActors,
-  weaponActors,
-  prefill,
-  onClose,
-}: ActionCenterContentProps): JSX.Element {
+export function ActionCenterContent({ contextActor, items, prefill, onClose }: ActionCenterContentProps): JSX.Element {
   const incoming = prefill?.incoming;
   const combatant = combatantFromPrefill(prefill);
   const consumeSlot = Boolean(combatant);
   const lockedAction: ActionValue | null = incoming ? "defend" : (prefill?.action ?? null);
 
-  const skillItems = sourcedOptionsOf(crew, "skill");
-  const suiteItems = sourcedOptionsOf(suiteActors, "equipment_suite");
-  const weaponItems = sourcedOptionsOf(weaponActors, "weapon");
+  const { skills: skillItems, suites: suiteItems, weapons: weaponItems } = items;
 
   const [action, setAction] = useState<ActionValue>(
     lockedAction ?? prefill?.action ?? defaultCombatAction(consumeSlot),
@@ -734,9 +729,7 @@ async function resolveWeaponActors(contextActor: Actor): Promise<Actor[]> {
 export class ActionCenterApp extends ReactDialog {
   constructor(
     private contextActor: Actor,
-    private crew: ActorOf<"character">[],
-    private suiteActors: Actor[],
-    private weaponActors: Actor[],
+    private items: ActionCenterItems,
     private prefill?: ActionCenterPrefill,
     options: AppOptions = {},
   ) {
@@ -759,9 +752,7 @@ export class ActionCenterApp extends ReactDialog {
     return (
       <ActionCenterContent
         contextActor={this.contextActor}
-        crew={this.crew}
-        suiteActors={this.suiteActors}
-        weaponActors={this.weaponActors}
+        items={this.items}
         prefill={this.prefill}
         onClose={() => void this.close()}
       />
@@ -790,7 +781,12 @@ export async function openActionCenter(contextActor: Actor, prefill?: ActionCent
 
   const suiteActors = await resolveSuiteActors(contextActor, crew);
   const weaponActors = await resolveWeaponActors(contextActor);
+  const items: ActionCenterItems = {
+    skills: sourcedOptionsOf(crew, "skill"),
+    suites: sourcedOptionsOf(suiteActors, "equipment_suite"),
+    weapons: sourcedOptionsOf(weaponActors, "weapon"),
+  };
   if (currentApp) await currentApp.close();
-  currentApp = new ActionCenterApp(contextActor, crew, suiteActors, weaponActors, prefill);
+  currentApp = new ActionCenterApp(contextActor, items, prefill);
   void currentApp.render(true);
 }

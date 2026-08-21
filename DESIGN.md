@@ -50,7 +50,7 @@ Guides are decorative (`aria-hidden`). Guide color is `--rt-border`; plus marks 
 - **Grid** for two-dimensional sheet sections (stats tiles, header + portrait).
 - **Stack** for one-dimensional grouping (field + label, a column of lists, header actions).
 - **LabelGrid** for a stack of label + control rows that must share one label width (systems, drama).
-- **Table** for tabular data (item lists, crew, conflicts). Named cell widths (`grow`, `hug`, `stat`, `action`, `ammo`, `controls`). Do not invent pixel templates.
+- **Table** for tabular data (item lists, crew, conflicts). Cell `width` is `grow`, `auto`, or a Tailwind scale token (`10`, `12`, `16`, `20`, `32`). Do not invent pixel templates.
 - Do not nest `Grid` inside `Grid`. One Grid per `GridSystem`. A sheet may have two systems (header, body) stacked, not nested.
 - `solid` cells are opaque tiles. Adjacent tiles are separated by the grid gutter. A cell that spans columns covers the gutter it crosses, so a full-width block has no midline.
 - Off-grid surfaces (dialogs, a list in a `Stack`) use `Card`. Cards have no stroke; grid guides are the chrome.
@@ -84,20 +84,20 @@ Do not invent half-steps.
 
 ## Primitives
 
-| Primitive                                                                                                                                | Role                                                                                        |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `Sheet`, `SheetBody`                                                                                                                     | Root fill/overflow; `.robotech`                                                             |
-| `GridSystem`, `Grid`, `GridCell`                                                                                                         | Geist Grid system                                                                           |
-| `Stack`                                                                                                                                  | 1D layout                                                                                   |
-| `LabelGrid`, `LabelRow`, `LabelRule`                                                                                                     | Shared label column for aligned control rows                                                |
-| `Text`                                                                                                                                   | Type roles plus `size` (`small` \| `medium` \| `large`)                                     |
-| `Portrait`                                                                                                                               | Actor/item image                                                                            |
-| `Divider`                                                                                                                                | 1px rule                                                                                    |
-| `Callout`                                                                                                                                | Hint, warning, or empty slot                                                                |
-| `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`                                                                             | Tabular rows. Cell `width` is `grow` \| `hug` \| `stat` \| `action` \| `ammo` \| `controls` |
-| `Card`, `CardHeader`, `CardTitle`                                                                                                        | Off-grid surface; title is compact uppercase `mono`; header is a fixed 36px row             |
-| `Button`, `Input`, `NumberInput`, `Select`, `Textarea`, `Field`, `Label`, `Checkbox`, `Tag`, `TabNav`, `ToggleGroup`, `ProseMirrorField` | Controls with baked type roles                                                              |
-| `TrackerHex`                                                                                                                             | Game-specific hex input                                                                     |
+| Primitive                                                                                                                                | Role                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `Sheet`, `SheetBody`                                                                                                                     | Root fill/overflow; `.robotech`                                                        |
+| `GridSystem`, `Grid`, `GridCell`                                                                                                         | Geist Grid system                                                                      |
+| `Stack`                                                                                                                                  | 1D layout                                                                              |
+| `LabelGrid`, `LabelRow`, `LabelRule`                                                                                                     | Shared label column for aligned control rows                                           |
+| `Text`                                                                                                                                   | Type roles plus `size` (`small` \| `medium` \| `large`)                                |
+| `Portrait`                                                                                                                               | Actor/item image                                                                       |
+| `Divider`                                                                                                                                | 1px rule                                                                               |
+| `Callout`                                                                                                                                | Hint, warning, or empty slot                                                           |
+| `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`                                                                             | Tabular rows. Cell `width` is `grow` \| `auto` \| `10` \| `12` \| `16` \| `20` \| `32` |
+| `Card`, `CardHeader`, `CardTitle`                                                                                                        | Off-grid surface; title is compact uppercase `mono`; header is a fixed 36px row        |
+| `Button`, `Input`, `NumberInput`, `Select`, `Textarea`, `Field`, `Label`, `Checkbox`, `Tag`, `TabNav`, `ToggleGroup`, `ProseMirrorField` | Controls with baked type roles                                                         |
+| `TrackerHex`                                                                                                                             | Game-specific hex input                                                                |
 
 Layout-facing primitives do not accept `className`. Add a variant instead (`full`, `orientation`, `width`, `tone`, `truncate`).
 

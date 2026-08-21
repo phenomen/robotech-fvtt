@@ -44,17 +44,17 @@ export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element 
                   {game.i18n.localize("ROBOTECH.Effect.Name")}
                 </Text>
               </TableCell>
-              <TableCell width="hug">
+              <TableCell width="auto">
                 <Text variant="label" color="muted">
                   {game.i18n.localize("ROBOTECH.Effect.Source")}
                 </Text>
               </TableCell>
-              <TableCell width="action" align="center">
+              <TableCell width="12" align="center">
                 <Text variant="label" color="muted" align="center">
                   {game.i18n.localize("ROBOTECH.Effect.Enabled")}
                 </Text>
               </TableCell>
-              <TableCell width="controls" align="end" />
+              <TableCell width="16" align="end" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -85,13 +85,13 @@ function ActorEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
         </Button>
       </TableCell>
 
-      <TableCell width="hug">
+      <TableCell width="auto">
         <Text variant="label" color="muted" truncate>
           {effectSource(effect)}
         </Text>
       </TableCell>
 
-      <TableCell width="action" align="center">
+      <TableCell width="12" align="center">
         <Checkbox
           id={`${effect.id}-enabled`}
           checked={!effect.disabled}
@@ -100,7 +100,7 @@ function ActorEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
         />
       </TableCell>
 
-      <TableCell width="controls" align="end">
+      <TableCell width="16" align="end">
         {own && (
           <Button
             size="icon"
