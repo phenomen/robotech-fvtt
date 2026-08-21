@@ -114,7 +114,7 @@ static override defineSchema() {
 ```
 
 - `declare` every schema field (and derived fields) on the class so `actor.system` is typed.
-- Closed string sets use `choices` plus a `const` list from `@/config` (`WEALTH_VALUES`, etc.). Infer the union with `typeof VALUES[number]`.
+- Closed string sets use `options` plus a `const` list from `@/config` (`WEALTH_VALUES`, etc.). Infer the union with `typeof VALUES[number]`.
 - Narrow documents with `isActorOf` / `isItemOf` and the `ActorOf<"character">` / `ItemOf<"weapon">` types. Do not cast `actor.system` to a subtype.
 - Put shared slot/field shapes in helpers (see `hardwareSlots.ts`) instead of duplicating `SchemaField` trees.
 - Clamp interdependent values in `_preUpdate` (ammunition vs max, destroyed hardware vs slots).
@@ -157,7 +157,7 @@ Function components and named exports only. `ref` is a normal prop — do not us
 - No `any`. Start from `unknown` and narrow. Index access may be `undefined` — handle it.
 - Explicit return types on exported functions and components (`Promise<void>`, `React.JSX.Element`).
 - Prefer `type` for unions and mapped types; `interface` for object shapes that documents/components extend.
-- Closed unions from `as const satisfies readonly ChoiceOption[]`, not TypeScript `enum`.
+- Closed unions from `as const satisfies readonly Option[]`, not TypeScript `enum`.
 - Type predicates (`actor is ActorOf<"vessel">`) over assertions. If you must assert, you are probably missing a narrow in `@/utils/documents` or `@/models/documents`.
 - Foundry hook/override parameter types: derive from the class in `foundry/` (`Parameters<ApplicationBase["_renderHTML"]>[0]`) rather than inventing parallel interfaces.
 

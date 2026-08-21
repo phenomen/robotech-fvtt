@@ -5,7 +5,7 @@ import {
   type ConflictRecognitionValue,
   type ConflictThreatValue,
   type ConflictTypeValue,
-} from "@/config/choices";
+} from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 
 export interface ConflictTracker {

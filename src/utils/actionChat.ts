@@ -2,7 +2,7 @@ import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
 
 import { dieSuccessGradation, modifierLabelOf } from "@/config";
-import type { ActionValue, DamageTypeValue, RollModifierValue } from "@/config/choices";
+import type { ActionValue, DamageTypeValue, RollModifierValue } from "@/config/options";
 import type { Ad6DieResult } from "@/utils/AD6Roll";
 import { enrichHtml, escapeHtml } from "@/utils/html";
 import type { WeaponAttackStats, WeaponTag } from "@/utils/weaponUtils";

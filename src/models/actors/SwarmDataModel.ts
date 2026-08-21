@@ -1,4 +1,4 @@
-import { DAMAGE_TYPE_VALUES, type DamageTypeValue } from "@/config/choices";
+import { DAMAGE_TYPE_VALUES, type DamageTypeValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import type { VesselGauge } from "@/models/actors/VesselDataModel";
 import { isMemberAlive } from "@/utils/swarmUtils";

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
-import { CONFLICT_RECOGNITION_OPTIONS, CONFLICT_THREAT_OPTIONS } from "@/config/choices";
+import { CONFLICT_RECOGNITION_OPTIONS, CONFLICT_THREAT_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 import { rollConflictPool } from "@/utils";
 

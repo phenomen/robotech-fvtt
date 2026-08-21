@@ -1,5 +1,5 @@
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
-import { type CombatPhaseValue } from "@/config/choices";
+import { type CombatPhaseValue } from "@/config/options";
 import {
   announceCombatEnd,
   announceRoundPhase,

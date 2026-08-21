@@ -20,7 +20,7 @@ import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
 import { TabNav, type TabItem } from "@/components/ui/TabNav";
 import { Textarea } from "@/components/ui/Textarea";
-import { GENERIC_SKILL_LABEL_KEYS } from "@/config/choices";
+import { GENERIC_SKILL_LABEL_KEYS } from "@/config/options";
 import type { ActorOf, FieldValue, ItemOf } from "@/models";
 import { filterItemsOf } from "@/utils";
 

@@ -7,7 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import { ToggleGroup, ToggleItem } from "@/components/ui/ToggleGroup";
-import { COMBAT_PHASE_OPTIONS, type CombatPhaseValue } from "@/config/choices";
+import { COMBAT_PHASE_OPTIONS, type CombatPhaseValue } from "@/config/options";
 import { changePhase, combatPhaseOf, COMBAT_DOCUMENT_TYPE } from "@/utils/combat";
 
 interface CombatTrackerHeaderProps {

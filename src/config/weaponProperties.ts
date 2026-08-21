@@ -1,5 +1,5 @@
 import { type TagColor } from "@/components/ui/Tag";
-import { WEAPON_DAMAGE_OPTIONS, WEAPON_RANGE_OPTIONS, type ChoiceOption, type DamageTypeValue } from "@/config/choices";
+import { WEAPON_DAMAGE_OPTIONS, WEAPON_RANGE_OPTIONS, type Option, type DamageTypeValue } from "@/config/options";
 import type { WeaponProperties } from "@/models";
 
 /** Property keys grouped by the editor control and the value shape they share. */
@@ -22,9 +22,9 @@ export type WeaponPropertyDef = PropertyDefBase &
     | { inputType: "none"; key: FlagKey }
     | { inputType: "number"; key: AmountKey }
     | { inputType: "hardware"; key: "hardware" }
-    | { inputType: "select"; key: "range"; selectOptions: readonly ChoiceOption[] }
-    | { inputType: "damage"; key: "damage"; selectOptions: readonly ChoiceOption[] }
-    | { inputType: "multiplier"; key: "multiplier"; selectOptions: readonly ChoiceOption[] }
+    | { inputType: "select"; key: "range"; selectOptions: readonly Option[] }
+    | { inputType: "damage"; key: "damage"; selectOptions: readonly Option[] }
+    | { inputType: "multiplier"; key: "multiplier"; selectOptions: readonly Option[] }
   );
 
 const DAMAGE_LETTER_KEYS: Record<DamageTypeValue, string> = {

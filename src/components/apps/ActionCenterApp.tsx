@@ -25,7 +25,7 @@ import {
   modifierLabelOf,
   type ActionValue,
   type RollModifierValue,
-} from "@/config/choices";
+} from "@/config/options";
 import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
 import type { AppOptions, CloseOptions } from "@/types/application";
 import { postActionCard, type IncomingAttack } from "@/utils/actionChat";

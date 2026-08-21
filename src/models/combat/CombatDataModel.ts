@@ -1,4 +1,4 @@
-import { COMBAT_PHASE_VALUES, type CombatPhaseValue } from "@/config/choices";
+import { COMBAT_PHASE_VALUES, type CombatPhaseValue } from "@/config/options";
 import type { ParentOf } from "@/models/documents";
 
 type CombatDocument = foundry.documents.Combat;

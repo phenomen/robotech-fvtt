@@ -11,8 +11,8 @@ import {
   CONFLICT_RECOGNITION_OPTIONS,
   CONFLICT_THREAT_OPTIONS,
   CONFLICT_TYPE_OPTIONS,
-  type ChoiceOption,
-} from "@/config/choices";
+  type Option,
+} from "@/config/options";
 import type { ActorOf } from "@/models";
 import { isActorOf, removeEventConflict } from "@/utils";
 
@@ -165,7 +165,7 @@ async function previewOf(uuid: string): Promise<ConflictPreview> {
   return { uuid, name: "", conflictType: "", threat: "", recognition: "", missing: true };
 }
 
-function choiceLabel(options: readonly ChoiceOption[], value: string): string {
+function choiceLabel(options: readonly Option[], value: string): string {
   const option = options.find((item) => item.value === value);
   return option ? game.i18n.localize(option.labelKey) : value;
 }

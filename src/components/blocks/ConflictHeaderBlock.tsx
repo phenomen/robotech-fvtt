@@ -5,7 +5,7 @@ import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
-import { CONFLICT_TYPE_OPTIONS } from "@/config/choices";
+import { CONFLICT_TYPE_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface ConflictHeaderBlockProps {

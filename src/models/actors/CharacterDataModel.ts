@@ -1,4 +1,4 @@
-import { WEALTH_VALUES, type WealthValue } from "@/config/choices";
+import { WEALTH_VALUES, type WealthValue } from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID } from "@/config/statuses";
 import {
   MAX_BRAWL_WOUNDS,

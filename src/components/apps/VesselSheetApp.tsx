@@ -17,7 +17,7 @@ import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
 import { TabNav, type TabItem } from "@/components/ui/TabNav";
 import { ToggleGroup, ToggleItem } from "@/components/ui/ToggleGroup";
-import { VESSEL_MODE_OPTIONS } from "@/config/choices";
+import { VESSEL_MODE_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface VesselSheetAppProps {

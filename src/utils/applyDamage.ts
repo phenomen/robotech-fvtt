@@ -1,7 +1,7 @@
 import type Actor from "@client/documents/actor.mjs";
 
 import type { IconTone } from "@/components/ui/Icon";
-import type { DamageTypeValue } from "@/config/choices";
+import type { DamageTypeValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
 import { postDamageCard, type DamageBreakdown, type DamageDistribution, type IncomingAttack } from "@/utils/actionChat";

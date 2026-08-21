@@ -7,7 +7,7 @@ import {
   type SpeedUnitValue,
   type VesselModeValue,
   type VesselTypeValue,
-} from "@/config/choices";
+} from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { calcEngineSpeed } from "@/utils/vesselUtils";
 

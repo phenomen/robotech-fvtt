@@ -1,4 +1,4 @@
-import { SLOT_PHASE_VALUES, type SlotPhaseValue } from "@/config/choices";
+import { SLOT_PHASE_VALUES, type SlotPhaseValue } from "@/config/options";
 import type { ParentOf } from "@/models/documents";
 
 type CombatantDocument = foundry.documents.Combatant;

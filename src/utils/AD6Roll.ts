@@ -1,4 +1,4 @@
-import type { RollModifierValue } from "@/config/choices";
+import type { RollModifierValue } from "@/config/options";
 
 export interface RollOptions {
   diceCount: number;

@@ -1,4 +1,4 @@
-export * from "./choices";
+export * from "./options";
 export * from "./effects";
 export * from "./gradation";
 export * from "./itemLayout";

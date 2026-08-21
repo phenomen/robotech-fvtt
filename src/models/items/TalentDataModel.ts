@@ -1,4 +1,4 @@
-import { TALENT_CATEGORY_VALUES, type TalentCategoryValue } from "@/config/choices";
+import { TALENT_CATEGORY_VALUES, type TalentCategoryValue } from "@/config/options";
 import { ItemDataModel } from "@/models/items/ItemDataModel";
 
 export class TalentDataModel extends ItemDataModel {

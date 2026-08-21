@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Divider } from "@/components/ui/Divider";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
-import { PLOT_EVENT_PHASE_OPTIONS, type PlotEventPhaseValue } from "@/config/choices";
+import { PLOT_EVENT_PHASE_OPTIONS, type PlotEventPhaseValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 
 interface PlotEventRoundsBlockProps {

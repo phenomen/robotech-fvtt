@@ -1,4 +1,4 @@
-import type { ChoiceOption } from "@/config/choices";
+import type { Option } from "@/config/options";
 import type { ActorType, ItemType } from "@/models/documents";
 
 /** Foundry change types offered by the modifiers table; the `custom` type is deliberately omitted. */
@@ -9,14 +9,14 @@ export const EFFECT_CHANGE_TYPE_OPTIONS = [
   { value: "downgrade", labelKey: "ROBOTECH.Effect.ChangeType.Downgrade" },
   { value: "multiply", labelKey: "ROBOTECH.Effect.ChangeType.Multiply" },
   { value: "override", labelKey: "ROBOTECH.Effect.ChangeType.Override" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export type EffectChangeType = (typeof EFFECT_CHANGE_TYPE_OPTIONS)[number]["value"];
 
 export const DEFAULT_CHANGE_TYPE: EffectChangeType = "add";
 
 export interface EffectAttributeGroup {
   labelKey: string;
-  options: readonly ChoiceOption[];
+  options: readonly Option[];
 }
 
 /**
@@ -51,9 +51,9 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
       //{ value: "system.systems.engines", labelKey: "ROBOTECH.Vessel.Engines" },
       { value: "system.hardwarePoints", labelKey: "ROBOTECH.Vessel.HardwarePoints" },
       { value: "system.crew", labelKey: "ROBOTECH.Vessel.Crew" },
-      { value: "system.speedModes.general.ground", labelKey: "ROBOTECH.Vessel.Ground" },
-      { value: "system.speedModes.general.planetary", labelKey: "ROBOTECH.Vessel.Planetary" },
-      { value: "system.speedModes.general.space", labelKey: "ROBOTECH.Vessel.Space" },
+      { value: "system.speedModes.general.ground", labelKey: "ROBOTECH.Vessel.GroundUnits" },
+      { value: "system.speedModes.general.planetary", labelKey: "ROBOTECH.Vessel.PlanetaryUnits" },
+      { value: "system.speedModes.general.space", labelKey: "ROBOTECH.Vessel.SpaceUnits" },
     ],
   },
 ] as const satisfies readonly EffectAttributeGroup[];

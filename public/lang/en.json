@@ -8,7 +8,7 @@
       "plot_event": "Plot Event"
     },
     "Combat": {
-      "robotech": "Encounter"
+      "robotech": "Conflict"
     },
     "Combatant": {
       "robotech": "Combatant"
@@ -62,7 +62,7 @@
       "Empty": "No effects yet.",
       "OpenSheet": "Open effect sheet",
       "Source": "Source",
-      "Disabled": "Disabled",
+      "Enabled": "Enabled",
       "Modifiers": "Modifiers",
       "AddModifier": "Add Modifier",
       "NoModifiers": "No modifiers yet.",
@@ -179,9 +179,6 @@
       "SpeedTitle": "Speed & Movement",
       "Units": "Units",
       "GameUnits": "Game Units",
-      "Ground": "Ground",
-      "Planetary": "Planetary",
-      "Space": "Space",
       "GroundUnits": "Ground Units",
       "PlanetaryUnits": "Planetary Units",
       "SpaceUnits": "Space Units",
@@ -618,14 +615,14 @@
       "MentalBreak": "Mental Break"
     },
     "Combat": {
-      "Create": "Create encounter",
+      "Create": "Create conflict",
       "Settings": "Tracker settings",
-      "Menu": "Encounter options",
-      "NoEncounter": "No encounter",
+      "Menu": "Conflict options",
+      "NoEncounter": "No Conflict",
       "NotStarted": "Not started",
       "Round": "Round {n}",
-      "EmptyTurns": "Add tokens to this encounter.",
-      "Start": "Start encounter",
+      "EmptyTurns": "Add tokens to this Conflict.",
+      "Start": "Start Conflict",
       "PreviousTurn": "Previous Turn",
       "NextTurn": "Next Turn",
       "PreviousRound": "Previous Round",
@@ -642,7 +639,7 @@
       "TakenHeightened": "{phase}: {heightened} {action}",
       "TakeAction": "Take Action",
       "Hidden": "Hidden",
-      "NotInCombat": "That actor is not in the current encounter.",
+      "NotInCombat": "That actor is not in the current Conflict.",
       "ActionBudget": "Only two actions may be chosen each round.",
       "WaitForPhase": "Wait for the GM to advance the phase.",
       "Phases": {

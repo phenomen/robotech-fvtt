@@ -1,4 +1,4 @@
-import type { DamageTypeValue, VesselTypeValue } from "@/config/choices";
+import type { DamageTypeValue, VesselTypeValue } from "@/config/options";
 
 /** The damage class a vessel is hit in, which follows from how big the vessel itself is. */
 export const VESSEL_DAMAGE_CLASS: Record<VesselTypeValue, DamageTypeValue> = {

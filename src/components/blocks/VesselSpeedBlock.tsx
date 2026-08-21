@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
-import { SPEED_UNIT_OPTIONS, VESSEL_MODE_OPTIONS, type SpeedUnitValue } from "@/config/choices";
+import { SPEED_UNIT_OPTIONS, VESSEL_MODE_OPTIONS, type SpeedUnitValue } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 import { calcEngineSpeed } from "@/utils/vesselUtils";
 

@@ -1,4 +1,4 @@
-import { DAMAGE_TYPE_VALUES, WEAPON_RANGE_VALUES, type DamageTypeValue, type WeaponRangeValue } from "@/config/choices";
+import { DAMAGE_TYPE_VALUES, WEAPON_RANGE_VALUES, type DamageTypeValue, type WeaponRangeValue } from "@/config/options";
 import { capHardwareDestroyed, hardwareSlotsFields, type HardwareSlots } from "@/models/items/hardwareSlots";
 import { ItemDataModel } from "@/models/items/ItemDataModel";
 

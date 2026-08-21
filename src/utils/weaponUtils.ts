@@ -1,5 +1,5 @@
 import { type TagColor } from "@/components/ui/Tag";
-import type { DamageTypeValue } from "@/config/choices";
+import type { DamageTypeValue } from "@/config/options";
 import { WEAPON_PROPERTIES } from "@/config/weaponProperties";
 import type { ItemOf, WeaponAmount, WeaponProperties } from "@/models";
 

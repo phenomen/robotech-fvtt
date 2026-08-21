@@ -1,4 +1,4 @@
-import { PLOT_EVENT_PHASE_VALUES, type PlotEventPhaseValue } from "@/config/choices";
+import { PLOT_EVENT_PHASE_VALUES, type PlotEventPhaseValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 
 export interface PlotEventRounds {

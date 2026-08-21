@@ -11,7 +11,7 @@ import {
   type CombatPhaseValue,
   type ConflictActionValue,
   type SlotPhaseValue,
-} from "@/config/choices";
+} from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID, SLOWED_STATUS_ID } from "@/config/statuses";
 import { ACTION_SLOT_COUNT, emptySlot, emptySlots, type ActionSlot } from "@/models/combat";
 import { isActorOf } from "@/utils/documents";

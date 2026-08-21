@@ -51,7 +51,7 @@ export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element 
               </TableCell>
               <TableCell width="action" align="center">
                 <Text variant="label" color="muted" align="center">
-                  {game.i18n.localize("ROBOTECH.Effect.Disabled")}
+                  {game.i18n.localize("ROBOTECH.Effect.Enabled")}
                 </Text>
               </TableCell>
               <TableCell width="controls" align="end" />
@@ -93,10 +93,10 @@ function ActorEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
 
       <TableCell width="action" align="center">
         <Checkbox
-          id={`${effect.id}-disabled`}
-          checked={effect.disabled}
-          title={game.i18n.localize("ROBOTECH.Effect.Disabled")}
-          onCheckedChange={(checked) => void effect.update({ disabled: checked })}
+          id={`${effect.id}-enabled`}
+          checked={!effect.disabled}
+          title={game.i18n.localize("ROBOTECH.Effect.Enabled")}
+          onCheckedChange={(checked) => void effect.update({ disabled: !checked })}
         />
       </TableCell>
 

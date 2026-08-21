@@ -1,4 +1,4 @@
-import type { DamageTypeValue } from "@/config/choices";
+import type { DamageTypeValue } from "@/config/options";
 import type { SwarmMember } from "@/models";
 import { appliedPenetrationOf, calcDamageCascade, type CascadeResult } from "@/utils/vesselUtils";
 

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
-import { TALENT_CATEGORY_OPTIONS } from "@/config/choices";
+import { TALENT_CATEGORY_OPTIONS } from "@/config/options";
 
 export function TalentSheetFields({ item, handleFieldChange }: ItemFieldsProps<"talent">): JSX.Element {
   const system = item.system;

@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/Field";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
-import { WEALTH_OPTIONS } from "@/config/choices";
+import { WEALTH_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface CharacterMiscBlockProps {

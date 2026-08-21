@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Portrait } from "@/components/ui/Portrait";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
-import { VESSEL_TYPE_OPTIONS } from "@/config/choices";
+import { VESSEL_TYPE_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 import { pickImage } from "@/utils";
 

@@ -1,14 +1,14 @@
-export interface ChoiceOption {
+export interface Option {
   value: string;
   labelKey: string;
 }
 
-/** Keeps the literal value types of an option list while staying assignable to a field's `choices`. */
-function toValues<const T extends readonly ChoiceOption[]>(options: T): T[number]["value"][] {
+/** Keeps the literal value types of an option list while staying assignable to a field's `options`. */
+function toValues<const T extends readonly Option[]>(options: T): T[number]["value"][] {
   return options.map((option) => option.value);
 }
 
-export function isChoiceValue<const T extends readonly ChoiceOption[]>(
+export function isChoiceValue<const T extends readonly Option[]>(
   options: T,
   value: string,
 ): value is T[number]["value"] {
@@ -20,7 +20,7 @@ export const WEALTH_OPTIONS = [
   { value: "standard", labelKey: "ROBOTECH.Wealth.Standard" },
   { value: "high", labelKey: "ROBOTECH.Wealth.High" },
   { value: "ultra", labelKey: "ROBOTECH.Wealth.Ultra" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const WEALTH_VALUES = toValues(WEALTH_OPTIONS);
 export type WealthValue = (typeof WEALTH_VALUES)[number];
 
@@ -29,7 +29,7 @@ export const VESSEL_TYPE_OPTIONS = [
   { value: "vehicle", labelKey: "ROBOTECH.Vessel.TypeVehicle" },
   { value: "mecha", labelKey: "ROBOTECH.Vessel.TypeMecha" },
   { value: "naval", labelKey: "ROBOTECH.Vessel.TypeNaval" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const VESSEL_TYPE_VALUES = toValues(VESSEL_TYPE_OPTIONS);
 export type VesselTypeValue = (typeof VESSEL_TYPE_VALUES)[number];
 
@@ -39,15 +39,15 @@ export const TALENT_CATEGORY_OPTIONS = [
   { value: "social", labelKey: "ROBOTECH.Talents.Category.Social" },
   { value: "tactical", labelKey: "ROBOTECH.Talents.Category.Tactical" },
   { value: "technical", labelKey: "ROBOTECH.Talents.Category.Technical" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const TALENT_CATEGORY_VALUES = toValues(TALENT_CATEGORY_OPTIONS);
 export type TalentCategoryValue = (typeof TALENT_CATEGORY_VALUES)[number];
 
 export const SPEED_UNIT_OPTIONS = [
-  { value: "ground", labelKey: "ROBOTECH.Vessel.Ground" },
-  { value: "planetary", labelKey: "ROBOTECH.Vessel.Planetary" },
-  { value: "space", labelKey: "ROBOTECH.Vessel.Space" },
-] as const satisfies readonly ChoiceOption[];
+  { value: "ground", labelKey: "ROBOTECH.Vessel.GroundUnits" },
+  { value: "planetary", labelKey: "ROBOTECH.Vessel.PlanetaryUnits" },
+  { value: "space", labelKey: "ROBOTECH.Vessel.SpaceUnits" },
+] as const satisfies readonly Option[];
 export const SPEED_UNIT_VALUES = toValues(SPEED_UNIT_OPTIONS);
 export type SpeedUnitValue = (typeof SPEED_UNIT_VALUES)[number];
 
@@ -55,7 +55,7 @@ export const DAMAGE_TYPE_OPTIONS = [
   { value: "light", labelKey: "ROBOTECH.Damage.DamageClass.light" },
   { value: "mecha", labelKey: "ROBOTECH.Damage.DamageClass.mecha" },
   { value: "naval", labelKey: "ROBOTECH.Damage.DamageClass.naval" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const DAMAGE_TYPE_VALUES = toValues(DAMAGE_TYPE_OPTIONS);
 export type DamageTypeValue = (typeof DAMAGE_TYPE_VALUES)[number];
 
@@ -75,7 +75,7 @@ export const WEAPON_RANGE_OPTIONS = [
   { value: "M", labelKey: "ROBOTECH.Item.Ranges.M" },
   { value: "L", labelKey: "ROBOTECH.Item.Ranges.L" },
   { value: "EX", labelKey: "ROBOTECH.Item.Ranges.EX" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const WEAPON_RANGE_VALUES = toValues(WEAPON_RANGE_OPTIONS);
 export type WeaponRangeValue = (typeof WEAPON_RANGE_VALUES)[number];
 
@@ -83,7 +83,7 @@ export const VESSEL_MODE_OPTIONS = [
   { value: "fighter", labelKey: "ROBOTECH.Vessel.Fighter" },
   { value: "guardian", labelKey: "ROBOTECH.Vessel.Guardian" },
   { value: "battloid", labelKey: "ROBOTECH.Vessel.Battloid" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const VESSEL_MODE_VALUES = toValues(VESSEL_MODE_OPTIONS);
 export type VesselModeValue = (typeof VESSEL_MODE_VALUES)[number];
 
@@ -93,7 +93,7 @@ export const ROLL_MODIFIER_OPTIONS = [
   { value: "nominal", labelKey: "ROBOTECH.Roll.Modifiers.Nominal", shift: 0 },
   { value: "edge", labelKey: "ROBOTECH.Roll.Modifiers.Edge", shift: 1 },
   { value: "advantage", labelKey: "ROBOTECH.Roll.Modifiers.Advantage", shift: 2 },
-] as const satisfies readonly (ChoiceOption & { shift: number })[];
+] as const satisfies readonly (Option & { shift: number })[];
 export const ROLL_MODIFIER_VALUES = toValues(ROLL_MODIFIER_OPTIONS);
 export type RollModifierValue = (typeof ROLL_MODIFIER_VALUES)[number];
 
@@ -110,7 +110,7 @@ export const COMBAT_PHASE_OPTIONS = [
   { value: "support", labelKey: "ROBOTECH.Combat.Phases.Support" },
   { value: "ops", labelKey: "ROBOTECH.Combat.Phases.Ops" },
   { value: "cinematic", labelKey: "ROBOTECH.Combat.Phases.Cinematic" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const COMBAT_PHASE_VALUES = toValues(COMBAT_PHASE_OPTIONS);
 export type CombatPhaseValue = (typeof COMBAT_PHASE_VALUES)[number];
 
@@ -118,7 +118,7 @@ export const SLOT_PHASE_OPTIONS = [
   { value: "support", labelKey: "ROBOTECH.Combat.Phases.Support" },
   { value: "ops", labelKey: "ROBOTECH.Combat.Phases.Ops" },
   { value: "cinematic", labelKey: "ROBOTECH.Combat.Phases.Cinematic" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const SLOT_PHASE_VALUES = toValues(SLOT_PHASE_OPTIONS);
 export type SlotPhaseValue = (typeof SLOT_PHASE_VALUES)[number];
 
@@ -127,7 +127,7 @@ export const ACTION_PHASE_OPTIONS = [
   { value: "ops", labelKey: "ROBOTECH.Roll.Phases.Ops" },
   { value: "cinematic", labelKey: "ROBOTECH.Roll.Phases.Cinematic" },
   { value: "any", labelKey: "ROBOTECH.Roll.Phases.Any" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const ACTION_PHASE_VALUES = toValues(ACTION_PHASE_OPTIONS);
 export type ActionPhaseValue = (typeof ACTION_PHASE_VALUES)[number];
 
@@ -192,7 +192,7 @@ export const ACTION_OPTIONS = [
     hintKey: "ROBOTECH.Roll.Actions.Initiative.hint",
     phase: "any",
   },
-] as const satisfies readonly (ChoiceOption & {
+] as const satisfies readonly (Option & {
   hintKey: string;
   phase: ActionPhaseValue;
 })[];
@@ -250,7 +250,7 @@ export const THEME_OPTIONS = [
     labelKey: "ROBOTECH.Settings.Theme.Brown",
     groupKey: "ROBOTECH.Settings.Theme.Groups.Light",
   },
-] as const satisfies readonly (ChoiceOption & { groupKey: string })[];
+] as const satisfies readonly (Option & { groupKey: string })[];
 export const THEME_VALUES = toValues(THEME_OPTIONS);
 export type ThemeValue = (typeof THEME_VALUES)[number];
 
@@ -260,7 +260,7 @@ export const CONFLICT_TYPE_OPTIONS = [
   { value: "naval_vessel", labelKey: "ROBOTECH.Conflict.TypeNavalVessel" },
   { value: "social", labelKey: "ROBOTECH.Conflict.TypeSocial" },
   { value: "environmental", labelKey: "ROBOTECH.Conflict.TypeEnvironmental" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const CONFLICT_TYPE_VALUES = toValues(CONFLICT_TYPE_OPTIONS);
 export type ConflictTypeValue = (typeof CONFLICT_TYPE_VALUES)[number];
 
@@ -270,7 +270,7 @@ export const CONFLICT_RECOGNITION_OPTIONS = [
   { value: "reported", labelKey: "ROBOTECH.Conflict.RecognitionReported" },
   { value: "obscured", labelKey: "ROBOTECH.Conflict.RecognitionObscured" },
   { value: "hidden", labelKey: "ROBOTECH.Conflict.RecognitionHidden" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const CONFLICT_RECOGNITION_VALUES = toValues(CONFLICT_RECOGNITION_OPTIONS);
 export type ConflictRecognitionValue = (typeof CONFLICT_RECOGNITION_VALUES)[number];
 
@@ -279,7 +279,7 @@ export const CONFLICT_THREAT_OPTIONS = [
   { value: "beta", labelKey: "ROBOTECH.Conflict.ThreatBeta" },
   { value: "epsilon", labelKey: "ROBOTECH.Conflict.ThreatEpsilon" },
   { value: "omega", labelKey: "ROBOTECH.Conflict.ThreatOmega" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const CONFLICT_THREAT_VALUES = toValues(CONFLICT_THREAT_OPTIONS);
 export type ConflictThreatValue = (typeof CONFLICT_THREAT_VALUES)[number];
 
@@ -287,6 +287,6 @@ export const PLOT_EVENT_PHASE_OPTIONS = [
   { value: "risingAction", labelKey: "ROBOTECH.PlotEvent.RisingAction" },
   { value: "climax", labelKey: "ROBOTECH.PlotEvent.Climax" },
   { value: "conclusion", labelKey: "ROBOTECH.PlotEvent.Conclusion" },
-] as const satisfies readonly ChoiceOption[];
+] as const satisfies readonly Option[];
 export const PLOT_EVENT_PHASE_VALUES = toValues(PLOT_EVENT_PHASE_OPTIONS);
 export type PlotEventPhaseValue = (typeof PLOT_EVENT_PHASE_VALUES)[number];
