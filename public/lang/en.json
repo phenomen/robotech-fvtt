@@ -133,10 +133,12 @@
       "Stress": "Stress",
       "Burnout": "Burnout",
       "Drama": "Drama",
+      "DramaAbbr": "D",
       "DramaN": "Drama {n}",
       "DramaPlaceholder": "Drama description...",
       "Box": "Stress {n}: {state}",
       "Fatigue": "Fatigue",
+      "FatigueAbbr": "F",
       "Empty": "Empty"
     },
     "HeroicMove": {

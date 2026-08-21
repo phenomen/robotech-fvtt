@@ -21,6 +21,12 @@ function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxP
   const color = GRADATION_LEVELS[index]?.color ?? GRADATION.worst.color;
   const isFilled = Boolean(state);
 
+  const getLabel = (): string => {
+    if (state === "F") return game.i18n.localize("ROBOTECH.Stress.FatigueAbbr");
+    if (state === "D") return game.i18n.localize("ROBOTECH.Stress.DramaAbbr");
+    return "";
+  };
+
   const getTitleText = (): string => {
     let stateLabel = game.i18n.localize("ROBOTECH.Stress.Empty");
     if (state === "F") stateLabel = game.i18n.localize("ROBOTECH.Stress.Fatigue");
@@ -32,7 +38,7 @@ function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxP
     <TrackerHex
       color={color}
       isFilled={isFilled}
-      label={isFilled ? state : ""}
+      label={getLabel()}
       onClick={onLeftClick}
       onContextMenu={(e) => {
         e.preventDefault();
