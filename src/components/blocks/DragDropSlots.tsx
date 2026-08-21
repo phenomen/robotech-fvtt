@@ -45,8 +45,11 @@ export function DragDropSlots({ actor }: DragDropSlotsProps): JSX.Element {
               <Tag
                 label={
                   careerItem.system.rankTitle
-                    ? `R${careerItem.system.rank}: ${careerItem.system.rankTitle}`
-                    : `R${careerItem.system.rank}`
+                    ? game.i18n.localize("ROBOTECH.Character.RankNTitle", {
+                        n: careerItem.system.rank,
+                        title: careerItem.system.rankTitle,
+                      })
+                    : game.i18n.localize("ROBOTECH.Character.RankN", { n: careerItem.system.rank })
                 }
                 color="purple"
                 size="small"
@@ -54,7 +57,10 @@ export function DragDropSlots({ actor }: DragDropSlotsProps): JSX.Element {
               />
               {careerItem.system.fameTitle ? (
                 <Tag
-                  label={`F${careerItem.system.fame}: ${careerItem.system.fameTitle}`}
+                  label={game.i18n.localize("ROBOTECH.Character.FameNTitle", {
+                    n: careerItem.system.fame,
+                    title: careerItem.system.fameTitle,
+                  })}
                   color="amber"
                   size="small"
                   title={game.i18n.localize("ROBOTECH.Character.Fame")}
@@ -62,7 +68,7 @@ export function DragDropSlots({ actor }: DragDropSlotsProps): JSX.Element {
               ) : (
                 careerItem.system.fame > 0 && (
                   <Tag
-                    label={`F${careerItem.system.fame}`}
+                    label={game.i18n.localize("ROBOTECH.Character.FameN", { n: careerItem.system.fame })}
                     color="amber"
                     size="small"
                     title={game.i18n.localize("ROBOTECH.Character.Fame")}
