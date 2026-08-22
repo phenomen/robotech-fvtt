@@ -121,8 +121,8 @@ export class CharacterDataModel extends ActorDataModel {
       }),
       vitals: new fields.SchemaField({
         wounds: new fields.SchemaField({
-          value: new fields.NumberField({ initial: 4, integer: true, min: 0 }),
-          max: new fields.NumberField({ initial: 4, integer: true, min: 0 }),
+          value: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
+          max: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
         }),
         stress: new fields.SchemaField({
           value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
@@ -136,7 +136,7 @@ export class CharacterDataModel extends ActorDataModel {
       wounds: new fields.SchemaField({
         brawl: new fields.SchemaField({
           value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-          max: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
+          max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
           states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
         }),
         critical: new fields.SchemaField({
