@@ -5,6 +5,6 @@
   "sortTailwindcss": true,
   "sortPackageJson": true,
   "quoteStyle": "double",
-  "endOfLine": "crlf",
+  "endOfLine": "lf",
   "printWidth": 120
 }
