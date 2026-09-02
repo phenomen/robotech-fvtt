@@ -8,7 +8,9 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix"
+    "lint:fix": "oxlint --fix",
+    "check": "ultracite check --type-aware",
+    "fix": "ultracite fix --type-aware"
   },
   "dependencies": {
     "react": "^19.2.8",
@@ -19,11 +21,13 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "bun-plugin-tailwind": "^0.1.2",
-    "cn": "^0.2.2",
+    "cn": "^0.2.4",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
+    "oxlint-plugin-react-doctor": "^0.9.12",
     "oxlint-tsgolint": "^7.0.2001",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "ultracite": "7.10.7"
   }
 }

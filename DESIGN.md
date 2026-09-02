@@ -84,20 +84,20 @@ Do not invent half-steps.
 
 ## Primitives
 
-| Primitive                                                                                                                                | Role                                                                                   |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `Sheet`, `SheetBody`                                                                                                                     | Root fill/overflow; `.robotech`                                                        |
-| `GridSystem`, `Grid`, `GridCell`                                                                                                         | Geist Grid system                                                                      |
-| `Stack`                                                                                                                                  | 1D layout                                                                              |
-| `LabelGrid`, `LabelRow`, `LabelRule`                                                                                                     | Shared label column for aligned control rows                                           |
-| `Text`                                                                                                                                   | Type roles plus `size` (`small` \| `medium` \| `large`)                                |
-| `Portrait`                                                                                                                               | Actor/item image                                                                       |
-| `Divider`                                                                                                                                | 1px rule                                                                               |
-| `Callout`                                                                                                                                | Hint, warning, or empty slot                                                           |
-| `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell`                                                                             | Tabular rows. Cell `width` is `grow` \| `auto` \| `10` \| `12` \| `16` \| `20` \| `32` |
-| `Card`, `CardHeader`, `CardTitle`                                                                                                        | Off-grid surface; title is compact uppercase `mono`; header is a fixed 36px row        |
-| `Button`, `Input`, `NumberInput`, `Select`, `Textarea`, `Field`, `Label`, `Checkbox`, `Tag`, `TabNav`, `ToggleGroup`, `ProseMirrorField` | Controls with baked type roles                                                         |
-| `TrackerHex`                                                                                                                             | Game-specific hex input                                                                |
+| Primitive | Role |
+| --- | --- |
+| `Sheet`, `SheetBody` | Root fill/overflow; `.robotech` |
+| `GridSystem`, `Grid`, `GridCell` | Geist Grid system |
+| `Stack` | 1D layout |
+| `LabelGrid`, `LabelRow`, `LabelRule` | Shared label column for aligned control rows |
+| `Text` | Type roles plus `size` (`small` \| `medium` \| `large`) |
+| `Portrait` | Actor/item image |
+| `Divider` | 1px rule |
+| `Callout` | Hint, warning, or empty slot |
+| `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell` | Tabular rows. Cell `width` is `grow` \| `auto` \| `10` \| `12` \| `16` \| `20` \| `32` |
+| `Card`, `CardHeader`, `CardTitle` | Off-grid surface; title is compact uppercase `mono`; header is a fixed 36px row |
+| `Button`, `Input`, `NumberInput`, `Select`, `Textarea`, `Field`, `Label`, `Checkbox`, `Tag`, `TabNav`, `ToggleGroup`, `ProseMirrorField` | Controls with baked type roles |
+| `TrackerHex` | Game-specific hex input |
 
 Layout-facing primitives do not accept `className`. Add a variant instead (`full`, `orientation`, `width`, `tone`, `truncate`).
 

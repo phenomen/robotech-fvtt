@@ -4,17 +4,17 @@ import path from "node:path";
 import tailwind from "bun-plugin-tailwind";
 
 const outdir = path.join(process.cwd(), "dist");
-await rm(outdir, { recursive: true, force: true });
+await rm(outdir, { force: true, recursive: true });
 await mkdir(outdir, { recursive: true });
 
 // Build JS entrypoint
 const jsBuild = await Bun.build({
   entrypoints: ["src/robotech.ts"],
-  outdir,
-  naming: "robotech.js",
-  target: "browser",
   minify: true,
+  naming: "robotech.js",
+  outdir,
   sourcemap: false,
+  target: "browser",
 });
 
 if (!jsBuild.success) {
@@ -25,10 +25,10 @@ if (!jsBuild.success) {
 // Build CSS
 const cssBuild = await Bun.build({
   entrypoints: ["src/styles/robotech.css"],
-  outdir,
-  naming: "robotech.css",
-  plugins: [tailwind],
   minify: true,
+  naming: "robotech.css",
+  outdir,
+  plugins: [tailwind],
 });
 
 if (!cssBuild.success) {
