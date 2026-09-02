@@ -52,10 +52,16 @@ const GridLinesContext = createContext<GridLines>({
   width: 0,
 });
 
+/** Computed style values such as `"12.5px"`. `Number("12.5px")` is NaN. */
+function cssPx(value: string): number {
+  // oxlint-disable-next-line unicorn/prefer-number-coercion
+  return Number.parseFloat(value);
+}
+
 function parseTrackSizes(template: string): number[] {
   return template
     .split(/(?<=px)\s+/u)
-    .map(Number)
+    .map(cssPx)
     .filter((size) => Number.isFinite(size));
 }
 
@@ -78,10 +84,10 @@ function trackStops(sizes: number[], start: number, gap: number): number[] {
 
 function readLines(el: HTMLElement): GridLines {
   const style = getComputedStyle(el);
-  const padLeft = Number(style.paddingLeft) || 0;
-  const padTop = Number(style.paddingTop) || 0;
-  const colGap = Number(style.columnGap) || 0;
-  const rowGap = Number(style.rowGap) || 0;
+  const padLeft = cssPx(style.paddingLeft) || 0;
+  const padTop = cssPx(style.paddingTop) || 0;
+  const colGap = cssPx(style.columnGap) || 0;
+  const rowGap = cssPx(style.rowGap) || 0;
   const vertical = parseTrackSizes(style.gridTemplateColumns);
   const horizontal = parseTrackSizes(style.gridTemplateRows);
   return {
@@ -207,7 +213,9 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
       observer.disconnect();
       mutation.disconnect();
     };
-  }, [hideGuides]);
+    // columns/rows change track counts without always resizing the grid element.
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies
+  }, [columns, hideGuides, rows]);
 
   const style: CSSProperties = {
     backgroundColor: guideColor(dashedGuides, debug),
