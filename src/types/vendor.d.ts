@@ -44,7 +44,7 @@ declare module "handlebars" {
 declare namespace React {
   namespace JSX {
     interface IntrinsicElements {
-      subtle: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+      subtle: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
     }
   }
 }

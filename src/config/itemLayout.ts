@@ -1,15 +1,15 @@
 export type ItemSheetLayoutMode = "tabs" | "stacked";
 
 export const ITEM_SHEET_LAYOUTS: Record<string, ItemSheetLayoutMode> = {
-  weapon: "tabs",
   career: "tabs",
+  equipment_suite: "tabs",
+  feature: "tabs",
+  gear: "tabs",
   race: "tabs",
   skill: "stacked",
   talent: "tabs",
-  equipment_suite: "tabs",
-  gear: "tabs",
-  feature: "tabs",
   upgrade: "tabs",
+  weapon: "tabs",
 };
 
 export function getLayoutMode(itemType: string): ItemSheetLayoutMode {

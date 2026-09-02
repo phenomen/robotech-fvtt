@@ -1,5 +1,6 @@
 import type Item from "@client/documents/item.mjs";
-import { useState, type ChangeEvent, type JSX } from "react";
+import { useState } from "react";
+import type { ChangeEvent, JSX } from "react";
 
 import { ItemEffectsList } from "@/components/blocks/ItemEffectsList";
 import {
@@ -19,7 +20,8 @@ import { Input } from "@/components/ui/Input";
 import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
-import { TabNav, type TabItem } from "@/components/ui/TabNav";
+import { TabNav } from "@/components/ui/TabNav";
+import type { TabItem } from "@/components/ui/TabNav";
 import { Text } from "@/components/ui/Text";
 import { itemHasEffects } from "@/config/effects";
 import { getLayoutMode } from "@/config/itemLayout";
@@ -27,6 +29,12 @@ import type { FieldValue } from "@/models";
 import { isItemOf } from "@/utils";
 
 export type ItemTabType = "stats" | "description" | "effects";
+
+const ITEM_TABS: TabItem<ItemTabType>[] = [
+  { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
+  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
+];
+const ITEM_EFFECTS_TAB: TabItem<ItemTabType> = { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" };
 
 interface ItemSheetAppProps {
   item: Item;
@@ -46,11 +54,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
     void item.update({ [path]: val });
   };
 
-  const itemTabs: TabItem<ItemTabType>[] = [
-    { key: "stats", label: game.i18n.localize("ROBOTECH.Tabs.Stats") },
-    { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
-    ...(hasEffects ? [{ key: "effects" as const, label: game.i18n.localize("ROBOTECH.Tabs.Effects") }] : []),
-  ];
+  const itemTabs = hasEffects ? [...ITEM_TABS, ITEM_EFFECTS_TAB] : ITEM_TABS;
 
   const renderItemFields = () => {
     if (isItemOf(item, "race")) {
@@ -94,7 +98,9 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
       <ProseMirrorField
         name="system.description"
         value={system.description}
-        onChange={(val) => handleFieldChange("system.description", val)}
+        onChange={(val) => {
+          handleFieldChange("system.description", val);
+        }}
         minHeight="tall"
       />
     </Stack>

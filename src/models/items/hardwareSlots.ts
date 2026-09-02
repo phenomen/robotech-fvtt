@@ -9,12 +9,12 @@ export function hardwareSlotsFields(options?: { initialValue?: number; min?: num
 } {
   const fields = foundry.data.fields;
   return {
+    destroyed: new fields.ArrayField(new fields.BooleanField({ initial: false }), { initial: [] }),
     value: new fields.NumberField({
       initial: options?.initialValue ?? 0,
       integer: true,
       min: options?.min ?? 0,
     }),
-    destroyed: new fields.ArrayField(new fields.BooleanField({ initial: false }), { initial: [] }),
   };
 }
 
@@ -29,13 +29,17 @@ export function hardwareSlotsSchema(options?: {
 export function syncDestroyedSlots(value: number, destroyed: boolean[]): boolean[] {
   const count = Math.max(0, value);
   const next = destroyed.slice(0, count).map(Boolean);
-  while (next.length < count) next.push(false);
+  while (next.length < count) {
+    next.push(false);
+  }
   return next;
 }
 
 export function capHardwareDestroyed(hardware: HardwareSlots, changes: object, path: string): void {
   const patch = foundry.utils.getProperty(changes, path);
-  if (!isHardwarePatch(patch)) return;
+  if (!isHardwarePatch(patch)) {
+    return;
+  }
 
   const nextValue = typeof patch.value === "number" ? patch.value : hardware.value;
   const sourceDestroyed = Array.isArray(patch.destroyed) ? patch.destroyed : hardware.destroyed;
@@ -56,6 +60,8 @@ function isHardwarePatch(value: unknown): value is Partial<HardwareSlots> {
 }
 
 function destroyedEquals(left: boolean[], right: boolean[]): boolean {
-  if (left.length !== right.length) return false;
+  if (left.length !== right.length) {
+    return false;
+  }
   return left.every((value, index) => value === right[index]);
 }

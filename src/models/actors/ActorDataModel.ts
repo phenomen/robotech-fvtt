@@ -9,10 +9,10 @@ type PreCreateUser = Parameters<TypeDataModelBase["_preCreate"]>[2];
 
 const TOKEN_BARS: Record<ActorType, { bar1: string | null; bar2: string | null }> = {
   character: { bar1: "vitals.wounds", bar2: null },
-  vessel: { bar1: "structure", bar2: null },
-  swarm: { bar1: "structure", bar2: "vessels" },
   conflict: { bar1: "tracker", bar2: null },
   plot_event: { bar1: null, bar2: null },
+  swarm: { bar1: "structure", bar2: "vessels" },
+  vessel: { bar1: "structure", bar2: null },
 };
 
 export class ActorDataModel extends foundry.abstract.TypeDataModel {
@@ -30,15 +30,19 @@ export class ActorDataModel extends foundry.abstract.TypeDataModel {
   override async _preCreate(
     data: PreCreateData,
     options: PreCreateOptions,
-    user: PreCreateUser,
+    user: PreCreateUser
   ): Promise<boolean | void> {
     const allowed = await super._preCreate(data, options, user);
-    if (allowed === false) return false;
+    if (allowed === false) {
+      return false;
+    }
     this.applyTokenDefaults(data);
   }
 
   private applyTokenDefaults(data: PreCreateData): void {
-    if (!game.settings.get("robotech", "applyTokenDefaults")) return;
+    if (!game.settings.get("robotech", "applyTokenDefaults")) {
+      return;
+    }
 
     const provided = prototypeTokenOf(data);
     const bars = TOKEN_BARS[this.parent.type];
@@ -57,15 +61,21 @@ export class ActorDataModel extends foundry.abstract.TypeDataModel {
     if (!("bar2" in provided)) {
       patch.bar2 = { attribute: bars.bar2 };
     }
-    if (Object.keys(patch).length === 0) return;
+    if (Object.keys(patch).length === 0) {
+      return;
+    }
 
     this.parent.prototypeToken.updateSource(patch);
   }
 }
 
 function prototypeTokenOf(data: PreCreateData): object {
-  if (!("prototypeToken" in data)) return {};
+  if (!("prototypeToken" in data)) {
+    return {};
+  }
   const token = data.prototypeToken;
-  if (!token || typeof token !== "object") return {};
+  if (!token || typeof token !== "object") {
+    return {};
+  }
   return token;
 }

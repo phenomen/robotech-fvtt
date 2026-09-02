@@ -52,7 +52,7 @@ declare module "@client/documents/actor.mjs" {
     statuses: Set<string>;
     toggleStatusEffect(
       statusId: string,
-      options?: { active?: boolean; overlay?: boolean },
+      options?: { active?: boolean; overlay?: boolean }
     ): Promise<foundry.documents.ActiveEffect | boolean | undefined>;
   }
 }

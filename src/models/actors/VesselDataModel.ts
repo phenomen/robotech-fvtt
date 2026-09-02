@@ -1,13 +1,5 @@
-import {
-  ROLL_MODIFIER_VALUES,
-  SPEED_UNIT_VALUES,
-  VESSEL_MODE_VALUES,
-  VESSEL_TYPE_VALUES,
-  type RollModifierValue,
-  type SpeedUnitValue,
-  type VesselModeValue,
-  type VesselTypeValue,
-} from "@/config/options";
+import { ROLL_MODIFIER_VALUES, SPEED_UNIT_VALUES, VESSEL_MODE_VALUES, VESSEL_TYPE_VALUES } from "@/config/options";
+import type { RollModifierValue, SpeedUnitValue, VesselModeValue, VesselTypeValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { calcEngineSpeed } from "@/utils/vesselUtils";
 
@@ -62,60 +54,62 @@ export class VesselDataModel extends ActorDataModel {
 
     const speedUnitSchema = () =>
       new fields.SchemaField({
-        selected: new fields.StringField({ initial: "ground", choices: SPEED_UNIT_VALUES }),
         game: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         ground: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         planetary: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+        selected: new fields.StringField({ choices: SPEED_UNIT_VALUES, initial: "ground" }),
         space: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       });
 
-    const ratingField = () => new fields.StringField({ initial: "nominal", choices: ROLL_MODIFIER_VALUES });
+    const ratingField = () => new fields.StringField({ choices: ROLL_MODIFIER_VALUES, initial: "nominal" });
 
     return {
       ...super.defineSchema(),
-      vesselType: new fields.StringField({
-        initial: VESSEL_TYPE_VALUES[2], // "mecha"
-        choices: VESSEL_TYPE_VALUES,
+      armor: new fields.SchemaField({
+        max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
+        value: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
       }),
+      characterUuids: new fields.ArrayField(new fields.StringField({ initial: "" }), {
+        initial: [],
+      }),
+      classification: new fields.StringField({ initial: "" }),
+      crew: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
       designation: new fields.StringField({ initial: "" }),
       faction: new fields.StringField({ initial: "" }),
-      requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-      classification: new fields.StringField({ initial: "" }),
-      transformable: new fields.BooleanField({ initial: false }),
-      mode: new fields.StringField({
-        initial: VESSEL_MODE_VALUES[0], // "fighter"
-        choices: VESSEL_MODE_VALUES,
-      }),
+      hardwarePoints: new fields.NumberField({ initial: 4, integer: true, min: 0 }),
       isBasic: new fields.BooleanField({ initial: false }),
-      structure: new fields.SchemaField({
-        value: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
-        max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
+      mode: new fields.StringField({
+        choices: VESSEL_MODE_VALUES,
+        // "fighter"
+        initial: VESSEL_MODE_VALUES[0],
       }),
-      armor: new fields.SchemaField({
-        value: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
+      requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+      speedModes: new fields.SchemaField({
+        battloid: speedUnitSchema(),
+        fighter: speedUnitSchema(),
+        general: speedUnitSchema(),
+        guardian: speedUnitSchema(),
+      }),
+      structure: new fields.SchemaField({
         max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
+        value: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
       }),
       systems: new fields.SchemaField({
-        sensors: ratingField(),
-        targeting: ratingField(),
-        thrusters: ratingField(),
         engines: new fields.NumberField({
           initial: 4,
           integer: true,
-          min: 0,
           max: 4,
+          min: 0,
         }),
+        sensors: ratingField(),
+        targeting: ratingField(),
+        thrusters: ratingField(),
       }),
-      speedModes: new fields.SchemaField({
-        general: speedUnitSchema(),
-        fighter: speedUnitSchema(),
-        guardian: speedUnitSchema(),
-        battloid: speedUnitSchema(),
-      }),
-      hardwarePoints: new fields.NumberField({ initial: 4, integer: true, min: 0 }),
-      crew: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-      characterUuids: new fields.ArrayField(new fields.StringField({ initial: "" }), {
-        initial: [],
+      transformable: new fields.BooleanField({ initial: false }),
+      vesselType: new fields.StringField({
+        choices: VESSEL_TYPE_VALUES,
+        // "mecha"
+        initial: VESSEL_TYPE_VALUES[2],
       }),
     };
   }
@@ -136,10 +130,10 @@ export class VesselDataModel extends ActorDataModel {
     const engineLevel = this.systems.engines;
 
     return {
-      selected: base.selected,
       game: calcEngineSpeed(base[base.selected], engineLevel),
       ground: calcEngineSpeed(base.ground, engineLevel),
       planetary: calcEngineSpeed(base.planetary, engineLevel),
+      selected: base.selected,
       space: calcEngineSpeed(base.space, engineLevel),
     };
   }

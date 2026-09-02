@@ -14,12 +14,12 @@ export class CareerDataModel extends ItemDataModel {
     return {
       ...super.defineSchema(),
       element: new fields.StringField({ initial: "" }),
-      talent: new fields.StringField({ initial: "" }),
-      rank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-      rankTitle: new fields.StringField({ initial: "" }),
+      equipment: new fields.StringField({ initial: "" }),
       fame: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       fameTitle: new fields.StringField({ initial: "" }),
-      equipment: new fields.StringField({ initial: "" }),
+      rank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+      rankTitle: new fields.StringField({ initial: "" }),
+      talent: new fields.StringField({ initial: "" }),
     };
   }
 }

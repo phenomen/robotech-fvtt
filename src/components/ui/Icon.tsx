@@ -12,44 +12,40 @@ interface IconProps {
 }
 
 const SIZE_CLASS = {
-  small: "size-3",
-  medium: "size-4",
   large: "size-6",
+  medium: "size-4",
+  small: "size-3",
 } as const;
 
 const TONE_CLASS = {
-  default: "",
-  primary: "text-rt-primary",
-  muted: "text-rt-muted",
-  danger: "text-rt-danger",
-  current: "text-current",
-  green: "text-rt-custom-green",
-  teal: "text-rt-custom-teal",
-  blue: "text-rt-custom-blue",
   amber: "text-rt-custom-amber",
+  blue: "text-rt-custom-blue",
+  current: "text-current",
+  danger: "text-rt-danger",
+  default: "",
+  green: "text-rt-custom-green",
+  muted: "text-rt-muted",
+  primary: "text-rt-primary",
+  teal: "text-rt-custom-teal",
 } as const;
 
-export const Icon = React.memo(function Icon({
-  name,
-  size = "medium",
-  tone = "default",
-  title,
-}: IconProps): React.JSX.Element {
+export const Icon = React.memo(({ name, size = "medium", tone = "default", title }: IconProps): React.JSX.Element => {
   const path = `systems/robotech/assets/icons/${name}.svg`;
   return (
     <span
       title={title}
       className={cn("inline-block shrink-0 bg-current", SIZE_CLASS[size], TONE_CLASS[tone])}
       style={{
-        maskImage: `url('${path}')`,
-        maskSize: "contain",
-        maskRepeat: "no-repeat",
-        maskPosition: "center",
         WebkitMaskImage: `url('${path}')`,
-        WebkitMaskSize: "contain",
-        WebkitMaskRepeat: "no-repeat",
         WebkitMaskPosition: "center",
+        WebkitMaskRepeat: "no-repeat",
+        WebkitMaskSize: "contain",
+        maskImage: `url('${path}')`,
+        maskPosition: "center",
+        maskRepeat: "no-repeat",
+        maskSize: "contain",
       }}
     />
   );
 });
+Icon.displayName = "Icon";

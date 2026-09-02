@@ -1,6 +1,6 @@
 import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
-import { type JSX, type ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { Button } from "@/components/ui/Button";
@@ -24,15 +24,15 @@ export type ListedItemType = Exclude<ItemType, "career" | "race">;
 type ListedItem = ItemOf<ListedItemType>;
 type UsableItem = ItemOf<"talent"> | ItemOf<"equipment_suite">;
 
-const HARDWARE_SLOT_TYPES: ListedItemType[] = ["weapon", "feature", "equipment_suite"];
-const USABLE_TYPES: ListedItemType[] = ["talent", "equipment_suite"];
+const HARDWARE_SLOT_TYPES = new Set<ListedItemType>(["weapon", "feature", "equipment_suite"]);
+const USABLE_TYPES = new Set<ListedItemType>(["talent", "equipment_suite"]);
 
 function isUsable(itemType: ListedItemType): boolean {
-  return USABLE_TYPES.includes(itemType);
+  return USABLE_TYPES.has(itemType);
 }
 
 function hasHardwareColumn(itemType: ListedItemType): boolean {
-  return HARDWARE_SLOT_TYPES.includes(itemType);
+  return HARDWARE_SLOT_TYPES.has(itemType);
 }
 
 function isSuite(itemType: ListedItemType): boolean {
@@ -175,6 +175,7 @@ function HardwareSlotsCell({ item }: { item: ListedItem }): JSX.Element {
         <Stack direction="row" gap={1} align="center" justify="center">
           {destroyed.map((isDestroyed, index) => (
             <Checkbox
+              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               key={index}
               checked={isDestroyed}
               onCheckedChange={(checked) => void setSlotDestroyed(item, index, checked)}
@@ -203,12 +204,12 @@ function openItemSheet(item: Item): void {
   void item.sheet?.render(true);
 }
 
-async function useItem(actor: Actor, item: UsableItem): Promise<void> {
+async function spendItemUse(actor: Actor, item: UsableItem): Promise<void> {
   await sendToChat({
     actor,
-    title: item.name,
     description: item.system.description,
     relativeTo: item,
+    title: item.name,
   });
   await spendUse(item);
 }
@@ -319,8 +320,11 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
   const isDestroyed = isFullyDestroyed(item);
 
   const rollSkill = (skill: ItemOf<"skill">) => {
-    if (onOpenRoll) onOpenRoll(skill);
-    else void openActionCenter(actor, { skill1Id: skill.id ?? undefined });
+    if (onOpenRoll) {
+      onOpenRoll(skill);
+    } else {
+      void openActionCenter(actor, { skill1Id: skill.id ?? undefined });
+    }
   };
 
   return (
@@ -342,9 +346,16 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
 
       {hasHardwareColumn(itemType) && <HardwareSlotsCell item={item} />}
 
-      {isItemOf(item, "skill") && <SkillCells item={item} onRoll={() => rollSkill(item)} />}
+      {isItemOf(item, "skill") && (
+        <SkillCells
+          item={item}
+          onRoll={() => {
+            rollSkill(item);
+          }}
+        />
+      )}
 
-      {isUsableItem(item) && <UsesCells item={item} onUse={() => void useItem(actor, item)} />}
+      {isUsableItem(item) && <UsesCells item={item} onUse={() => void spendItemUse(actor, item)} />}
 
       {isItemOf(item, "equipment_suite") && <SuiteSkillCell item={item} />}
 
@@ -360,7 +371,9 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
           <Button
             size="icon"
             variant="outline"
-            onClick={() => openItemSheet(item)}
+            onClick={() => {
+              openItemSheet(item);
+            }}
             title={game.i18n.localize("ROBOTECH.Buttons.Edit")}
           >
             <Icon name="edit" />

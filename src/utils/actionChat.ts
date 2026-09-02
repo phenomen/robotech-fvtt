@@ -10,13 +10,13 @@ import type { WeaponAttackStats, WeaponTag } from "@/utils/weaponUtils";
 const TAG_COLOR_CLASS: Record<WeaponTag["color"], string> = {
   amber: "rt-chat-tag--amber",
   blue: "rt-chat-tag--blue",
-  red: "rt-chat-tag--red",
+  default: "rt-chat-tag--default",
   green: "rt-chat-tag--green",
-  teal: "rt-chat-tag--teal",
-  purple: "rt-chat-tag--purple",
   pink: "rt-chat-tag--pink",
   primary: "rt-chat-tag--primary",
-  default: "rt-chat-tag--default",
+  purple: "rt-chat-tag--purple",
+  red: "rt-chat-tag--red",
+  teal: "rt-chat-tag--teal",
 };
 
 export type ActionChatKind = "action" | "attack" | "defend";
@@ -53,27 +53,29 @@ export interface ActionCardInput {
 
 export function actionFlagsOf(message: foundry.documents.ChatMessage): ActionChatFlags | null {
   const flags = message.getFlag("robotech", "action");
-  if (!isChatFlags(flags)) return null;
+  if (!isChatFlags(flags)) {
+    return null;
+  }
   return flags;
 }
 
 export async function postActionCard(input: ActionCardInput): Promise<void> {
   const kind = cardKindOf(input.action, input.incoming);
   const flags: ActionChatFlags = {
-    kind,
     action: input.action,
     contextUuid: input.actor.uuid ?? "",
-    successes: input.successes,
     incoming: input.incoming,
+    kind,
+    successes: input.successes,
   };
 
   await foundry.documents.ChatMessage.create({
-    user: game.user?.id,
-    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
     content: actionCardHtml(input, kind),
-    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
-    rolls: [input.roll],
     flags: { robotech: { action: flags } },
+    rolls: [input.roll],
+    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
+    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+    user: game.user?.id,
   });
 }
 
@@ -89,20 +91,20 @@ export interface PoolCardInput {
 
 export async function postPoolCard(input: PoolCardInput): Promise<void> {
   await foundry.documents.ChatMessage.create({
-    user: game.user?.id,
-    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
     content: poolCardHtml(input),
-    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
     rolls: [input.roll],
+    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
+    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+    user: game.user?.id,
   });
 }
 
 export async function postDamageCard(breakdown: DamageBreakdown): Promise<void> {
   await foundry.documents.ChatMessage.create({
-    user: game.user?.id,
-    speaker: foundry.documents.ChatMessage.getSpeaker(),
     content: damageCardHtml(breakdown),
+    speaker: foundry.documents.ChatMessage.getSpeaker(),
     style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+    user: game.user?.id,
   });
 }
 
@@ -116,10 +118,10 @@ export interface DescriptionCardInput {
 export async function sendToChat(input: DescriptionCardInput): Promise<void> {
   const description = await enrichHtml(input.description, { relativeTo: input.relativeTo });
   await foundry.documents.ChatMessage.create({
-    user: game.user?.id,
-    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
     content: descriptionCardHtml(input.title, description),
+    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
     style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+    user: game.user?.id,
   });
 }
 
@@ -164,8 +166,12 @@ function descriptionCardHtml(title: string, description: string): string {
 }
 
 function cardKindOf(action: ActionValue, incoming?: IncomingAttack): ActionChatKind {
-  if (action === "attack") return "attack";
-  if (action === "defend" && incoming) return "defend";
+  if (action === "attack") {
+    return "attack";
+  }
+  if (action === "defend" && incoming) {
+    return "defend";
+  }
   return "action";
 }
 
@@ -203,7 +209,9 @@ function actionCardHtml(input: ActionCardInput, kind: ActionChatKind): string {
 }
 
 function initiativeSpeedHtml(input: ActionCardInput): string {
-  if (input.action !== "initiative" || input.speed === undefined) return "";
+  if (input.action !== "initiative" || input.speed === undefined) {
+    return "";
+  }
   const speedLabel = game.i18n.localize("ROBOTECH.Roll.Speed");
   return `<span>${speedLabel}: <strong class="rt-chat-meta-value">${input.speed}</strong></span>`;
 }
@@ -233,7 +241,9 @@ function poolCardHtml(input: PoolCardInput): string {
 }
 
 function bonusChipHtml(bonus: number): string {
-  if (bonus === 0) return "";
+  if (bonus === 0) {
+    return "";
+  }
   const signed = bonus > 0 ? `+${bonus}` : String(bonus);
   const label = game.i18n.localize("ROBOTECH.Roll.ManualSuccesses");
   const tone = bonus > 0 ? "rt-success-bonus--gain" : "rt-success-bonus--loss";
@@ -265,7 +275,9 @@ function successPartHtml(label: string, value: string): string {
 }
 
 function weaponBlockHtml(incoming?: IncomingAttack): string {
-  if (!incoming) return "";
+  if (!incoming) {
+    return "";
+  }
   const called = incoming.calledShot
     ? `<div class="rt-chat-called">${game.i18n.localize("ROBOTECH.Roll.CalledShotYes")}</div>`
     : "";
@@ -277,7 +289,9 @@ function weaponBlockHtml(incoming?: IncomingAttack): string {
 }
 
 function weaponTagsHtml(tags: WeaponTag[] | undefined): string {
-  if (!tags?.length) return "";
+  if (!tags?.length) {
+    return "";
+  }
   const chips = tags
     .map((tag) => {
       const colorClass = TAG_COLOR_CLASS[tag.color] ?? TAG_COLOR_CLASS.default;
@@ -292,8 +306,8 @@ function damageCardHtml(breakdown: DamageBreakdown): string {
   const typeLabel = game.i18n.localize(`ROBOTECH.Damage.DamageClass.${breakdown.damageType}`);
   const summary = game.i18n.localize(breakdown.summaryKey, {
     damage: breakdown.damageInflicted,
-    type: typeLabel,
     name: breakdown.targetName,
+    type: typeLabel,
   });
   const summaryClass = breakdown.isOverkill ? "rt-chat-summary rt-chat-summary--danger" : "rt-chat-summary";
   return `<div class="rt-chat-card">
@@ -316,27 +330,30 @@ function damageRowsHtml(breakdown: DamageBreakdown): string {
   if (breakdown.calledShot) {
     rows.push(damageRow("ROBOTECH.Roll.CalledShotYes", {}));
   }
-  if (breakdown.netHits <= 0) return rows.join("");
+  if (breakdown.netHits <= 0) {
+    return rows.join("");
+  }
 
-  rows.push(multiplierRow(breakdown), armorRow(breakdown), armorHitsRow(breakdown));
-  rows.push(classScaleRow(breakdown));
+  rows.push(multiplierRow(breakdown), armorRow(breakdown), armorHitsRow(breakdown), classScaleRow(breakdown));
   return rows.join("");
 }
 
 function multiplierRow(breakdown: DamageBreakdown): string {
-  if (breakdown.multiplier <= 1 || !breakdown.multiplierTargetType) return "";
+  if (breakdown.multiplier <= 1 || !breakdown.multiplierTargetType) {
+    return "";
+  }
   const type = classLabel(breakdown.multiplierTargetType);
   if (breakdown.multiplierApplied) {
     return damageRow("ROBOTECH.Damage.Breakdown.MultiplierApplied", {
-      value: breakdown.multiplier,
-      type,
       hits: breakdown.multipliedHits,
+      type,
+      value: breakdown.multiplier,
     });
   }
   return damageRow("ROBOTECH.Damage.Breakdown.MultiplierSkipped", {
-    value: breakdown.multiplier,
-    type,
     target: classLabel(breakdown.damageType),
+    type,
+    value: breakdown.multiplier,
   });
 }
 
@@ -355,29 +372,35 @@ function armorRow(breakdown: DamageBreakdown): string {
   }
   if (breakdown.armorPenetration > 0 && !penetrationApplies) {
     return damageRow("ROBOTECH.Damage.Breakdown.ArmorSkipped", {
-      armor: breakdown.armor,
       ap: breakdown.armorPenetration,
+      armor: breakdown.armor,
       target: classLabel(breakdown.damageType),
     });
   }
   return damageRow("ROBOTECH.Damage.Breakdown.Armor", {
-    armor: breakdown.armor,
     ap: breakdown.armorPenetration,
+    armor: breakdown.armor,
     effective: breakdown.effectiveArmor,
   });
 }
 
 function armorHitsRow(breakdown: DamageBreakdown): string {
-  if (breakdown.swarmArmor || breakdown.netHits <= 0) return "";
+  if (breakdown.swarmArmor || breakdown.netHits <= 0) {
+    return "";
+  }
   return damageRow("ROBOTECH.Damage.Breakdown.HitsOverArmor", {
     hits: breakdown.hitsOverArmor,
   });
 }
 
 function classScaleRow(breakdown: DamageBreakdown): string {
-  if (breakdown.netHits <= 0) return "";
+  if (breakdown.netHits <= 0) {
+    return "";
+  }
   const key = classScaleKey(breakdown.attackType, breakdown.damageType);
-  if (!key) return "";
+  if (!key) {
+    return "";
+  }
   return damageRow(key, {
     attack: classLabel(breakdown.attackType),
     target: classLabel(breakdown.damageType),
@@ -385,15 +408,21 @@ function classScaleRow(breakdown: DamageBreakdown): string {
 }
 
 function classScaleKey(attack: DamageTypeValue, target: DamageTypeValue): string | null {
-  if (attack === target) return "ROBOTECH.Damage.Breakdown.ClassSame";
+  if (attack === target) {
+    return "ROBOTECH.Damage.Breakdown.ClassSame";
+  }
   if ((attack === "light" && target === "mecha") || (attack === "mecha" && target === "naval")) {
     return "ROBOTECH.Damage.Breakdown.ClassReduce";
   }
   if ((attack === "mecha" && target === "light") || (attack === "naval" && target === "mecha")) {
     return "ROBOTECH.Damage.Breakdown.ClassOverkill";
   }
-  if (attack === "naval" && target === "light") return "ROBOTECH.Damage.Breakdown.ClassOverkillHeavy";
-  if (attack === "light" && target === "naval") return "ROBOTECH.Damage.Breakdown.ClassImmune";
+  if (attack === "naval" && target === "light") {
+    return "ROBOTECH.Damage.Breakdown.ClassOverkillHeavy";
+  }
+  if (attack === "light" && target === "naval") {
+    return "ROBOTECH.Damage.Breakdown.ClassImmune";
+  }
   return null;
 }
 
@@ -406,7 +435,9 @@ function damageRow(key: string, data: Record<string, string | number>): string {
 }
 
 function distributionHtml(distribution: DamageDistribution | undefined): string {
-  if (!distribution) return "";
+  if (!distribution) {
+    return "";
+  }
   const rows = [
     distribution.structure > 0 ? assignedRow("ROBOTECH.Damage.Distribution.Structure", distribution.structure) : "",
     distribution.armor > 0 ? assignedRow("ROBOTECH.Damage.Distribution.Armor", distribution.armor) : "",
@@ -415,15 +446,17 @@ function distributionHtml(distribution: DamageDistribution | undefined): string 
       assignedRow("ROBOTECH.Damage.Distribution.Hardware", entry.amount, {
         name: entry.name,
         suffixKey: "ROBOTECH.Damage.Distribution.HardwareUnit",
-      }),
+      })
     ),
     distribution.unassigned > 0
       ? `<div class="rt-chat-breakdown-row">${signedDamage(distribution.unassigned)} ${game.i18n.localize(
-          "ROBOTECH.Damage.Distribution.Unassigned",
+          "ROBOTECH.Damage.Distribution.Unassigned"
         )}</div>`
       : "",
   ].filter(Boolean);
-  if (rows.length === 0) return "";
+  if (rows.length === 0) {
+    return "";
+  }
   return `<div class="rt-chat-distribution">
     <div class="rt-chat-distribution-title">${game.i18n.localize("ROBOTECH.Damage.Distribution.Title")}</div>
     ${rows.join("")}
@@ -441,24 +474,30 @@ function signedDamage(amount: number): string {
 }
 
 function opposedBlockHtml(kind: ActionChatKind, input: ActionCardInput): string {
-  if (kind !== "defend" || !input.incoming) return "";
+  if (kind !== "defend" || !input.incoming) {
+    return "";
+  }
   return `<div class="rt-chat-opposed">${metaRow(
     "ROBOTECH.Roll.AttackSuccesses",
-    String(input.incoming.attackSuccesses),
+    String(input.incoming.attackSuccesses)
   )}${metaRow("ROBOTECH.Roll.DefendSuccesses", String(input.successes))}</div>`;
 }
 
 function actionButtonsHtml(kind: ActionChatKind): string {
-  if (kind !== "attack" && kind !== "defend") return "";
+  if (kind !== "attack" && kind !== "defend") {
+    return "";
+  }
 
   const apply = `<button type="button" class="rt-chat-button" data-rt-action="apply-damage">${game.i18n.localize(
-    "ROBOTECH.Roll.ApplyDamage",
+    "ROBOTECH.Roll.ApplyDamage"
   )}</button>`;
 
-  if (kind === "defend") return `<div class="rt-chat-actions">${apply}</div>`;
+  if (kind === "defend") {
+    return `<div class="rt-chat-actions">${apply}</div>`;
+  }
 
   const defend = `<button type="button" class="rt-chat-button rt-chat-button--ghost" data-rt-action="defend">${game.i18n.localize(
-    "ROBOTECH.Roll.DefendButton",
+    "ROBOTECH.Roll.DefendButton"
   )}</button>`;
   return `<div class="rt-chat-actions">${defend}${apply}</div>`;
 }
@@ -468,7 +507,9 @@ function metaRow(labelKey: string, value: string): string {
 }
 
 function isChatFlags(value: unknown): value is ActionChatFlags {
-  if (!value || typeof value !== "object") return false;
+  if (!value || typeof value !== "object") {
+    return false;
+  }
   if (!("kind" in value) || !("action" in value) || !("contextUuid" in value) || !("successes" in value)) {
     return false;
   }

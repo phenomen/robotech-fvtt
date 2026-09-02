@@ -1,6 +1,7 @@
-import { type JSX, type ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
-import { SPACE_GAP, SPACE_PAD, type Space } from "@/components/ui/space";
+import { SPACE_GAP, SPACE_PAD } from "@/components/ui/space";
+import type { Space } from "@/components/ui/space";
 import { cn } from "@/utils";
 
 export type StackDirection = "row" | "column";
@@ -20,22 +21,22 @@ export interface StackProps {
 }
 
 const DIRECTION_CLASS: Record<StackDirection, string> = {
-  row: "flex-row",
   column: "flex-col",
+  row: "flex-row",
 };
 
 const ALIGN_CLASS: Record<StackAlign, string> = {
-  start: "items-start",
   center: "items-center",
   end: "items-end",
+  start: "items-start",
   stretch: "items-stretch",
 };
 
 const JUSTIFY_CLASS: Record<StackJustify, string> = {
-  start: "justify-start",
+  between: "justify-between",
   center: "justify-center",
   end: "justify-end",
-  between: "justify-between",
+  start: "justify-start",
 };
 
 export function Stack({
@@ -55,12 +56,12 @@ export function Stack({
         "flex min-w-0",
         DIRECTION_CLASS[direction],
         SPACE_GAP[gap],
-        pad !== undefined ? SPACE_PAD[pad] : undefined,
+        pad === undefined ? undefined : SPACE_PAD[pad],
         align ? ALIGN_CLASS[align] : undefined,
         justify ? JUSTIFY_CLASS[justify] : undefined,
         wrap && "flex-wrap",
         grow && "min-h-0 min-w-0 flex-1",
-        shrink && "shrink-0",
+        shrink && "shrink-0"
       )}
     >
       {children}

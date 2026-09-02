@@ -1,4 +1,5 @@
-﻿import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { ActorEffectsList } from "@/components/blocks/ActorEffectsList";
@@ -18,13 +19,23 @@ import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
-import { TabNav, type TabItem } from "@/components/ui/TabNav";
+import { TabNav } from "@/components/ui/TabNav";
+import type { TabItem } from "@/components/ui/TabNav";
 import { Textarea } from "@/components/ui/Textarea";
 import { GENERIC_SKILL_LABEL_KEYS } from "@/config/options";
 import type { ActorOf, FieldValue, ItemOf } from "@/models";
 import { filterItemsOf } from "@/utils";
 
 export type ActorTabType = "stats" | "skills" | "talents" | "equipment" | "description" | "effects";
+
+const ACTOR_TABS: TabItem<ActorTabType>[] = [
+  { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
+  { key: "skills", labelKey: "ROBOTECH.Tabs.Skills" },
+  { key: "talents", labelKey: "ROBOTECH.Tabs.Talents" },
+  { key: "equipment", labelKey: "ROBOTECH.Tabs.Equipment" },
+  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
+  { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" },
+];
 
 interface ActorSheetAppProps {
   actor: ActorOf<"character">;
@@ -34,24 +45,19 @@ async function addGenericSkills(actor: ActorOf<"character">): Promise<void> {
   const existing = new Set(filterItemsOf(actor, "skill").map((skill) => skill.name.toLowerCase()));
   const items = GENERIC_SKILL_LABEL_KEYS.flatMap((key) => {
     const name = game.i18n.localize(key);
-    if (existing.has(name.toLowerCase())) return [];
-    return [{ name, type: "skill" as const, system: { value: 1 } }];
+    if (existing.has(name.toLowerCase())) {
+      return [];
+    }
+    return [{ name, system: { value: 1 }, type: "skill" as const }];
   });
-  if (items.length === 0) return;
+  if (items.length === 0) {
+    return;
+  }
   await actor.createEmbeddedDocuments("Item", items);
 }
 
 export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<ActorTabType>("stats");
-
-  const actorTabs: TabItem<ActorTabType>[] = [
-    { key: "stats", label: game.i18n.localize("ROBOTECH.Tabs.Stats") },
-    { key: "skills", label: game.i18n.localize("ROBOTECH.Tabs.Skills") },
-    { key: "talents", label: game.i18n.localize("ROBOTECH.Tabs.Talents") },
-    { key: "equipment", label: game.i18n.localize("ROBOTECH.Tabs.Equipment") },
-    { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
-    { key: "effects", label: game.i18n.localize("ROBOTECH.Tabs.Effects") },
-  ];
 
   const system = actor.system;
 
@@ -75,7 +81,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
         </GridSystem>
       </SheetHeader>
 
-      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={actorTabs} />
+      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={ACTOR_TABS} />
 
       <SheetBody>
         {activeTab === "stats" && (
@@ -178,7 +184,9 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
                   <ProseMirrorField
                     name="system.description"
                     value={system.description}
-                    onChange={(val) => handleFieldChange("system.description", val)}
+                    onChange={(val) => {
+                      handleFieldChange("system.description", val);
+                    }}
                     minHeight="tall"
                   />
                 </Stack>

@@ -1,10 +1,11 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { LabelGrid, LabelRow, LabelRule } from "@/components/ui/LabelGrid";
 import { Stack } from "@/components/ui/Stack";
-import { GRADATION_KEYS, ROLL_MODIFIER_OPTIONS, type RollModifierValue } from "@/config";
+import { GRADATION_KEYS, ROLL_MODIFIER_OPTIONS } from "@/config";
+import type { RollModifierValue } from "@/config";
 import type { ActorOf, FieldValue, VesselSystemName } from "@/models";
 
 interface VesselSystemsBlockProps {
@@ -13,11 +14,11 @@ interface VesselSystemsBlockProps {
 }
 
 const ENGINE_STEPS = [
-  { level: 0, label: "0%" },
-  { level: 1, label: "25%" },
-  { level: 2, label: "50%" },
-  { level: 3, label: "75%" },
-  { level: 4, label: "100%" },
+  { label: "0%", level: 0 },
+  { label: "25%", level: 1 },
+  { label: "50%", level: 2 },
+  { label: "75%", level: 3 },
+  { label: "100%", level: 4 },
 ];
 
 export function VesselSystemsBlock({ actor, onFieldChange }: VesselSystemsBlockProps): JSX.Element {
@@ -47,7 +48,9 @@ export function VesselSystemsBlock({ actor, onFieldChange }: VesselSystemsBlockP
                 variant={isActive ? "primary" : "secondary"}
                 gradation={GRADATION_KEYS[index] ?? "neutral"}
                 full
-                onClick={() => setSystemLevel(sysName, option.value)}
+                onClick={() => {
+                  setSystemLevel(sysName, option.value);
+                }}
               >
                 {game.i18n.localize(option.labelKey)}
               </Button>
@@ -81,7 +84,9 @@ export function VesselSystemsBlock({ actor, onFieldChange }: VesselSystemsBlockP
                   variant={isActive ? "primary" : "secondary"}
                   gradation={GRADATION_KEYS[index] ?? "neutral"}
                   full
-                  onClick={() => setEngineLevel(step.level)}
+                  onClick={() => {
+                    setEngineLevel(step.level);
+                  }}
                 >
                   {step.label}
                 </Button>

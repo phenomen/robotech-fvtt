@@ -1,11 +1,12 @@
-import React, { useRef, type KeyboardEvent } from "react";
+import React, { useRef } from "react";
+import type { KeyboardEvent } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import { cn } from "@/utils";
 
 export interface TabItem<T extends string = string> {
   key: T;
-  label: string;
+  labelKey: string;
 }
 
 interface TabNavProps<T extends string = string> {
@@ -25,11 +26,18 @@ function TabNavInner<T extends string = string>({ activeTab, onTabChange, tabs }
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number): void => {
     const last = tabs.length - 1;
     let next: number | undefined;
-    if (event.key === "ArrowRight") next = index === last ? 0 : index + 1;
-    else if (event.key === "ArrowLeft") next = index === 0 ? last : index - 1;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = last;
-    if (next === undefined) return;
+    if (event.key === "ArrowRight") {
+      next = index === last ? 0 : index + 1;
+    } else if (event.key === "ArrowLeft") {
+      next = index === 0 ? last : index - 1;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = last;
+    }
+    if (next === undefined) {
+      return;
+    }
     event.preventDefault();
     moveFocus(next);
   };
@@ -58,12 +66,16 @@ function TabNavInner<T extends string = string>({ activeTab, onTabChange, tabs }
                 "border-none! bg-transparent! shadow-none!",
                 isActive ? "text-rt-primary" : "text-rt-muted hover:text-rt-primary",
                 isActive &&
-                  "after:bg-rt-primary after:absolute after:inset-x-0 after:bottom-[-1px] after:h-0.5 after:content-['']",
+                  "after:bg-rt-primary after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:content-['']"
               )}
-              onClick={() => onTabChange(t.key)}
-              onKeyDown={(event) => handleKeyDown(event, index)}
+              onClick={() => {
+                onTabChange(t.key);
+              }}
+              onKeyDown={(event) => {
+                handleKeyDown(event, index);
+              }}
             >
-              {t.label}
+              {game.i18n.localize(t.labelKey)}
             </button>
           );
         })}

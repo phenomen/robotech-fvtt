@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
 import { Field } from "@/components/ui/Field";
@@ -15,7 +15,9 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
         <Input
           width="full"
           value={system.element}
-          onChange={(e) => handleFieldChange("system.element", e.target.value)}
+          onChange={(e) => {
+            handleFieldChange("system.element", e.target.value);
+          }}
           placeholder={game.i18n.localize("ROBOTECH.Item.ElementPlaceholder")}
         />
       </Field>
@@ -23,7 +25,9 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
         <Input
           width="full"
           value={system.talent}
-          onChange={(e) => handleFieldChange("system.talent", e.target.value)}
+          onChange={(e) => {
+            handleFieldChange("system.talent", e.target.value);
+          }}
           placeholder={game.i18n.localize("ROBOTECH.Item.TalentPlaceholder")}
         />
       </Field>
@@ -33,14 +37,18 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
             controls
             min={0}
             value={system.rank}
-            onValueChange={(val) => handleFieldChange("system.rank", val ?? 1)}
+            onValueChange={(val) => {
+              handleFieldChange("system.rank", val ?? 1);
+            }}
           />
         </Field>
         <Field label={game.i18n.localize("ROBOTECH.Item.RankTitle")}>
           <Input
             width="full"
             value={system.rankTitle}
-            onChange={(e) => handleFieldChange("system.rankTitle", e.target.value)}
+            onChange={(e) => {
+              handleFieldChange("system.rankTitle", e.target.value);
+            }}
             placeholder={game.i18n.localize("ROBOTECH.Item.RankTitlePlaceholder")}
           />
         </Field>
@@ -51,14 +59,18 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
             controls
             min={0}
             value={system.fame}
-            onValueChange={(val) => handleFieldChange("system.fame", val ?? 0)}
+            onValueChange={(val) => {
+              handleFieldChange("system.fame", val ?? 0);
+            }}
           />
         </Field>
         <Field label={game.i18n.localize("ROBOTECH.Item.FameTitle")}>
           <Input
             width="full"
             value={system.fameTitle}
-            onChange={(e) => handleFieldChange("system.fameTitle", e.target.value)}
+            onChange={(e) => {
+              handleFieldChange("system.fameTitle", e.target.value);
+            }}
             placeholder={game.i18n.localize("ROBOTECH.Item.FameTitlePlaceholder")}
           />
         </Field>
@@ -67,7 +79,9 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
         <Input
           width="full"
           value={system.equipment}
-          onChange={(e) => handleFieldChange("system.equipment", e.target.value)}
+          onChange={(e) => {
+            handleFieldChange("system.equipment", e.target.value);
+          }}
           placeholder={game.i18n.localize("ROBOTECH.Item.EquipmentPlaceholder")}
         />
       </Field>

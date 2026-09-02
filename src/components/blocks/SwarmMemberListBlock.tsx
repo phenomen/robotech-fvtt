@@ -12,8 +12,7 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf, SwarmMember } from "@/models";
-import { useLinkedActors } from "@/utils";
-import { openActorSheet } from "@/utils";
+import { useLinkedActors, openActorSheet } from "@/utils";
 
 interface SwarmMemberListBlockProps {
   actor: ActorOf<"swarm">;
@@ -24,8 +23,12 @@ const NO_UUIDS: readonly string[] = [];
 /** A stack keeps structure on its lead vessel while any vessel is left, and none once emptied. */
 function withMemberPatch(member: SwarmMember, updates: Partial<SwarmMember>): SwarmMember {
   const next = { ...member, ...updates };
-  if (next.count <= 0) return { ...next, currentStructure: 0 };
-  if (next.currentStructure <= 0) return { ...next, currentStructure: next.reducedStructure };
+  if (next.count <= 0) {
+    return { ...next, currentStructure: 0 };
+  }
+  if (next.currentStructure <= 0) {
+    return { ...next, currentStructure: next.reducedStructure };
+  }
   return next;
 }
 
@@ -104,7 +107,13 @@ function SwarmMemberRow({
         </Stack>
 
         <Field label={game.i18n.localize("ROBOTECH.Swarm.Members.Armor")}>
-          <NumberInput value={member.armor} min={0} onValueChange={(val) => onUpdate(member.id, { armor: val ?? 0 })} />
+          <NumberInput
+            value={member.armor}
+            min={0}
+            onValueChange={(val) => {
+              onUpdate(member.id, { armor: val ?? 0 });
+            }}
+          />
         </Field>
 
         <Field
@@ -120,22 +129,39 @@ function SwarmMemberRow({
             value={member.currentStructure}
             min={member.count > 0 ? 1 : 0}
             max={member.reducedStructure}
-            onValueChange={(val) => onUpdate(member.id, { currentStructure: val ?? 0 })}
+            onValueChange={(val) => {
+              onUpdate(member.id, { currentStructure: val ?? 0 });
+            }}
           />
         </Field>
 
         <Field label={game.i18n.localize("ROBOTECH.Swarm.Members.Speed")}>
-          <NumberInput value={member.speed} min={0} onValueChange={(val) => onUpdate(member.id, { speed: val ?? 0 })} />
+          <NumberInput
+            value={member.speed}
+            min={0}
+            onValueChange={(val) => {
+              onUpdate(member.id, { speed: val ?? 0 });
+            }}
+          />
         </Field>
 
         <Field label={game.i18n.localize("ROBOTECH.Swarm.Members.Count")}>
-          <NumberInput value={member.count} min={0} controls onValueChange={(val) => onCountChange(member, val ?? 0)} />
+          <NumberInput
+            value={member.count}
+            min={0}
+            controls
+            onValueChange={(val) => {
+              onCountChange(member, val ?? 0);
+            }}
+          />
         </Field>
 
         <Button
           variant="danger"
           size="icon"
-          onClick={() => onDelete(member.id)}
+          onClick={() => {
+            onDelete(member.id);
+          }}
           title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
         >
           <Icon name="x" />
@@ -163,7 +189,7 @@ function MemberCrewList({ actorUuid }: { actorUuid: string }): JSX.Element {
       ) : (
         <Stack direction="row" gap={2} wrap>
           {crew.map((entry) =>
-            entry.actor ? <CrewChip key={entry.uuid} name={entry.actor.name} uuid={entry.uuid} /> : null,
+            entry.actor ? <CrewChip key={entry.uuid} name={entry.actor.name} uuid={entry.uuid} /> : null
           )}
         </Stack>
       )}

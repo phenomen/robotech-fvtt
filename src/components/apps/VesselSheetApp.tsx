@@ -1,4 +1,5 @@
-﻿import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { ActorEffectsList } from "@/components/blocks/ActorEffectsList";
 import { CrewListBlock } from "@/components/blocks/CrewListBlock";
@@ -15,7 +16,8 @@ import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
-import { TabNav, type TabItem } from "@/components/ui/TabNav";
+import { TabNav } from "@/components/ui/TabNav";
+import type { TabItem } from "@/components/ui/TabNav";
 import { ToggleGroup, ToggleItem } from "@/components/ui/ToggleGroup";
 import { VESSEL_MODE_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
@@ -25,6 +27,14 @@ interface VesselSheetAppProps {
 }
 
 export type VesselTabType = "stats" | "equipment" | "crew" | "description" | "effects";
+
+const VESSEL_TABS: TabItem<VesselTabType>[] = [
+  { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
+  { key: "equipment", labelKey: "ROBOTECH.Tabs.Equipment" },
+  { key: "crew", labelKey: "ROBOTECH.Tabs.Crew" },
+  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
+  { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" },
+];
 
 export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<VesselTabType>("stats");
@@ -36,14 +46,6 @@ export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
   const handleFieldChange = (path: string, val: FieldValue) => {
     void actor.update({ [path]: val });
   };
-
-  const vesselTabs: TabItem<VesselTabType>[] = [
-    { key: "stats", label: game.i18n.localize("ROBOTECH.Tabs.Stats") },
-    { key: "equipment", label: game.i18n.localize("ROBOTECH.Tabs.Equipment") },
-    { key: "crew", label: game.i18n.localize("ROBOTECH.Tabs.Crew") },
-    { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
-    { key: "effects", label: game.i18n.localize("ROBOTECH.Tabs.Effects") },
-  ];
 
   return (
     <Sheet>
@@ -57,7 +59,7 @@ export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
         </GridSystem>
       </SheetHeader>
 
-      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={vesselTabs} />
+      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={VESSEL_TABS} />
 
       <SheetBody>
         {activeTab === "stats" && (
@@ -82,11 +84,18 @@ export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
                   <Stack direction="row" gap={3} align="center" justify="between">
                     <Checkbox
                       checked={system.transformable}
-                      onCheckedChange={(val) => handleFieldChange("system.transformable", val)}
+                      onCheckedChange={(val) => {
+                        handleFieldChange("system.transformable", val);
+                      }}
                       label={game.i18n.localize("ROBOTECH.Vessel.Transformable")}
                     />
                     {system.transformable && (
-                      <ToggleGroup value={system.mode} onValueChange={(val) => handleFieldChange("system.mode", val)}>
+                      <ToggleGroup
+                        value={system.mode}
+                        onValueChange={(val) => {
+                          handleFieldChange("system.mode", val);
+                        }}
+                      >
                         {VESSEL_MODE_OPTIONS.map((option) => (
                           <ToggleItem key={option.value} value={option.value}>
                             {game.i18n.localize(option.labelKey)}
@@ -141,7 +150,9 @@ export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
                   <ProseMirrorField
                     name="system.description"
                     value={system.description}
-                    onChange={(val) => handleFieldChange("system.description", val)}
+                    onChange={(val) => {
+                      handleFieldChange("system.description", val);
+                    }}
                     minHeight="tall"
                   />
                 </Stack>

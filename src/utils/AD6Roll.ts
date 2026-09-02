@@ -24,18 +24,30 @@ export function calcDieSuccess(die: number, modifier: RollModifierValue): number
     return die === 6 ? 2 : 0;
   }
   if (modifier === "nominal") {
-    if (die === 6) return 2;
-    if (die === 5) return 1;
+    if (die === 6) {
+      return 2;
+    }
+    if (die === 5) {
+      return 1;
+    }
     return 0;
   }
   if (modifier === "edge") {
-    if (die === 6) return 2;
-    if (die >= 4) return 1;
+    if (die === 6) {
+      return 2;
+    }
+    if (die >= 4) {
+      return 1;
+    }
     return 0;
   }
   if (modifier === "advantage") {
-    if (die >= 5) return 2;
-    if (die === 4) return 1;
+    if (die >= 5) {
+      return 2;
+    }
+    if (die === 4) {
+      return 1;
+    }
     return 0;
   }
   return 0;
@@ -53,5 +65,5 @@ export async function evaluateAd6Roll(options: RollOptions): Promise<Ad6RollResu
     return { die, successes: dieSuccesses };
   });
 
-  return { roll, successes, dice };
+  return { dice, roll, successes };
 }

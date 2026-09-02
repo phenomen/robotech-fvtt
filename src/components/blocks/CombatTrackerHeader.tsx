@@ -1,5 +1,5 @@
 import type Combat from "@client/documents/combat.mjs";
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { ContextAnchor } from "@/components/ui/ContextAnchor";
@@ -7,8 +7,19 @@ import { Icon } from "@/components/ui/Icon";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import { ToggleGroup, ToggleItem } from "@/components/ui/ToggleGroup";
-import { COMBAT_PHASE_OPTIONS, type CombatPhaseValue } from "@/config/options";
+import { COMBAT_PHASE_OPTIONS } from "@/config/options";
+import type { CombatPhaseValue } from "@/config/options";
 import { changePhase, combatPhaseOf, COMBAT_DOCUMENT_TYPE } from "@/utils/combat";
+
+function encounterStatus(combat: Combat | null): string {
+  if (!combat) {
+    return game.i18n.localize("ROBOTECH.Combat.NoEncounter");
+  }
+  if (combat.started) {
+    return game.i18n.localize("ROBOTECH.Combat.Round", { n: combat.round });
+  }
+  return game.i18n.localize("ROBOTECH.Combat.NotStarted");
+}
 
 interface CombatTrackerHeaderProps {
   combat: Combat | null;
@@ -19,12 +30,10 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
   const isGM = game.user?.isGM === true;
   const phase = combat ? combatPhaseOf(combat) : "communication";
 
-  const handleCreate = () => {
-    void createEncounter();
-  };
-
   const handlePhase = (value: string) => {
-    if (!combat || !isGM) return;
+    if (!combat || !isGM) {
+      return;
+    }
     void changePhase(combat, value as CombatPhaseValue);
   };
 
@@ -48,7 +57,7 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
               type="button"
               size="icon"
               title={game.i18n.localize("ROBOTECH.Combat.Create")}
-              onClick={handleCreate}
+              onClick={() => void createEncounter()}
             >
               <Icon name="add" />
             </Button>
@@ -74,11 +83,7 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
       </Stack>
 
       <Text variant="label" align="center">
-        {combat
-          ? combat.started
-            ? game.i18n.localize("ROBOTECH.Combat.Round", { n: combat.round })
-            : game.i18n.localize("ROBOTECH.Combat.NotStarted")
-          : game.i18n.localize("ROBOTECH.Combat.NoEncounter")}
+        {encounterStatus(combat)}
       </Text>
 
       {combat ? (
@@ -97,5 +102,7 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
 async function createEncounter(): Promise<void> {
   const created = await foundry.documents.Combat.implementation.create({ type: COMBAT_DOCUMENT_TYPE });
   const combat = (Array.isArray(created) ? created[0] : created) as foundry.documents.Combat | undefined;
-  if (combat) await combat.activate({ render: false });
+  if (combat) {
+    await combat.activate({ render: false });
+  }
 }

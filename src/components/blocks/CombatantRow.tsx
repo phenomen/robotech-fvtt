@@ -1,6 +1,6 @@
 import type Combat from "@client/documents/combat.mjs";
 import type Combatant from "@client/documents/combatant.mjs";
-import { type DragEvent, type JSX } from "react";
+import type { DragEvent, JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { Button } from "@/components/ui/Button";
@@ -22,6 +22,16 @@ import {
 } from "@/utils/combat";
 
 const DRAG_TYPE = "robotech-combatant";
+
+function combatantTone(active: boolean, defeated: boolean): "primary" | "default" | "secondary" {
+  if (active) {
+    return "primary";
+  }
+  if (defeated) {
+    return "default";
+  }
+  return "secondary";
+}
 
 interface CombatantRowProps {
   combat: Combat;
@@ -46,17 +56,23 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
   const canAct = canEdit && !!actor && (skillsLeft > 0 || !usage.suiteUsed) && !inComms && !combatant.isDefeated;
 
   const handleInitiative = (value: number | null) => {
-    if (!isGM) return;
+    if (!isGM) {
+      return;
+    }
     void combatant.update({ initiative: value });
   };
 
   const handleRoll = () => {
-    if (!actor) return;
+    if (!actor) {
+      return;
+    }
     void openActionCenter(actor, { action: "initiative" });
   };
 
   const handleAct = () => {
-    if (!actor || !canAct) return;
+    if (!actor || !canAct) {
+      return;
+    }
     void openActionCenter(actor, { combatantId: combatant.id ?? undefined });
   };
 
@@ -66,17 +82,23 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
   };
 
   const handleDragOver = (event: DragEvent<HTMLElement>) => {
-    if (!isGM) return;
+    if (!isGM) {
+      return;
+    }
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
 
   const handleDrop = (event: DragEvent<HTMLElement>) => {
-    if (!isGM) return;
+    if (!isGM) {
+      return;
+    }
     event.preventDefault();
     const draggedId = event.dataTransfer.getData(DRAG_TYPE);
     const targetId = combatant.id;
-    if (!draggedId || !targetId || draggedId === targetId) return;
+    if (!draggedId || !targetId || draggedId === targetId) {
+      return;
+    }
     void reorderTurns(combat, draggedId, targetId);
   };
 
@@ -86,7 +108,7 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
       active={active}
       hidden={combatant.hidden}
       defeated={combatant.isDefeated}
-      tone={active ? "primary" : combatant.isDefeated ? "default" : "secondary"}
+      tone={combatantTone(active, combatant.isDefeated)}
       draggable={isGM}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
@@ -159,10 +181,14 @@ async function reorderTurns(combat: Combat, draggedId: string, targetId: string)
   const ids = combat.turns.map((entry) => entry.id).filter((id): id is string => Boolean(id));
   const from = ids.indexOf(draggedId);
   const to = ids.indexOf(targetId);
-  if (from < 0 || to < 0) return;
+  if (from === -1 || to === -1) {
+    return;
+  }
   const next = [...ids];
   const [moved] = next.splice(from, 1);
-  if (!moved) return;
+  if (!moved) {
+    return;
+  }
   next.splice(to, 0, moved);
   await writeTurnOrder(combat, next);
 }

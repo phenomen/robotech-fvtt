@@ -18,29 +18,27 @@ export interface ToggleGroupProps {
   children: React.ReactNode;
 }
 
-export const ToggleGroup = React.memo(function ToggleGroup({
-  value,
-  onValueChange,
-  disabled = false,
-  children,
-}: ToggleGroupProps): React.JSX.Element {
-  const handleSelect = useCallback(
-    (itemValue: string) => {
-      onValueChange?.(itemValue);
-    },
-    [onValueChange],
-  );
+export const ToggleGroup = React.memo(
+  ({ value, onValueChange, disabled = false, children }: ToggleGroupProps): React.JSX.Element => {
+    const handleSelect = useCallback(
+      (itemValue: string) => {
+        onValueChange?.(itemValue);
+      },
+      [onValueChange]
+    );
 
-  const contextValue = useMemo(() => ({ value, onSelect: handleSelect, disabled }), [value, handleSelect, disabled]);
+    const contextValue = useMemo(() => ({ disabled, onSelect: handleSelect, value }), [value, handleSelect, disabled]);
 
-  return (
-    <ToggleGroupContext.Provider value={contextValue}>
-      <Stack direction="row" gap={1} align="center">
-        {children}
-      </Stack>
-    </ToggleGroupContext.Provider>
-  );
-});
+    return (
+      <ToggleGroupContext.Provider value={contextValue}>
+        <Stack direction="row" gap={1} align="center">
+          {children}
+        </Stack>
+      </ToggleGroupContext.Provider>
+    );
+  }
+);
+ToggleGroup.displayName = "ToggleGroup";
 
 export interface ToggleItemProps {
   value: string;
@@ -48,28 +46,27 @@ export interface ToggleItemProps {
   children: React.ReactNode;
 }
 
-export const ToggleItem = React.memo(function ToggleItem({
-  value: itemValue,
-  disabled = false,
-  children,
-}: ToggleItemProps): React.JSX.Element {
-  const ctx = useContext(ToggleGroupContext);
-  const isSelected = ctx?.value === itemValue;
-  const isDisabled = disabled || ctx?.disabled || false;
+export const ToggleItem = React.memo(
+  ({ value: itemValue, disabled = false, children }: ToggleItemProps): React.JSX.Element => {
+    const ctx = useContext(ToggleGroupContext);
+    const isSelected = ctx?.value === itemValue;
+    const isDisabled = (disabled || ctx?.disabled) ?? false;
 
-  const handleClick = useCallback(() => {
-    ctx?.onSelect(itemValue);
-  }, [ctx, itemValue]);
+    const handleClick = useCallback(() => {
+      ctx?.onSelect(itemValue);
+    }, [ctx, itemValue]);
 
-  return (
-    <Button
-      type="button"
-      size="small"
-      variant={isSelected ? "primary" : "secondary"}
-      disabled={isDisabled}
-      onClick={handleClick}
-    >
-      {children}
-    </Button>
-  );
-});
+    return (
+      <Button
+        type="button"
+        size="small"
+        variant={isSelected ? "primary" : "secondary"}
+        disabled={isDisabled}
+        onClick={handleClick}
+      >
+        {children}
+      </Button>
+    );
+  }
+);
+ToggleItem.displayName = "ToggleItem";

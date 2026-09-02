@@ -1,4 +1,5 @@
-import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { ReactDialog } from "@/components/apps/ReactDialog";
 import { Button } from "@/components/ui/Button";
@@ -19,10 +20,8 @@ import {
   initialAmountsOf,
   selectedSlotsOf,
   toggleHardwareSlot,
-  type DamageAmounts,
-  type DamagePreview,
-  type DamageSink,
 } from "@/utils/applyDamage";
+import type { DamageAmounts, DamagePreview, DamageSink } from "@/utils/applyDamage";
 
 interface DamageDialogContentProps {
   preview: DamagePreview;
@@ -51,9 +50,12 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
     setAmounts((current) => toggleHardwareSlot(current, sink, index, checked, damage));
   };
 
-  const handleApply = (): void => {
-    if (!canApply) return;
-    void commitDamage(preview, amounts).then(() => onClose());
+  const handleApply = async (): Promise<void> => {
+    if (!canApply) {
+      return;
+    }
+    await commitDamage(preview, amounts);
+    onClose();
   };
 
   return (
@@ -62,8 +64,8 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
         <Text variant="label" color="primary">
           {game.i18n.localize("ROBOTECH.Damage.DistributeHint", {
             damage: incoming,
-            type: typeLabel,
             name: preview.actor.name,
+            type: typeLabel,
           })}
         </Text>
         {preview.incoming.calledShot && (
@@ -105,7 +107,7 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
         <Button size="medium" variant="outline" onClick={onClose}>
           {game.i18n.localize("ROBOTECH.Buttons.Cancel")}
         </Button>
-        <Button size="medium" variant="primary" disabled={!canApply} onClick={handleApply}>
+        <Button size="medium" variant="primary" disabled={!canApply} onClick={() => void handleApply()}>
           {game.i18n.localize("ROBOTECH.Roll.ApplyDamage")}
         </Button>
       </Stack>
@@ -137,7 +139,15 @@ function SinkRow({ sink, amounts, onChange }: SinkRowProps): JSX.Element {
         </>
       }
     >
-      <NumberInput min={0} max={sink.maxAssign} controls value={value} onValueChange={(next) => onChange(sink, next)} />
+      <NumberInput
+        min={0}
+        max={sink.maxAssign}
+        controls
+        value={value}
+        onValueChange={(next) => {
+          onChange(sink, next);
+        }}
+      />
     </Field>
   );
 }
@@ -152,6 +162,7 @@ interface HardwareRowProps {
 function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): JSX.Element {
   const slots = sink.destroyed ?? [];
   const selected = selectedSlotsOf(sink, amounts);
+  const selectedSet = new Set(selected);
   const canSpend = remaining > 0 || amounts.structure > 0;
   const label = sink.name ?? game.i18n.localize(sink.labelKey);
 
@@ -162,10 +173,11 @@ function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): 
       </Label>
       <Stack direction="row" gap={1} align="center" justify="end" wrap shrink>
         {slots.map((wasDestroyed, index) => {
-          const assigned = selected.includes(index);
+          const assigned = selectedSet.has(index);
           return (
             <Checkbox
-              key={index}
+              // oxlint-disable-next-line react-doctor/no-array-index-as-key
+              key={`slot-${index}`}
               checked={wasDestroyed || assigned}
               disabled={wasDestroyed || (!assigned && !canSpend)}
               variant="danger"
@@ -173,7 +185,9 @@ function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): 
                 current: index + 1,
                 total: slots.length,
               })}
-              onCheckedChange={(checked) => onToggle(sink, index, checked)}
+              onCheckedChange={(checked) => {
+                onToggle(sink, index, checked);
+              }}
             />
           );
         })}
@@ -184,21 +198,21 @@ function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): 
 
 export class DamageDialogApp extends ReactDialog {
   constructor(
-    private preview: DamagePreview,
-    options: AppOptions = {},
+    private readonly preview: DamagePreview,
+    options: AppOptions = {}
   ) {
     super(options);
   }
 
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    id: "robotech-damage-dialog",
     classes: ["robotech", "dialog", "damage-dialog"],
-    position: { width: 420, height: "auto" },
+    id: "robotech-damage-dialog",
+    position: { height: "auto", width: 420 },
     window: {
       ...super.DEFAULT_OPTIONS.window,
-      title: "ROBOTECH.Damage.DistributeTitle",
       resizable: false,
+      title: "ROBOTECH.Damage.DistributeTitle",
     },
   };
 
@@ -207,7 +221,9 @@ export class DamageDialogApp extends ReactDialog {
   }
 
   override _onClose(options: CloseOptions): void {
-    if (currentApp === this) currentApp = null;
+    if (currentApp === this) {
+      currentApp = null;
+    }
     super._onClose(options);
   }
 }
@@ -216,7 +232,9 @@ let currentApp: DamageDialogApp | null = null;
 
 export function openDamageDialog(preview: DamagePreview): void {
   void (async () => {
-    if (currentApp) await currentApp.close();
+    if (currentApp) {
+      await currentApp.close();
+    }
     currentApp = new DamageDialogApp(preview);
     void currentApp.render(true);
   })();

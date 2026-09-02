@@ -1,15 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type JSX,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties, JSX, ReactNode } from "react";
 
-import { SPACE_PAD, type Space } from "@/components/ui/space";
+import { SPACE_PAD } from "@/components/ui/space";
+import type { Space } from "@/components/ui/space";
 import { cn } from "@/utils";
 
 interface GridSystemValue {
@@ -19,9 +12,9 @@ interface GridSystemValue {
 }
 
 const GridSystemContext = createContext<GridSystemValue>({
-  guideWidth: 1,
   dashedGuides: false,
   debug: false,
+  guideWidth: 1,
 });
 
 export interface GridSystemProps {
@@ -37,8 +30,9 @@ export function GridSystem({
   dashedGuides = false,
   debug = false,
 }: GridSystemProps): JSX.Element {
+  const value = useMemo(() => ({ dashedGuides, debug, guideWidth }), [dashedGuides, debug, guideWidth]);
   return (
-    <GridSystemContext.Provider value={{ guideWidth, dashedGuides, debug }}>
+    <GridSystemContext.Provider value={value}>
       <div className="relative w-full min-w-0 overflow-hidden">{children}</div>
     </GridSystemContext.Provider>
   );
@@ -52,45 +46,49 @@ interface GridLines {
 }
 
 const GridLinesContext = createContext<GridLines>({
-  vertical: [],
-  horizontal: [],
-  width: 0,
   height: 0,
+  horizontal: [],
+  vertical: [],
+  width: 0,
 });
 
 function parseTrackSizes(template: string): number[] {
   return template
-    .split(/(?<=px)\s+/)
-    .map((part) => Number.parseFloat(part))
+    .split(/(?<=px)\s+/u)
+    .map(Number)
     .filter((size) => Number.isFinite(size));
 }
 
 function trackStops(sizes: number[], start: number, gap: number): number[] {
   const stops = [0];
   let acc = start;
-  for (let i = 0; i < sizes.length; i++) {
+  for (let i = 0; i < sizes.length; i += 1) {
     const size = sizes[i];
-    if (size === undefined) continue;
+    if (size === undefined) {
+      continue;
+    }
     acc += size;
     stops.push(acc);
-    if (i < sizes.length - 1) acc += gap;
+    if (i < sizes.length - 1) {
+      acc += gap;
+    }
   }
   return stops;
 }
 
 function readLines(el: HTMLElement): GridLines {
   const style = getComputedStyle(el);
-  const padLeft = Number.parseFloat(style.paddingLeft) || 0;
-  const padTop = Number.parseFloat(style.paddingTop) || 0;
-  const colGap = Number.parseFloat(style.columnGap) || 0;
-  const rowGap = Number.parseFloat(style.rowGap) || 0;
+  const padLeft = Number(style.paddingLeft) || 0;
+  const padTop = Number(style.paddingTop) || 0;
+  const colGap = Number(style.columnGap) || 0;
+  const rowGap = Number(style.rowGap) || 0;
   const vertical = parseTrackSizes(style.gridTemplateColumns);
   const horizontal = parseTrackSizes(style.gridTemplateRows);
   return {
-    vertical: vertical.length > 0 ? trackStops(vertical, padLeft, colGap) : [0, el.offsetWidth],
-    horizontal: horizontal.length > 0 ? trackStops(horizontal, padTop, rowGap) : [0, el.offsetHeight],
-    width: el.offsetWidth,
     height: el.offsetHeight,
+    horizontal: horizontal.length > 0 ? trackStops(horizontal, padTop, rowGap) : [0, el.offsetHeight],
+    vertical: vertical.length > 0 ? trackStops(vertical, padLeft, colGap) : [0, el.offsetWidth],
+    width: el.offsetWidth,
   };
 }
 
@@ -105,10 +103,10 @@ function cellBox(grid: HTMLElement, cell: Element): CellBox {
   const gridRect = grid.getBoundingClientRect();
   const rect = cell.getBoundingClientRect();
   return {
+    bottom: rect.bottom - gridRect.top,
     left: rect.left - gridRect.left,
     right: rect.right - gridRect.left,
     top: rect.top - gridRect.top,
-    bottom: rect.bottom - gridRect.top,
   };
 }
 
@@ -123,13 +121,19 @@ function spansAcross(boxes: CellBox[], x: number, y: number): boolean {
 function findCrosses(grid: HTMLElement, lines: GridLines): { x: number; y: number }[] {
   const xs = lines.vertical.slice(1, -1);
   const ys = lines.horizontal.slice(1, -1);
-  if (xs.length === 0 || ys.length === 0) return [];
+  if (xs.length === 0 || ys.length === 0) {
+    return [];
+  }
   const boxes = [...grid.querySelectorAll("[data-grid-cell]")].map((cell) => cellBox(grid, cell));
-  if (boxes.length === 0) return [];
+  if (boxes.length === 0) {
+    return [];
+  }
   const points: { x: number; y: number }[] = [];
   for (const x of xs) {
     for (const y of ys) {
-      if (spansAcross(boxes, x, y - 4) && spansAcross(boxes, x, y + 4)) continue;
+      if (spansAcross(boxes, x, y - 4) && spansAcross(boxes, x, y + 4)) {
+        continue;
+      }
       points.push({ x, y });
     }
   }
@@ -164,16 +168,20 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
   const { guideWidth, dashedGuides, debug } = useContext(GridSystemContext);
   const ref = useRef<HTMLDivElement>(null);
   const [lines, setLines] = useState<GridLines>({
-    vertical: [],
-    horizontal: [],
-    width: 0,
     height: 0,
+    horizontal: [],
+    vertical: [],
+    width: 0,
   });
   const [crosses, setCrosses] = useState<{ x: number; y: number }[]>([]);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el) {
+      return () => {
+        /* grid not mounted */
+      };
+    }
     const update = (): void => {
       const next = readLines(el);
       setLines((prev) => (sameLines(prev, next) ? prev : next));
@@ -199,15 +207,15 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
       observer.disconnect();
       mutation.disconnect();
     };
-  }, [columns, rows, hideGuides]);
+  }, [hideGuides]);
 
   const style: CSSProperties = {
-    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-    gridTemplateRows: rows !== undefined ? `repeat(${rows}, minmax(0, auto))` : undefined,
+    backgroundColor: guideColor(dashedGuides, debug),
     columnGap: hideGuides === "column" ? 0 : guideWidth,
-    rowGap: hideGuides === "row" ? 0 : guideWidth,
+    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+    gridTemplateRows: rows === undefined ? undefined : `repeat(${rows}, minmax(0, auto))`,
     padding: guideWidth,
-    backgroundColor: dashedGuides ? undefined : debug ? "var(--rt-primary)" : "var(--rt-border)",
+    rowGap: hideGuides === "row" ? 0 : guideWidth,
   };
 
   return (
@@ -258,11 +266,11 @@ function GuideOverlay({ lines, hideGuides, guideWidth, dashed, debug }: GuideOve
             key={`v-${x}`}
             className="absolute top-0 h-full"
             style={{
+              borderLeftColor: color,
+              borderLeftStyle: stroke,
+              borderLeftWidth: guideWidth,
               left: lines.width > guideWidth ? Math.min(x, lines.width - guideWidth) : x,
               width: 0,
-              borderLeftWidth: guideWidth,
-              borderLeftStyle: stroke,
-              borderLeftColor: color,
             }}
           />
         ))}
@@ -272,11 +280,11 @@ function GuideOverlay({ lines, hideGuides, guideWidth, dashed, debug }: GuideOve
             key={`h-${y}`}
             className="absolute left-0 w-full"
             style={{
-              top: lines.height > guideWidth ? Math.min(y, lines.height - guideWidth) : y,
-              height: 0,
-              borderTopWidth: guideWidth,
-              borderTopStyle: stroke,
               borderTopColor: color,
+              borderTopStyle: stroke,
+              borderTopWidth: guideWidth,
+              height: 0,
+              top: lines.height > guideWidth ? Math.min(y, lines.height - guideWidth) : y,
             }}
           />
         ))}
@@ -287,9 +295,9 @@ function GuideOverlay({ lines, hideGuides, guideWidth, dashed, debug }: GuideOve
 export type GridCellTone = "default" | "info" | "danger" | "hollow";
 
 const TONE_MIX: Record<Exclude<GridCellTone, "default">, string> = {
-  info: "color-mix(in srgb, var(--rt-primary) 10%, var(--rt-background))",
   danger: "color-mix(in srgb, var(--rt-danger) 10%, var(--rt-background))",
   hollow: "var(--rt-background)",
+  info: "color-mix(in srgb, var(--rt-primary) 10%, var(--rt-background))",
 };
 
 export interface GridCellProps {
@@ -301,8 +309,27 @@ export interface GridCellProps {
   children?: ReactNode;
 }
 
+function guideColor(dashedGuides: boolean, debug: boolean): string | undefined {
+  if (dashedGuides) {
+    return undefined;
+  }
+  if (debug) {
+    return "var(--rt-primary)";
+  }
+  return "var(--rt-border)";
+}
+
+function cellSurfaceClass(toneFill: string | undefined, solid: boolean): string {
+  if (toneFill || !solid) {
+    return "bg-rt-background";
+  }
+  return "bg-rt-secondary";
+}
+
 function gridLine(value: string | number | undefined): string | undefined {
-  if (value === undefined) return undefined;
+  if (value === undefined) {
+    return undefined;
+  }
   return String(value);
 }
 
@@ -313,13 +340,13 @@ export function GridCell({ column, row, solid = false, tone = "default", pad, ch
       data-grid-cell=""
       className={cn(
         "relative min-w-0",
-        toneFill ? "bg-rt-background" : solid ? "bg-rt-secondary" : "bg-rt-background",
-        pad !== undefined ? SPACE_PAD[pad] : undefined,
+        cellSurfaceClass(toneFill, solid),
+        pad === undefined ? undefined : SPACE_PAD[pad]
       )}
       style={{
+        backgroundColor: toneFill,
         gridColumn: gridLine(column),
         gridRow: gridLine(row),
-        backgroundColor: toneFill,
       }}
     >
       {children}
@@ -344,8 +371,8 @@ function CrossMark({ x, y, guideWidth }: CrossMarkProps): JSX.Element {
   const span = CROSS_ARM * 2 + guideWidth;
   return (
     <div className="pointer-events-none absolute" style={{ left: x, top: y }}>
-      <div className="bg-rt-primary absolute" style={{ left: -CROSS_ARM, top: 0, width: span, height: guideWidth }} />
-      <div className="bg-rt-primary absolute" style={{ left: 0, top: -CROSS_ARM, width: guideWidth, height: span }} />
+      <div className="bg-rt-primary absolute" style={{ height: guideWidth, left: -CROSS_ARM, top: 0, width: span }} />
+      <div className="bg-rt-primary absolute" style={{ height: span, left: 0, top: -CROSS_ARM, width: guideWidth }} />
     </div>
   );
 }
@@ -355,7 +382,9 @@ export function GridCross({ column, row }: GridCrossProps): JSX.Element | null {
   const lines = useContext(GridLinesContext);
   const x = lines.vertical[column - 1];
   const y = lines.horizontal[row - 1];
-  if (x === undefined || y === undefined) return null;
+  if (x === undefined || y === undefined) {
+    return null;
+  }
   return <CrossMark x={x} y={y} guideWidth={guideWidth} />;
 }
 

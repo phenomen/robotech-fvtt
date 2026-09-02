@@ -4,7 +4,9 @@ import { evaluateAd6Roll } from "@/utils/AD6Roll";
 import { actorFromUuid, isSceneActor } from "@/utils/documents";
 
 export async function linkPlotEvent(conflict: ActorOf<"conflict">, plotEventUuid: string): Promise<void> {
-  if (!plotEventUuid) return;
+  if (!plotEventUuid) {
+    return;
+  }
   if (conflict.system.plotEventUuid === plotEventUuid) {
     ui.notifications.warn(game.i18n.localize("ROBOTECH.Conflict.AlreadyLinked"));
     return;
@@ -21,10 +23,14 @@ export async function linkPlotEvent(conflict: ActorOf<"conflict">, plotEventUuid
   }
 
   const previousUuid = conflict.system.plotEventUuid;
-  if (previousUuid) await detachFromEvent(conflict, previousUuid);
+  if (previousUuid) {
+    await detachFromEvent(conflict, previousUuid);
+  }
 
   const conflictUuid = conflict.uuid;
-  if (!conflictUuid) return;
+  if (!conflictUuid) {
+    return;
+  }
 
   const nextIds = plotEvent.system.conflictUuids.includes(conflictUuid)
     ? plotEvent.system.conflictUuids
@@ -42,7 +48,9 @@ export async function unlinkPlotEvent(conflict: ActorOf<"conflict">): Promise<vo
       ui.notifications.error(game.i18n.localize("ROBOTECH.Sheet.NoPermission"));
       return;
     }
-    if (plotEvent) await detachFromEvent(conflict, previousUuid);
+    if (plotEvent) {
+      await detachFromEvent(conflict, previousUuid);
+    }
   }
   await conflict.update({ "system.plotEventUuid": "" });
 }
@@ -59,7 +67,9 @@ export async function addEventConflict(plotEvent: ActorOf<"plot_event">, conflic
   }
 
   const plotUuid = plotEvent.uuid;
-  if (!plotUuid) return;
+  if (!plotUuid) {
+    return;
+  }
   await linkPlotEvent(conflict, plotUuid);
 }
 
@@ -101,31 +111,35 @@ export async function rollConflictPool(conflict: ActorOf<"conflict">): Promise<v
   const result = await evaluateAd6Roll({ diceCount: pool, modifier: "nominal" });
   await postPoolCard({
     actor: conflict,
-    title: game.i18n.localize("ROBOTECH.Conflict.PoolRollTitle", { name: conflict.name }),
-    modifier: "nominal",
-    diceCount: pool,
     dice: result.dice,
-    successes: result.successes,
+    diceCount: pool,
+    modifier: "nominal",
     roll: result.roll,
+    successes: result.successes,
+    title: game.i18n.localize("ROBOTECH.Conflict.PoolRollTitle", { name: conflict.name }),
   });
 }
 
 async function detachFromEvent(conflict: ActorOf<"conflict">, plotEventUuid: string): Promise<void> {
   const plotEvent = await plotEventOf(plotEventUuid);
-  if (!plotEvent?.isOwner) return;
+  if (!plotEvent?.isOwner) {
+    return;
+  }
 
   const conflictUuid = conflict.uuid;
-  if (!conflictUuid) return;
+  if (!conflictUuid) {
+    return;
+  }
 
   await plotEvent.update({
     "system.conflictUuids": plotEvent.system.conflictUuids.filter((id) => id !== conflictUuid),
   });
 }
 
-function plotEventOf(uuid: string): Promise<ActorOf<"plot_event"> | null> {
-  return actorFromUuid(uuid, ["plot_event"]);
+async function plotEventOf(uuid: string): Promise<ActorOf<"plot_event"> | null> {
+  return await actorFromUuid(uuid, ["plot_event"]);
 }
 
-function conflictOf(uuid: string): Promise<ActorOf<"conflict"> | null> {
-  return actorFromUuid(uuid, ["conflict"]);
+async function conflictOf(uuid: string): Promise<ActorOf<"conflict"> | null> {
+  return await actorFromUuid(uuid, ["conflict"]);
 }

@@ -1,4 +1,5 @@
-import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { ReactDialog } from "@/components/apps/ReactDialog";
 import { Button } from "@/components/ui/Button";
@@ -57,7 +58,9 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
           min={0}
           max={MAX_BRAWL_WOUNDS}
           value={brawl}
-          onValueChange={(val) => setBrawl(clamp(val, MAX_BRAWL_WOUNDS))}
+          onValueChange={(val) => {
+            setBrawl(clamp(val, MAX_BRAWL_WOUNDS));
+          }}
         />
       </Field>
 
@@ -76,7 +79,9 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
           min={0}
           max={MAX_CRITICAL_WOUNDS}
           value={critical}
-          onValueChange={(val) => setCritical(clamp(val, MAX_CRITICAL_WOUNDS))}
+          onValueChange={(val) => {
+            setCritical(clamp(val, MAX_CRITICAL_WOUNDS));
+          }}
         />
       </Field>
 
@@ -108,19 +113,19 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
 
 export class VitalsSettingsApp extends ReactDialog {
   constructor(
-    private actor: ActorOf<"character">,
-    options: AppOptions = {},
+    private readonly actor: ActorOf<"character">,
+    options: AppOptions = {}
   ) {
     super(options);
   }
 
   static override DEFAULT_OPTIONS = {
-    id: "robotech-vitals-settings",
     classes: ["robotech", "dialog", "vitals-settings"],
-    position: { width: 400, height: "auto" },
+    id: "robotech-vitals-settings",
+    position: { height: "auto", width: 400 },
     window: {
-      title: "ROBOTECH.Wounds.Settings",
       resizable: false,
+      title: "ROBOTECH.Wounds.Settings",
     },
   };
 

@@ -4,16 +4,16 @@ export type TextVariant = "title" | "label" | "mono" | "copy";
 export type TextSize = "small" | "medium" | "large";
 
 export const TYPO_VARIANT: Record<TextVariant, string> = {
-  title: "typo-title",
+  copy: "typo-copy",
   label: "typo-label",
   mono: "typo-mono",
-  copy: "typo-copy",
+  title: "typo-title",
 };
 
 export const TYPO_SIZE: Record<TextSize, string> = {
-  small: "typo-small",
-  medium: "typo-medium",
   large: "typo-large",
+  medium: "typo-medium",
+  small: "typo-small",
 };
 
 export function typoClass(variant: TextVariant, size: TextSize = "medium"): string {

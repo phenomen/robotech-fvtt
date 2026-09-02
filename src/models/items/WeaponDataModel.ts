@@ -1,5 +1,7 @@
-import { DAMAGE_TYPE_VALUES, WEAPON_RANGE_VALUES, type DamageTypeValue, type WeaponRangeValue } from "@/config/options";
-import { capHardwareDestroyed, hardwareSlotsFields, type HardwareSlots } from "@/models/items/hardwareSlots";
+import { DAMAGE_TYPE_VALUES, WEAPON_RANGE_VALUES } from "@/config/options";
+import type { DamageTypeValue, WeaponRangeValue } from "@/config/options";
+import { capHardwareDestroyed, hardwareSlotsFields } from "@/models/items/hardwareSlots";
+import type { HardwareSlots } from "@/models/items/hardwareSlots";
 import { ItemDataModel } from "@/models/items/ItemDataModel";
 
 /** A property that is either on or off, with no value of its own. */
@@ -62,65 +64,65 @@ export class WeaponDataModel extends ItemDataModel {
     return {
       ...super.defineSchema(),
       properties: new fields.SchemaField({
-        damage: new fields.SchemaField({
-          active: new fields.BooleanField({ initial: true }),
-          type: new fields.StringField({
-            initial: "mecha",
-            choices: DAMAGE_TYPE_VALUES,
-          }),
-        }),
         ammunition: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
-          value: new fields.NumberField({ initial: 10, integer: true, min: 0 }),
           current: new fields.NumberField({ initial: 10, integer: true, min: 0 }),
+          value: new fields.NumberField({ initial: 10, integer: true, min: 0 }),
         }),
-        range: new fields.SchemaField({
-          active: new fields.BooleanField({ initial: true }),
-          value: new fields.StringField({
-            initial: "M",
-            choices: WEAPON_RANGE_VALUES,
-          }),
-        }),
-        extended: new fields.BooleanField({ initial: false }),
-        melee: new fields.BooleanField({ initial: false }),
-        water: new fields.BooleanField({ initial: false }),
         blast: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
           value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
         }),
-        line: new fields.SchemaField({
-          active: new fields.BooleanField({ initial: false }),
-          value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-        }),
-        cone: new fields.BooleanField({ initial: false }),
-        sniper: new fields.BooleanField({ initial: false }),
-        incendiary: new fields.BooleanField({ initial: false }),
-        corrosive: new fields.BooleanField({ initial: false }),
         bulky: new fields.BooleanField({ initial: false }),
-        parry: new fields.BooleanField({ initial: false }),
-        missile: new fields.BooleanField({ initial: false }),
-        quiet: new fields.BooleanField({ initial: false }),
+        cone: new fields.BooleanField({ initial: false }),
+        corrosive: new fields.BooleanField({ initial: false }),
+        damage: new fields.SchemaField({
+          active: new fields.BooleanField({ initial: true }),
+          type: new fields.StringField({
+            choices: DAMAGE_TYPE_VALUES,
+            initial: "mecha",
+          }),
+        }),
+        extended: new fields.BooleanField({ initial: false }),
         hardware: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
           ...hardwareSlotsFields(),
         }),
+        incendiary: new fields.BooleanField({ initial: false }),
+        line: new fields.SchemaField({
+          active: new fields.BooleanField({ initial: false }),
+          value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+        }),
+        melee: new fields.BooleanField({ initial: false }),
+        missile: new fields.BooleanField({ initial: false }),
+        multiplier: new fields.SchemaField({
+          active: new fields.BooleanField({ initial: false }),
+          targetType: new fields.StringField({
+            choices: DAMAGE_TYPE_VALUES,
+            initial: "light",
+          }),
+          value: new fields.NumberField({
+            initial: 2,
+            integer: true,
+            max: 5,
+            min: 2,
+          }),
+        }),
+        parry: new fields.BooleanField({ initial: false }),
         penetration: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),
           value: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
         }),
-        multiplier: new fields.SchemaField({
-          active: new fields.BooleanField({ initial: false }),
-          value: new fields.NumberField({
-            initial: 2,
-            integer: true,
-            min: 2,
-            max: 5,
-          }),
-          targetType: new fields.StringField({
-            initial: "light",
-            choices: DAMAGE_TYPE_VALUES,
+        quiet: new fields.BooleanField({ initial: false }),
+        range: new fields.SchemaField({
+          active: new fields.BooleanField({ initial: true }),
+          value: new fields.StringField({
+            choices: WEAPON_RANGE_VALUES,
+            initial: "M",
           }),
         }),
+        sniper: new fields.BooleanField({ initial: false }),
+        water: new fields.BooleanField({ initial: false }),
       }),
     };
   }
@@ -128,11 +130,11 @@ export class WeaponDataModel extends ItemDataModel {
   override async _preUpdate(
     changes: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[0],
     options: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[1],
-    user: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[2],
+    user: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[2]
   ): Promise<boolean | void> {
     capAmmunition(this.properties.ammunition, changes);
     capHardwareDestroyed(this.properties.hardware, changes, "system.properties.hardware");
-    return super._preUpdate(changes, options, user);
+    return await super._preUpdate(changes, options, user);
   }
 }
 
@@ -142,7 +144,9 @@ function isAmmoPatch(value: unknown): value is Partial<WeaponAmmunition> {
 
 function capAmmunition(ammo: WeaponAmmunition, changes: object): void {
   const patch = foundry.utils.getProperty(changes, "system.properties.ammunition");
-  if (!isAmmoPatch(patch)) return;
+  if (!isAmmoPatch(patch)) {
+    return;
+  }
 
   const nextMax = typeof patch.value === "number" ? patch.value : ammo.value;
   let nextCurrent = typeof patch.current === "number" ? patch.current : ammo.current;

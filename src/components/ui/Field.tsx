@@ -1,7 +1,7 @@
-import { cloneElement, useId, type JSX, type ReactElement, type ReactNode } from "react";
+import type { JSX, ReactElement, ReactNode } from "react";
 
 import { Checkbox } from "@/components/ui/Checkbox";
-import { type IconTone } from "@/components/ui/Icon";
+import type { IconTone } from "@/components/ui/Icon";
 import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { cn } from "@/utils";
@@ -22,6 +22,13 @@ function isCenteredControl(child: ReactElement): boolean {
   return child.type === NumberInput || child.type === Checkbox;
 }
 
+function fieldLayoutClass(orientation: FieldOrientation, center: boolean): string {
+  if (orientation !== "vertical") {
+    return "flex-row items-center justify-between gap-2";
+  }
+  return cn("flex-col gap-1", center ? "items-center" : "items-start");
+}
+
 export function Field({
   label,
   icon,
@@ -31,24 +38,14 @@ export function Field({
   grow = false,
   children,
 }: FieldProps): JSX.Element {
-  const autoId = useId();
-  const id = children.props.id ?? autoId;
   const center = orientation === "vertical" && isCenteredControl(children);
 
   return (
-    <div
-      className={cn(
-        "flex",
-        orientation === "vertical"
-          ? cn("flex-col gap-1", center ? "items-center" : "items-start")
-          : "flex-row items-center justify-between gap-2",
-        grow && "min-w-0 flex-1",
-      )}
-    >
-      <Label htmlFor={id} icon={icon} iconTone={iconTone} title={title}>
+    <label className={cn("flex", fieldLayoutClass(orientation, center), grow && "min-w-0 flex-1")}>
+      <Label icon={icon} iconTone={iconTone} title={title}>
         {label}
       </Label>
-      {cloneElement(children, { id })}
-    </div>
+      {children}
+    </label>
   );
 }

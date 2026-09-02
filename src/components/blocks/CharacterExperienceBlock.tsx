@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Field } from "@/components/ui/Field";
@@ -26,21 +26,27 @@ export function CharacterExperienceBlock({ actor }: CharacterExperienceBlockProp
         <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Character.Level")}>
           <NumberInput
             value={system.level}
-            onValueChange={(val) => handleFieldChange("system.level", val ?? 1)}
+            onValueChange={(val) => {
+              handleFieldChange("system.level", val ?? 1);
+            }}
             min={1}
           />
         </Field>
         <Field icon="exp" iconTone="primary" label={game.i18n.localize("ROBOTECH.Character.Experience")}>
           <NumberInput
             value={system.experience}
-            onValueChange={(val) => handleFieldChange("system.experience", val ?? 0)}
+            onValueChange={(val) => {
+              handleFieldChange("system.experience", val ?? 0);
+            }}
             min={0}
           />
         </Field>
         <Field icon="bp" iconTone="primary" label={game.i18n.localize("ROBOTECH.Character.BuildPoints")}>
           <NumberInput
             value={system.buildPoints}
-            onValueChange={(val) => handleFieldChange("system.buildPoints", val ?? 0)}
+            onValueChange={(val) => {
+              handleFieldChange("system.buildPoints", val ?? 0);
+            }}
             min={0}
           />
         </Field>

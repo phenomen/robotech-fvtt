@@ -1,5 +1,6 @@
 import { flushSync } from "react-dom";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 
 import { CombatTrackerApp } from "@/components/apps/CombatTrackerApp";
 import type { CloseOptions } from "@/types/application";
@@ -32,7 +33,7 @@ export class RobotechCombatTracker extends foundry.applications.sidebar.tabs.Com
   override _replaceHTML(
     result: Record<string, HTMLElement>,
     content: HTMLElement,
-    _options: Parameters<TrackerBase["_replaceHTML"]>[2],
+    _options: Parameters<TrackerBase["_replaceHTML"]>[2]
   ): void {
     const rendered = result.body;
     if (rendered && !content.contains(rendered)) {

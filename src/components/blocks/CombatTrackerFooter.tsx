@@ -1,5 +1,5 @@
 import type Combat from "@client/documents/combat.mjs";
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Stack } from "@/components/ui/Stack";
@@ -9,14 +9,18 @@ interface CombatTrackerFooterProps {
 }
 
 export function CombatTrackerFooter({ combat }: CombatTrackerFooterProps): JSX.Element | null {
-  if (!combat) return null;
+  if (!combat) {
+    return null;
+  }
 
   const isGM = game.user?.isGM === true;
   const currentOwner = !!combat.combatant?.isOwner;
   const canStep = isGM || currentOwner;
 
   if (!combat.started) {
-    if (!isGM) return null;
+    if (!isGM) {
+      return null;
+    }
     return (
       <Stack pad={2} gap={2}>
         <Button type="button" variant="primary" full onClick={() => void combat.startCombat()}>

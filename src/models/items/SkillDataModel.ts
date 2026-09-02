@@ -9,9 +9,9 @@ export class SkillDataModel extends ItemDataModel {
     const fields = foundry.data.fields;
     return {
       ...super.defineSchema(),
-      value: new fields.NumberField({ initial: 1, integer: true, min: 1, max: 5 }),
       benefit: new fields.StringField({ initial: "" }),
       cost: new fields.StringField({ initial: "" }),
+      value: new fields.NumberField({ initial: 1, integer: true, max: 5, min: 1 }),
     };
   }
 }

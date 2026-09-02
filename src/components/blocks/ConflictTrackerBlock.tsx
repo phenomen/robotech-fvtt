@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -46,10 +46,13 @@ export function ConflictTrackerBlock({ actor }: ConflictTrackerBlockProps): JSX.
         <Stack direction="row" gap={2} wrap>
           {states.map((checked, index) => (
             <Checkbox
+              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               key={`tracker-${index}`}
               id={`${actor.id}-tracker-${index}`}
               checked={checked}
-              onCheckedChange={(val) => handleToggle(index, val)}
+              onCheckedChange={(val) => {
+                handleToggle(index, val);
+              }}
               title={game.i18n.localize("ROBOTECH.Conflict.TrackerBox", { n: index + 1 })}
               size="large"
             />

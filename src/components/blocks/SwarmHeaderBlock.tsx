@@ -1,4 +1,4 @@
-import { type ChangeEvent, type JSX } from "react";
+import type { ChangeEvent, JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { Button } from "@/components/ui/Button";
@@ -32,7 +32,9 @@ export function SwarmHeaderBlock({ actor }: SwarmHeaderBlockProps): JSX.Element 
         src={actor.img}
         alt={actor.name}
         title={game.i18n.localize("ROBOTECH.Swarm.Title")}
-        onClick={() => pickImage(actor)}
+        onClick={() => {
+          pickImage(actor);
+        }}
         size="large"
       />
       <Stack gap={2} grow>

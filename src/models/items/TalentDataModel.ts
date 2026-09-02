@@ -1,4 +1,5 @@
-import { TALENT_CATEGORY_VALUES, type TalentCategoryValue } from "@/config/options";
+import { TALENT_CATEGORY_VALUES } from "@/config/options";
+import type { TalentCategoryValue } from "@/config/options";
 import { ItemDataModel } from "@/models/items/ItemDataModel";
 
 export class TalentDataModel extends ItemDataModel {
@@ -11,8 +12,8 @@ export class TalentDataModel extends ItemDataModel {
     return {
       ...super.defineSchema(),
       category: new fields.StringField({
-        initial: "leadership",
         choices: TALENT_CATEGORY_VALUES,
+        initial: "leadership",
       }),
       prerequisite: new fields.StringField({ initial: "" }),
       uses: new fields.NumberField({ initial: 1, integer: true, min: 0 }),

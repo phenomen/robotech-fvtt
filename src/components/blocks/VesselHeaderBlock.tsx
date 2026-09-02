@@ -1,4 +1,4 @@
-import { type ChangeEvent, type JSX } from "react";
+import type { ChangeEvent, JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { Button } from "@/components/ui/Button";
@@ -29,7 +29,9 @@ export function VesselHeaderBlock({ actor, onFieldChange }: VesselHeaderBlockPro
         src={actor.img}
         alt={actor.name}
         title={game.i18n.localize("ROBOTECH.Vessel.Title")}
-        onClick={() => pickImage(actor)}
+        onClick={() => {
+          pickImage(actor);
+        }}
         size="large"
       />
       <Stack gap={2} grow>
@@ -51,7 +53,9 @@ export function VesselHeaderBlock({ actor, onFieldChange }: VesselHeaderBlockPro
             <Input
               width="full"
               value={system.designation}
-              onChange={(e) => onFieldChange("system.designation", e.target.value)}
+              onChange={(e) => {
+                onFieldChange("system.designation", e.target.value);
+              }}
               placeholder={game.i18n.localize("ROBOTECH.Vessel.DesignationPlaceholder")}
             />
           </Field>
@@ -59,7 +63,9 @@ export function VesselHeaderBlock({ actor, onFieldChange }: VesselHeaderBlockPro
             <Input
               width="full"
               value={system.classification}
-              onChange={(e) => onFieldChange("system.classification", e.target.value)}
+              onChange={(e) => {
+                onFieldChange("system.classification", e.target.value);
+              }}
               placeholder={game.i18n.localize("ROBOTECH.Vessel.ClassificationPlaceholder")}
             />
           </Field>
@@ -67,7 +73,9 @@ export function VesselHeaderBlock({ actor, onFieldChange }: VesselHeaderBlockPro
             <Select
               width="full"
               value={system.vesselType}
-              onChange={(e) => onFieldChange("system.vesselType", e.target.value)}
+              onChange={(e) => {
+                onFieldChange("system.vesselType", e.target.value);
+              }}
             >
               {VESSEL_TYPE_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>

@@ -1,4 +1,5 @@
-﻿import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { PlotEventConflictList } from "@/components/blocks/PlotEventConflictList";
 import { PlotEventHeaderBlock } from "@/components/blocks/PlotEventHeaderBlock";
@@ -8,7 +9,8 @@ import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
-import { TabNav, type TabItem } from "@/components/ui/TabNav";
+import { TabNav } from "@/components/ui/TabNav";
+import type { TabItem } from "@/components/ui/TabNav";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface PlotEventSheetAppProps {
@@ -17,17 +19,17 @@ interface PlotEventSheetAppProps {
 
 export type PlotEventTabType = "data" | "description";
 
+const PLOT_EVENT_TABS: TabItem<PlotEventTabType>[] = [
+  { key: "data", labelKey: "ROBOTECH.Tabs.Data" },
+  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
+];
+
 export function PlotEventSheetApp({ actor }: PlotEventSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<PlotEventTabType>("data");
 
   const handleFieldChange = (path: string, val: FieldValue) => {
     void actor.update({ [path]: val });
   };
-
-  const tabs: TabItem<PlotEventTabType>[] = [
-    { key: "data", label: game.i18n.localize("ROBOTECH.Tabs.Data") },
-    { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
-  ];
 
   return (
     <Sheet>
@@ -41,7 +43,7 @@ export function PlotEventSheetApp({ actor }: PlotEventSheetAppProps): JSX.Elemen
         </GridSystem>
       </SheetHeader>
 
-      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
+      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={PLOT_EVENT_TABS} />
 
       <SheetBody>
         {activeTab === "data" && (
@@ -67,7 +69,9 @@ export function PlotEventSheetApp({ actor }: PlotEventSheetAppProps): JSX.Elemen
                   <ProseMirrorField
                     name="system.description"
                     value={actor.system.description}
-                    onChange={(val) => handleFieldChange("system.description", val)}
+                    onChange={(val) => {
+                      handleFieldChange("system.description", val);
+                    }}
                     minHeight="tall"
                   />
                 </Stack>

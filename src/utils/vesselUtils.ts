@@ -3,9 +3,9 @@ import type { DamageTypeValue, VesselTypeValue } from "@/config/options";
 /** The damage class a vessel is hit in, which follows from how big the vessel itself is. */
 export const VESSEL_DAMAGE_CLASS: Record<VesselTypeValue, DamageTypeValue> = {
   infantry: "light",
-  vehicle: "mecha",
   mecha: "mecha",
   naval: "naval",
+  vehicle: "mecha",
 };
 
 export interface CascadeInput {
@@ -22,9 +22,11 @@ export interface CascadeInput {
 export function appliedPenetrationOf(
   armorPenetration: number,
   attackType: DamageTypeValue,
-  targetType: DamageTypeValue,
+  targetType: DamageTypeValue
 ): number {
-  if (attackType !== targetType) return 0;
+  if (attackType !== targetType) {
+    return 0;
+  }
   return Math.max(0, armorPenetration);
 }
 
@@ -32,7 +34,7 @@ export function effectiveArmorOf(
   targetArmor: number,
   armorPenetration: number,
   attackType: DamageTypeValue,
-  targetType: DamageTypeValue,
+  targetType: DamageTypeValue
 ): number {
   return Math.max(0, targetArmor - appliedPenetrationOf(armorPenetration, attackType, targetType));
 }
@@ -53,12 +55,12 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
   const netHits = Math.max(0, attackHits - defendHits);
   if (netHits <= 0) {
     return {
-      netHits: 0,
-      hitsOverArmor: 0,
       damageInflicted: 0,
       damageTypeInflicted: targetType,
-      isOverkill: false,
+      hitsOverArmor: 0,
       isImmune: false,
+      isOverkill: false,
+      netHits: 0,
       summaryKey: "ROBOTECH.Damage.Defended",
     };
   }
@@ -69,24 +71,24 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
 
   if (hitsOverArmor <= 0) {
     return {
-      netHits,
-      hitsOverArmor: 0,
       damageInflicted: 0,
       damageTypeInflicted: targetType,
-      isOverkill: false,
+      hitsOverArmor: 0,
       isImmune: false,
+      isOverkill: false,
+      netHits,
       summaryKey: "ROBOTECH.Damage.ArmorAbsorbed",
     };
   }
 
   if (attackType === "light" && targetType === "naval") {
     return {
-      netHits,
-      hitsOverArmor,
       damageInflicted: 0,
       damageTypeInflicted: "naval",
-      isOverkill: false,
+      hitsOverArmor,
       isImmune: true,
+      isOverkill: false,
+      netHits,
       summaryKey: "ROBOTECH.Damage.ImmuneLightVsNaval",
     };
   }
@@ -112,12 +114,12 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
   }
 
   return {
-    netHits,
-    hitsOverArmor,
     damageInflicted,
     damageTypeInflicted: targetType,
-    isOverkill,
+    hitsOverArmor,
     isImmune: false,
+    isOverkill,
+    netHits,
     summaryKey: isOverkill ? "ROBOTECH.Damage.OverkillSuccess" : "ROBOTECH.Damage.DirectHit",
   };
 }

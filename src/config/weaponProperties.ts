@@ -1,5 +1,6 @@
-import { type TagColor } from "@/components/ui/Tag";
-import { WEAPON_DAMAGE_OPTIONS, WEAPON_RANGE_OPTIONS, type Option, type DamageTypeValue } from "@/config/options";
+import type { TagColor } from "@/components/ui/Tag";
+import { WEAPON_DAMAGE_OPTIONS, WEAPON_RANGE_OPTIONS } from "@/config/options";
+import type { Option, DamageTypeValue } from "@/config/options";
 import type { WeaponProperties } from "@/models";
 
 /** Property keys grouped by the editor control and the value shape they share. */
@@ -35,149 +36,149 @@ const DAMAGE_LETTER_KEYS: Record<DamageTypeValue, string> = {
 
 export const WEAPON_PROPERTIES: WeaponPropertyDef[] = [
   {
-    key: "damage",
-    nameKey: "ROBOTECH.Item.Property.Damage.name",
-    tagColor: "red",
-    inputType: "damage",
-    selectOptions: WEAPON_DAMAGE_OPTIONS,
     formatTag: ({ damage }) =>
       game.i18n.localize("ROBOTECH.Item.Property.Damage.tag", {
         val: game.i18n.localize(DAMAGE_LETTER_KEYS[damage.type]),
       }),
+    inputType: "damage",
+    key: "damage",
+    nameKey: "ROBOTECH.Item.Property.Damage.name",
+    selectOptions: WEAPON_DAMAGE_OPTIONS,
+    tagColor: "red",
   },
   {
-    key: "multiplier",
-    nameKey: "ROBOTECH.Item.Property.Multiplier.name",
-    tagColor: "red",
-    inputType: "multiplier",
-    selectOptions: WEAPON_DAMAGE_OPTIONS,
     formatTag: ({ multiplier }) =>
       game.i18n.localize("ROBOTECH.Item.Property.Multiplier.tag", {
         mult: multiplier.value,
         typeLetter: game.i18n.localize(DAMAGE_LETTER_KEYS[multiplier.targetType]),
       }),
+    inputType: "multiplier",
+    key: "multiplier",
+    nameKey: "ROBOTECH.Item.Property.Multiplier.name",
+    selectOptions: WEAPON_DAMAGE_OPTIONS,
+    tagColor: "red",
   },
   {
+    inputType: "number",
     key: "ammunition",
     nameKey: "ROBOTECH.Item.Property.Ammunition.name",
     tagColor: "teal",
-    inputType: "number",
   },
   {
+    formatTag: ({ range }) => game.i18n.localize("ROBOTECH.Item.Property.Range.tag", { val: range.value }),
+    inputType: "select",
     key: "range",
     nameKey: "ROBOTECH.Item.Property.Range.name",
-    tagColor: "teal",
-    inputType: "select",
     selectOptions: WEAPON_RANGE_OPTIONS,
-    formatTag: ({ range }) => game.i18n.localize("ROBOTECH.Item.Property.Range.tag", { val: range.value }),
+    tagColor: "teal",
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Extended.tag"),
+    inputType: "none",
     key: "extended",
     nameKey: "ROBOTECH.Item.Property.Extended.name",
     tagColor: "teal",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Extended.tag"),
   },
   {
+    formatTag: ({ blast }) => game.i18n.localize("ROBOTECH.Item.Property.Blast.tag", { val: blast.value }),
+    inputType: "number",
     key: "blast",
     nameKey: "ROBOTECH.Item.Property.Blast.name",
     tagColor: "teal",
-    inputType: "number",
-    formatTag: ({ blast }) => game.i18n.localize("ROBOTECH.Item.Property.Blast.tag", { val: blast.value }),
   },
   {
+    formatTag: ({ line }) => game.i18n.localize("ROBOTECH.Item.Property.Line.tag", { val: line.value }),
+    inputType: "number",
     key: "line",
     nameKey: "ROBOTECH.Item.Property.Line.name",
     tagColor: "teal",
-    inputType: "number",
-    formatTag: ({ line }) => game.i18n.localize("ROBOTECH.Item.Property.Line.tag", { val: line.value }),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Cone.tag"),
+    inputType: "none",
     key: "cone",
     nameKey: "ROBOTECH.Item.Property.Cone.name",
     tagColor: "teal",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Cone.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Melee.tag"),
+    inputType: "none",
     key: "melee",
     nameKey: "ROBOTECH.Item.Property.Melee.name",
     tagColor: "teal",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Melee.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Water.tag"),
+    inputType: "none",
     key: "water",
     nameKey: "ROBOTECH.Item.Property.Water.name",
     tagColor: "teal",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Water.tag"),
   },
   {
+    formatTag: ({ penetration }) =>
+      game.i18n.localize("ROBOTECH.Item.Property.Penetration.tag", { val: penetration.value }),
+    inputType: "number",
     key: "penetration",
     nameKey: "ROBOTECH.Item.Property.Penetration.name",
     tagColor: "amber",
-    inputType: "number",
-    formatTag: ({ penetration }) =>
-      game.i18n.localize("ROBOTECH.Item.Property.Penetration.tag", { val: penetration.value }),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Sniper.tag"),
+    inputType: "none",
     key: "sniper",
     nameKey: "ROBOTECH.Item.Property.Sniper.name",
     tagColor: "amber",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Sniper.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Incendiary.tag"),
+    inputType: "none",
     key: "incendiary",
     nameKey: "ROBOTECH.Item.Property.Incendiary.name",
     tagColor: "amber",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Incendiary.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Corrosive.tag"),
+    inputType: "none",
     key: "corrosive",
     nameKey: "ROBOTECH.Item.Property.Corrosive.name",
     tagColor: "amber",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Corrosive.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Parry.tag"),
+    inputType: "none",
     key: "parry",
     nameKey: "ROBOTECH.Item.Property.Parry.name",
     tagColor: "amber",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Parry.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Bulky.tag"),
+    inputType: "none",
     key: "bulky",
     nameKey: "ROBOTECH.Item.Property.Bulky.name",
     tagColor: "green",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Bulky.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Missile.tag"),
+    inputType: "none",
     key: "missile",
     nameKey: "ROBOTECH.Item.Property.Missile.name",
     tagColor: "green",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Missile.tag"),
   },
   {
+    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Quiet.tag"),
+    inputType: "none",
     key: "quiet",
     nameKey: "ROBOTECH.Item.Property.Quiet.name",
     tagColor: "green",
-    inputType: "none",
-    formatTag: () => game.i18n.localize("ROBOTECH.Item.Property.Quiet.tag"),
   },
   {
+    formatTag: ({ hardware }) => {
+      const slots = Math.max(0, hardware.value);
+      return Array.from({ length: slots }, () => game.i18n.localize("ROBOTECH.Item.Property.Hardware.tag"));
+    },
+    inputType: "hardware",
     key: "hardware",
     nameKey: "ROBOTECH.Item.Property.Hardware.name",
     tagColor: "green",
-    inputType: "hardware",
-    formatTag: ({ hardware }) => {
-      const slots = Math.max(0, hardware.value);
-      return Array(slots).fill(game.i18n.localize("ROBOTECH.Item.Property.Hardware.tag"));
-    },
   },
 ];

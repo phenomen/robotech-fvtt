@@ -1,4 +1,5 @@
-import { createContext, useContext, type JSX, type ReactNode } from "react";
+import { createContext, useContext } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { cn } from "@/utils";
 
@@ -9,19 +10,19 @@ export type TableTone = "default" | "danger";
 const InHeaderContext = createContext(false);
 
 const WIDTH_CLASS: Record<TableWidth, string> = {
-  grow: "w-full min-w-0",
-  auto: "w-px whitespace-nowrap",
   "10": "w-10 whitespace-nowrap",
   "12": "w-12 whitespace-nowrap",
   "16": "w-16 whitespace-nowrap",
   "20": "w-20 whitespace-nowrap",
   "32": "w-32 min-w-32",
+  auto: "w-px whitespace-nowrap",
+  grow: "w-full min-w-0",
 };
 
 const ALIGN_CLASS: Record<TableAlign, string> = {
-  start: "text-left",
   center: "text-center",
   end: "text-right",
+  start: "text-left",
 };
 
 export interface TableProps {
@@ -62,14 +63,20 @@ export interface TableRowProps {
   children?: ReactNode;
 }
 
+function rowBackground(header: boolean, tone: TableTone): string {
+  if (header) {
+    return "bg-transparent!";
+  }
+  if (tone === "danger") {
+    return "bg-rt-danger/5!";
+  }
+  return "bg-rt-background!";
+}
+
 export function TableRow({ tone = "default", children }: TableRowProps): JSX.Element {
   const header = useContext(InHeaderContext);
 
-  return (
-    <tr className={cn(header ? "bg-transparent!" : tone === "danger" ? "bg-rt-danger/5!" : "bg-rt-background!")}>
-      {children}
-    </tr>
-  );
+  return <tr className={cn(rowBackground(header, tone))}>{children}</tr>;
 }
 
 export interface TableCellProps {
@@ -88,7 +95,7 @@ export function TableCell({ width, align = "start", children }: TableCellProps):
         "border-none! px-2 py-1 align-middle",
         header && "bg-transparent!",
         WIDTH_CLASS[width],
-        ALIGN_CLASS[align],
+        ALIGN_CLASS[align]
       )}
     >
       {children}

@@ -9,8 +9,8 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { useLinkedActors, type LinkedActor } from "@/utils";
-import { openActorSheet, SCENE_ACTOR_TYPES } from "@/utils";
+import { useLinkedActors, openActorSheet, SCENE_ACTOR_TYPES } from "@/utils";
+import type { LinkedActor } from "@/utils";
 
 interface ConflictActorListProps {
   actor: ActorOf<"conflict">;
@@ -65,7 +65,9 @@ function ActorRow({
           <Button
             variant="danger"
             size="icon"
-            onClick={() => onDelete(member.uuid)}
+            onClick={() => {
+              onDelete(member.uuid);
+            }}
             title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
           >
             <Icon name="x" />
@@ -95,7 +97,9 @@ function ActorRow({
         <Button
           variant="danger"
           size="icon"
-          onClick={() => onDelete(member.uuid)}
+          onClick={() => {
+            onDelete(member.uuid);
+          }}
           title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
         >
           <Icon name="x" />

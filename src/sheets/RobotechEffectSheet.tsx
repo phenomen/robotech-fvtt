@@ -1,6 +1,7 @@
 import type React from "react";
 import { flushSync } from "react-dom";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 
 import { EffectSheetApp } from "@/components/apps/EffectSheetApp";
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
@@ -13,18 +14,14 @@ export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "sheet", "effect"],
-    position: { width: 620, height: "auto" },
+    position: { height: "auto", width: 620 },
     window: { ...super.DEFAULT_OPTIONS.window, resizable: true },
   };
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
-    if (!this.container) {
-      this.container = createSheetContainer("robotech-effect-container");
-    }
+    this.container ??= createSheetContainer("robotech-effect-container");
 
-    if (!this.reactRoot) {
-      this.reactRoot = createRoot(this.container);
-    }
+    this.reactRoot ??= createRoot(this.container);
 
     flushSync(() => {
       this.reactRoot?.render(this.renderSheetApp());
@@ -35,7 +32,9 @@ export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV
 
   private renderSheetApp(): React.JSX.Element | null {
     const effect = this.document;
-    if (!(effect instanceof foundry.documents.ActiveEffect)) return null;
+    if (!(effect instanceof foundry.documents.ActiveEffect)) {
+      return null;
+    }
     return <EffectSheetApp effect={effect} />;
   }
 

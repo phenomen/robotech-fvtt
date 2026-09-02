@@ -11,8 +11,8 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { useLinkedActors, type LinkedActor } from "@/utils";
-import { openActorSheet } from "@/utils";
+import { useLinkedActors, openActorSheet } from "@/utils";
+import type { LinkedActor } from "@/utils";
 
 interface CrewListBlockProps {
   actor: ActorOf<"vessel">;
@@ -43,8 +43,8 @@ export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
       {actor.system.characterUuids.length > actor.system.crew && (
         <Callout icon="alert" tone="danger">
           {game.i18n.localize("ROBOTECH.Crew.OverCapacity", {
-            count: actor.system.characterUuids.length,
             capacity: actor.system.crew,
+            count: actor.system.characterUuids.length,
           })}
         </Callout>
       )}
@@ -83,7 +83,9 @@ function CrewRow({
           <Button
             variant="danger"
             size="icon"
-            onClick={() => onDelete(member.uuid)}
+            onClick={() => {
+              onDelete(member.uuid);
+            }}
             title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
           >
             <Icon name="x" />
@@ -113,7 +115,9 @@ function CrewRow({
         <Button
           variant="danger"
           size="icon"
-          onClick={() => onDelete(member.uuid)}
+          onClick={() => {
+            onDelete(member.uuid);
+          }}
           title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
         >
           <Icon name="x" />

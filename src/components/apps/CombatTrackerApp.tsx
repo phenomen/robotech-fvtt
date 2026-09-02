@@ -1,5 +1,5 @@
 import type Combat from "@client/documents/combat.mjs";
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { CombatantRow } from "@/components/blocks/CombatantRow";
 import { CombatTrackerFooter } from "@/components/blocks/CombatTrackerFooter";
@@ -14,7 +14,7 @@ interface CombatTrackerAppProps {
 }
 
 export function CombatTrackerApp({ combat }: CombatTrackerAppProps): JSX.Element {
-  const combats = (game.combats?.combats ?? []) as Combat[];
+  const combats = game.combats?.combats ?? [];
   const turns = combat?.turns.filter((combatant) => combatant.visible) ?? [];
 
   return (

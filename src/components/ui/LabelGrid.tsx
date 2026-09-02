@@ -1,7 +1,8 @@
-import { type JSX, type ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { Divider } from "@/components/ui/Divider";
-import { SPACE_GAP, type Space } from "@/components/ui/space";
+import { SPACE_GAP } from "@/components/ui/space";
+import type { Space } from "@/components/ui/space";
 import { Text } from "@/components/ui/Text";
 import { cn } from "@/utils";
 

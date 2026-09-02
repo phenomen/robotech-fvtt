@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
 import { Field } from "@/components/ui/Field";
@@ -17,7 +17,9 @@ export function EquipmentSuiteSheetFields({
         <NumberInput
           min={1}
           value={system.skill}
-          onValueChange={(val) => handleFieldChange("system.skill", val ?? 1)}
+          onValueChange={(val) => {
+            handleFieldChange("system.skill", val ?? 1);
+          }}
           width="full"
         />
       </Field>
@@ -25,7 +27,9 @@ export function EquipmentSuiteSheetFields({
         <NumberInput
           min={0}
           value={system.uses.max}
-          onValueChange={(val) => handleFieldChange("system.uses.max", val)}
+          onValueChange={(val) => {
+            handleFieldChange("system.uses.max", val);
+          }}
           placeholder={game.i18n.localize("ROBOTECH.Item.Unlimited")}
           width="full"
         />
@@ -34,7 +38,9 @@ export function EquipmentSuiteSheetFields({
         <NumberInput
           min={0}
           value={system.hardware.value}
-          onValueChange={(val) => handleFieldChange("system.hardware.value", val ?? 0)}
+          onValueChange={(val) => {
+            handleFieldChange("system.hardware.value", val ?? 0);
+          }}
           width="full"
         />
       </Field>

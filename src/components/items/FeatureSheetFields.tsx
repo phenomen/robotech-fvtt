@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
 import { Field } from "@/components/ui/Field";
@@ -12,13 +12,21 @@ export function FeatureSheetFields({ item, handleFieldChange }: ItemFieldsProps<
   return (
     <Stack direction="row" gap={3}>
       <Field label={game.i18n.localize("ROBOTECH.Item.Bonus")}>
-        <Input value={system.bonus} onChange={(e) => handleFieldChange("system.bonus", e.target.value)} width="full" />
+        <Input
+          value={system.bonus}
+          onChange={(e) => {
+            handleFieldChange("system.bonus", e.target.value);
+          }}
+          width="full"
+        />
       </Field>
       <Field label={game.i18n.localize("ROBOTECH.Item.HardwarePoints")}>
         <NumberInput
           min={0}
           value={system.hardware.value}
-          onValueChange={(val) => handleFieldChange("system.hardware.value", val ?? 0)}
+          onValueChange={(val) => {
+            handleFieldChange("system.hardware.value", val ?? 0);
+          }}
           width="full"
         />
       </Field>

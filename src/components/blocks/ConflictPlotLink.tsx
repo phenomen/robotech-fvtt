@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { useLinkedActors } from "@/utils";
-import { openActorSheet } from "@/utils";
+import { useLinkedActors, openActorSheet } from "@/utils";
 
 interface ConflictPlotLinkProps {
   actor: ActorOf<"conflict">;
@@ -21,7 +20,7 @@ export function ConflictPlotLink({ actor }: ConflictPlotLinkProps): JSX.Element 
   const label =
     linked && plotEvent === null
       ? game.i18n.localize("ROBOTECH.Conflict.MissingPlotEvent")
-      : plotEvent?.name || game.i18n.localize("ROBOTECH.Conflict.PlotEventEmpty");
+      : (plotEvent?.name ?? game.i18n.localize("ROBOTECH.Conflict.PlotEventEmpty"));
 
   return (
     <Field label={game.i18n.localize("ROBOTECH.Conflict.PlotEvent")}>
@@ -30,7 +29,9 @@ export function ConflictPlotLink({ actor }: ConflictPlotLinkProps): JSX.Element 
         full
         disabled={!canOpen}
         onClick={() => {
-          if (uuid) void openActorSheet(uuid);
+          if (uuid) {
+            void openActorSheet(uuid);
+          }
         }}
         title={game.i18n.localize("ROBOTECH.Sheet.Open")}
       >

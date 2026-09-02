@@ -1,4 +1,5 @@
-﻿import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { ConflictActorList } from "@/components/blocks/ConflictActorList";
 import { ConflictFieldsBlock } from "@/components/blocks/ConflictFieldsBlock";
@@ -9,7 +10,8 @@ import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
-import { TabNav, type TabItem } from "@/components/ui/TabNav";
+import { TabNav } from "@/components/ui/TabNav";
+import type { TabItem } from "@/components/ui/TabNav";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface ConflictSheetAppProps {
@@ -18,17 +20,17 @@ interface ConflictSheetAppProps {
 
 export type ConflictTabType = "data" | "description";
 
+const CONFLICT_TABS: TabItem<ConflictTabType>[] = [
+  { key: "data", labelKey: "ROBOTECH.Tabs.Data" },
+  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
+];
+
 export function ConflictSheetApp({ actor }: ConflictSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<ConflictTabType>("data");
 
   const handleFieldChange = (path: string, val: FieldValue) => {
     void actor.update({ [path]: val });
   };
-
-  const tabs: TabItem<ConflictTabType>[] = [
-    { key: "data", label: game.i18n.localize("ROBOTECH.Tabs.Data") },
-    { key: "description", label: game.i18n.localize("ROBOTECH.Tabs.Description") },
-  ];
 
   return (
     <Sheet>
@@ -42,7 +44,7 @@ export function ConflictSheetApp({ actor }: ConflictSheetAppProps): JSX.Element 
         </GridSystem>
       </SheetHeader>
 
-      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={tabs} />
+      <TabNav activeTab={activeTab} onTabChange={setActiveTab} tabs={CONFLICT_TABS} />
 
       <SheetBody>
         {activeTab === "data" && (
@@ -71,7 +73,9 @@ export function ConflictSheetApp({ actor }: ConflictSheetAppProps): JSX.Element 
                   <ProseMirrorField
                     name="system.description"
                     value={actor.system.description}
-                    onChange={(val) => handleFieldChange("system.description", val)}
+                    onChange={(val) => {
+                      handleFieldChange("system.description", val);
+                    }}
                     minHeight="tall"
                   />
                 </Stack>

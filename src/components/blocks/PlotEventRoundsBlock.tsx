@@ -1,11 +1,13 @@
-import { useId, type JSX } from "react";
+import { useId } from "react";
+import type { JSX } from "react";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Divider } from "@/components/ui/Divider";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
-import { PLOT_EVENT_PHASE_OPTIONS, type PlotEventPhaseValue } from "@/config/options";
+import { PLOT_EVENT_PHASE_OPTIONS } from "@/config/options";
+import type { PlotEventPhaseValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 
 interface PlotEventRoundsBlockProps {
@@ -74,8 +76,12 @@ export function PlotEventRoundsBlock({ actor }: PlotEventRoundsBlockProps): JSX.
                 label={label}
                 count={rounds[option.value]}
                 active={activePhase === option.value}
-                onToggle={(checked) => handlePhaseToggle(option.value, checked)}
-                onCountChange={(val) => handleRoundChange(option.value, val)}
+                onToggle={(checked) => {
+                  handlePhaseToggle(option.value, checked);
+                }}
+                onCountChange={(val) => {
+                  handleRoundChange(option.value, val);
+                }}
               />
             </Stack>
           );

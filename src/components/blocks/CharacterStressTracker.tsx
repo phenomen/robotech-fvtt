@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Stack } from "@/components/ui/Stack";
@@ -22,15 +22,23 @@ function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxP
   const isFilled = Boolean(state);
 
   const getLabel = (): string => {
-    if (state === "F") return game.i18n.localize("ROBOTECH.Stress.FatigueAbbr");
-    if (state === "D") return game.i18n.localize("ROBOTECH.Stress.DramaAbbr");
+    if (state === "F") {
+      return game.i18n.localize("ROBOTECH.Stress.FatigueAbbr");
+    }
+    if (state === "D") {
+      return game.i18n.localize("ROBOTECH.Stress.DramaAbbr");
+    }
     return "";
   };
 
   const getTitleText = (): string => {
     let stateLabel = game.i18n.localize("ROBOTECH.Stress.Empty");
-    if (state === "F") stateLabel = game.i18n.localize("ROBOTECH.Stress.Fatigue");
-    if (state === "D") stateLabel = game.i18n.localize("ROBOTECH.Stress.Drama");
+    if (state === "F") {
+      stateLabel = game.i18n.localize("ROBOTECH.Stress.Fatigue");
+    }
+    if (state === "D") {
+      stateLabel = game.i18n.localize("ROBOTECH.Stress.Drama");
+    }
     return game.i18n.localize("ROBOTECH.Stress.Box", { n: index + 1, state: stateLabel });
   };
 
@@ -82,11 +90,16 @@ export function StressTracker({ actor }: StressTrackerProps): JSX.Element {
           <Stack direction="row" gap={1} align="center">
             {boxes.map((state, i) => (
               <StressHexBox
+                // oxlint-disable-next-line react-doctor/no-array-index-as-key
                 key={`stress-hex-${i}`}
                 index={i}
                 state={state}
-                onLeftClick={() => toggleBoxState(i)}
-                onRightClick={() => setBoxState(i, "")}
+                onLeftClick={() => {
+                  toggleBoxState(i);
+                }}
+                onRightClick={() => {
+                  setBoxState(i, "");
+                }}
               />
             ))}
           </Stack>

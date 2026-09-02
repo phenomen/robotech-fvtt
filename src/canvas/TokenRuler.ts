@@ -23,10 +23,14 @@ export class RobotechTokenRuler extends foundry.canvas.placeables.tokens.TokenRu
   }
 
   private applySpeedColor(style: { color?: PIXI.ColorSource }, waypoint: Waypoint): void {
-    if (waypoint.actionConfig?.teleport) return;
+    if (waypoint.actionConfig?.teleport) {
+      return;
+    }
 
     const speed = actorSpeed(this.token.actor);
-    if (speed <= 0) return;
+    if (speed <= 0) {
+      return;
+    }
 
     const exceeded = waypoint.measurement.cost - COST_EPSILON > speed;
     style.color = exceeded ? TOKEN_RULER_COLORS.exceeded : TOKEN_RULER_COLORS.normal;

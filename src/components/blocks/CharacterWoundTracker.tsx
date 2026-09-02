@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { openVitalsDialog } from "@/components/blocks/VitalsSettingsDialog";
 import { Button } from "@/components/ui/Button";
@@ -10,13 +10,8 @@ import { TrackerHex } from "@/components/ui/TrackerHex";
 import { GRADATION } from "@/config";
 import type { ActorOf } from "@/models";
 import { countCheckedBoxes } from "@/utils/trackers";
-import {
-  flatWoundGroup,
-  toggledWoundStates,
-  triumvirateGroupsOf,
-  type WoundRef,
-  type WoundType,
-} from "@/utils/woundUtils";
+import { flatWoundGroup, toggledWoundStates, triumvirateGroupsOf } from "@/utils/woundUtils";
+import type { WoundRef, WoundType } from "@/utils/woundUtils";
 
 interface WoundTrackerProps {
   actor: ActorOf<"character">;
@@ -43,16 +38,20 @@ interface WoundGroupProps {
   justify?: "start" | "center";
 }
 
+function labelOf(ref: WoundRef): string {
+  return game.i18n.localize(ref.type === "brawl" ? "ROBOTECH.Wounds.BrawlAbbr" : "ROBOTECH.Wounds.CriticalAbbr");
+}
+
+function titleOf(ref: WoundRef): string {
+  return game.i18n.localize("ROBOTECH.Wounds.Box", {
+    n: ref.index + 1,
+    type: game.i18n.localize(ref.type === "brawl" ? "ROBOTECH.Wounds.Brawl" : "ROBOTECH.Wounds.Critical"),
+  });
+}
+
 function WoundGroup({ refs, brawlStates, criticalStates, onToggle, justify = "start" }: WoundGroupProps): JSX.Element {
   const isChecked = (ref: WoundRef): boolean =>
     (ref.type === "brawl" ? brawlStates[ref.index] : criticalStates[ref.index]) ?? false;
-  const labelOf = (ref: WoundRef): string =>
-    game.i18n.localize(ref.type === "brawl" ? "ROBOTECH.Wounds.BrawlAbbr" : "ROBOTECH.Wounds.CriticalAbbr");
-  const titleOf = (ref: WoundRef): string =>
-    game.i18n.localize("ROBOTECH.Wounds.Box", {
-      type: game.i18n.localize(ref.type === "brawl" ? "ROBOTECH.Wounds.Brawl" : "ROBOTECH.Wounds.Critical"),
-      n: ref.index + 1,
-    });
 
   return (
     <Stack direction="row" gap={1} align="center" justify={justify} wrap pad={1}>
@@ -62,7 +61,9 @@ function WoundGroup({ refs, brawlStates, criticalStates, onToggle, justify = "st
           tone={ref.type}
           label={labelOf(ref)}
           isChecked={isChecked(ref)}
-          onClick={() => onToggle(ref)}
+          onClick={() => {
+            onToggle(ref);
+          }}
           title={titleOf(ref)}
         />
       ))}
@@ -82,9 +83,11 @@ export function WoundTracker({ actor }: WoundTrackerProps): JSX.Element {
 
   const toggleWoundHex = (ref: WoundRef) => {
     const group = groups.find((candidate) =>
-      candidate.some((item) => item.type === ref.type && item.index === ref.index),
+      candidate.some((item) => item.type === ref.type && item.index === ref.index)
     );
-    if (!group) return;
+    if (!group) {
+      return;
+    }
     const next = toggledWoundStates(group, ref.type, ref.index, brawlStates, criticalStates);
     void actor.update({
       "system.wounds.brawl.states": next.brawl,
@@ -105,7 +108,9 @@ export function WoundTracker({ actor }: WoundTrackerProps): JSX.Element {
           <Button
             size="icon"
             variant="secondary"
-            onClick={() => openVitalsDialog(actor)}
+            onClick={() => {
+              openVitalsDialog(actor);
+            }}
             title={game.i18n.localize("ROBOTECH.Wounds.Settings")}
           >
             <Icon name="settings" />

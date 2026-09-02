@@ -7,15 +7,11 @@ import { Icon } from "@/components/ui/Icon";
 import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
-import {
-  CONFLICT_RECOGNITION_OPTIONS,
-  CONFLICT_THREAT_OPTIONS,
-  CONFLICT_TYPE_OPTIONS,
-  type Option,
-} from "@/config/options";
+import { CONFLICT_RECOGNITION_OPTIONS, CONFLICT_THREAT_OPTIONS, CONFLICT_TYPE_OPTIONS } from "@/config/options";
+import type { Option } from "@/config/options";
 import type { ActorOf } from "@/models";
-import { useLinkedActors, type LinkedActor } from "@/utils";
-import { openActorSheet, removeEventConflict } from "@/utils";
+import { useLinkedActors, openActorSheet, removeEventConflict } from "@/utils";
+import type { LinkedActor } from "@/utils";
 
 interface PlotEventConflictListProps {
   actor: ActorOf<"plot_event">;
@@ -119,7 +115,9 @@ function ConflictRow({
         <Button
           variant="danger"
           size="icon"
-          onClick={() => onDelete(conflict.uuid)}
+          onClick={() => {
+            onDelete(conflict.uuid);
+          }}
           title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
         >
           <Icon name="x" />
@@ -130,7 +128,9 @@ function ConflictRow({
 }
 
 function choiceLabel(options: readonly Option[], value: string): string {
-  if (!value) return "";
+  if (!value) {
+    return "";
+  }
   const option = options.find((item) => item.value === value);
   return option ? game.i18n.localize(option.labelKey) : value;
 }

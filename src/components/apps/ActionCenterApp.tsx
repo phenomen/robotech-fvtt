@@ -1,6 +1,7 @@
 import type Actor from "@client/documents/actor.mjs";
 import type Combatant from "@client/documents/combatant.mjs";
-import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 
 import { ReactDialog } from "@/components/apps/ReactDialog";
 import { Button } from "@/components/ui/Button";
@@ -23,13 +24,13 @@ import {
   isChoiceValue,
   isConflictAction,
   modifierLabelOf,
-  type ActionValue,
-  type RollModifierValue,
 } from "@/config/options";
+import type { ActionValue, RollModifierValue } from "@/config/options";
 import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
 import type { ActionUsage } from "@/models/combat";
 import type { AppOptions, CloseOptions } from "@/types/application";
-import { postActionCard, type IncomingAttack } from "@/utils/actionChat";
+import { postActionCard } from "@/utils/actionChat";
+import type { IncomingAttack } from "@/utils/actionChat";
 import { evaluateAd6Roll, calcDieSuccess } from "@/utils/AD6Roll";
 import {
   actorSpeed,
@@ -43,7 +44,8 @@ import {
 } from "@/utils/combat";
 import { filterItemsOf, isActorOf, resolveLinkedCharacters, memberVesselsOf } from "@/utils/documents";
 import { isFullyDestroyed } from "@/utils/hardwareUtils";
-import { weaponAttackStats, type WeaponTag } from "@/utils/weaponUtils";
+import { weaponAttackStats } from "@/utils/weaponUtils";
+import type { WeaponTag } from "@/utils/weaponUtils";
 
 export interface ActionCenterPrefill {
   action?: ActionValue;
@@ -81,9 +83,9 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
   const { skills: skillItems, suites: suiteItems, weapons: weaponItems } = items;
 
   const [action, setAction] = useState<ActionValue>(
-    lockedAction ?? prefill?.action ?? defaultCombatAction(consumeSlot),
+    lockedAction ?? prefill?.action ?? defaultCombatAction(consumeSlot)
   );
-  const [skill1Id, setSkill1Id] = useState<string>(prefillSkillKey(skillItems, contextActor, prefill?.skill1Id));
+  const [skill1Id, setSkill1Id] = useState(() => prefillSkillKey(skillItems, contextActor, prefill?.skill1Id));
   const [skill2Id, setSkill2Id] = useState<string>("");
   const [suiteId, setSuiteId] = useState<string>("");
   const [weaponId, setWeaponId] = useState<string>(weaponItems[0]?.key ?? "");
@@ -121,7 +123,9 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
   const usage: ActionUsage = { skills: (skill1 ? 1 : 0) + (skill2 ? 1 : 0), suite: Boolean(suite) };
 
   const handleRoll = async () => {
-    if (!canRoll) return;
+    if (!canRoll) {
+      return;
+    }
 
     if (action === "initiative" && !combatantOf(contextActor)) {
       ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.NotInCombat"));
@@ -129,7 +133,9 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     }
 
     if (consumeSlot && combatant) {
-      if (!isConflictAction(action)) return;
+      if (!isConflictAction(action)) {
+        return;
+      }
       if (simpleActionsEnabled() && usage.suite && usage.skills < 1) {
         ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill"));
         return;
@@ -148,7 +154,9 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
 
     if (action === "initiative") {
       const applied = await applyInitiative(contextActor, successes, diceCount);
-      if (!applied) return;
+      if (!applied) {
+        return;
+      }
     }
 
     const incomingAttack = incomingAttackOf(action, successes, incoming, weapon?.item, contextActor, calledShot, {
@@ -157,20 +165,20 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     });
 
     await postActionCard({
-      actor: contextActor,
       action,
-      title: actionCardTitle(contextActor, action, heightened),
-      modifier,
-      diceCount,
-      dice: result.dice,
-      rolledSuccesses,
+      actor: contextActor,
       bonusSuccesses: manualSuccesses,
-      successes,
-      roll: result.roll,
-      skillNames: sourcedMethodNames(skill1, skill2, suite, swarmDice, contextActor),
-      incoming: incomingAttack,
+      dice: result.dice,
+      diceCount,
       heightened,
+      incoming: incomingAttack,
+      modifier,
+      roll: result.roll,
+      rolledSuccesses,
+      skillNames: sourcedMethodNames(skill1, skill2, suite, swarmDice, contextActor),
       speed: action === "initiative" ? actorSpeed(contextActor) : undefined,
+      successes,
+      title: actionCardTitle(contextActor, action, heightened),
     });
 
     if (consumeSlot && combatant && isConflictAction(action)) {
@@ -273,21 +281,25 @@ function ActionSelect({
           onChange={(event) => {
             const next = event.target.value;
             if (conflictOnly) {
-              if (isConflictAction(next)) onChange(next);
+              if (isConflictAction(next)) {
+                onChange(next);
+              }
               return;
             }
-            if (isChoiceValue(ACTION_OPTIONS, next)) onChange(next);
+            if (isChoiceValue(ACTION_OPTIONS, next)) {
+              onChange(next);
+            }
           }}
         >
           {phases.map((phase) => (
             <optgroup key={phase.value} label={game.i18n.localize(phase.labelKey)}>
-              {options
-                .filter((option) => option.phase === phase.value)
-                .map((option) => (
+              {options.map((option) =>
+                option.phase === phase.value ? (
                   <option key={option.value} value={option.value}>
                     {game.i18n.localize(option.labelKey)}
                   </option>
-                ))}
+                ) : null
+              )}
             </optgroup>
           ))}
         </Select>
@@ -334,7 +346,9 @@ function AttackOptions({
           value={penetrationValue}
           disabled={!penetrationActive}
           aria-label={game.i18n.localize("ROBOTECH.Roll.ArmorPenetration")}
-          onValueChange={(value) => onPenetrationValueChange(value ?? 0)}
+          onValueChange={(value) => {
+            onPenetrationValueChange(value ?? 0);
+          }}
         />
       </Stack>
     </Stack>
@@ -386,7 +400,13 @@ function SkillSelect({
 }): JSX.Element {
   return (
     <Field label={game.i18n.localize(labelKey)} grow>
-      <Select width="full" value={value} onChange={(event) => onChange(event.target.value)}>
+      <Select
+        width="full"
+        value={value}
+        onChange={(event) => {
+          onChange(event.target.value);
+        }}
+      >
         {allowNone && <option value="">— {game.i18n.localize("ROBOTECH.Roll.None")} —</option>}
         {skills.map((skill) => (
           <option key={skill.key} value={skill.key}>
@@ -409,7 +429,13 @@ function SuiteSelect({
 }): JSX.Element {
   return (
     <Field label={game.i18n.localize("ROBOTECH.Roll.SelectSuite")}>
-      <Select width="full" value={value} onChange={(event) => onChange(event.target.value)}>
+      <Select
+        width="full"
+        value={value}
+        onChange={(event) => {
+          onChange(event.target.value);
+        }}
+      >
         <option value="">— {game.i18n.localize("ROBOTECH.Roll.None")} —</option>
         {suites.map((item) => (
           <option key={item.key} value={item.key}>
@@ -432,7 +458,13 @@ function WeaponSelect({
 }): JSX.Element {
   return (
     <Field label={game.i18n.localize("ROBOTECH.Roll.Weapon")}>
-      <Select width="full" value={value} onChange={(event) => onChange(event.target.value)}>
+      <Select
+        width="full"
+        value={value}
+        onChange={(event) => {
+          onChange(event.target.value);
+        }}
+      >
         {weapons.length === 0 && <option value="">{game.i18n.localize("ROBOTECH.Roll.None")}</option>}
         {weapons.map((item) => (
           <option key={item.key} value={item.key}>
@@ -569,7 +601,9 @@ function Stepper({
           size="icon"
           variant="outline"
           title={game.i18n.localize("ROBOTECH.Buttons.Decrement")}
-          onClick={() => onChange(Math.max(min, value - 1))}
+          onClick={() => {
+            onChange(Math.max(min, value - 1));
+          }}
         >
           -
         </Button>
@@ -580,7 +614,9 @@ function Stepper({
           size="icon"
           variant="outline"
           title={game.i18n.localize("ROBOTECH.Buttons.Increment")}
-          onClick={() => onChange(Math.min(nextMax, value + 1))}
+          onClick={() => {
+            onChange(Math.min(nextMax, value + 1));
+          }}
         >
           +
         </Button>
@@ -590,15 +626,19 @@ function Stepper({
 }
 
 function dieTextColor(successes: number): "green" | "amber" | "danger" {
-  if (successes >= 2) return "green";
-  if (successes === 1) return "amber";
+  if (successes >= 2) {
+    return "green";
+  }
+  if (successes === 1) {
+    return "amber";
+  }
   return "danger";
 }
 
 function actionCardTitle(actor: Actor, action: ActionValue, heightened: boolean): string {
   const fallbackKey = ACTION_OPTIONS[0]?.labelKey ?? "";
   const actionLabel = game.i18n.localize(
-    ACTION_OPTIONS.find((option) => option.value === action)?.labelKey ?? fallbackKey,
+    ACTION_OPTIONS.find((option) => option.value === action)?.labelKey ?? fallbackKey
   );
   const key = heightened ? "ROBOTECH.Roll.HeightenedTitle" : "ROBOTECH.Roll.RollTitle";
   return game.i18n.localize(key, { action: actionLabel, name: actor.name });
@@ -611,10 +651,14 @@ function incomingAttackOf(
   weapon: ItemOf<"weapon"> | undefined,
   contextActor: Actor,
   calledShot: boolean,
-  penetration: WeaponAmount,
+  penetration: WeaponAmount
 ): IncomingAttack | undefined {
-  if (action === "defend") return incoming;
-  if (action !== "attack") return undefined;
+  if (action === "defend") {
+    return incoming;
+  }
+  if (action !== "attack") {
+    return undefined;
+  }
   if (weapon) {
     return { ...weaponAttackStats(weapon, penetration), attackSuccesses: successes, calledShot };
   }
@@ -622,28 +666,28 @@ function incomingAttackOf(
     const damageType = contextActor.system.damageClass;
     const tags: WeaponTag[] = [
       {
+        color: "red",
         id: "damage",
         label: game.i18n.localize(`ROBOTECH.Damage.DamageClass.${damageType}`),
-        color: "red",
       },
     ];
     if (penetration.active) {
       tags.push({
+        color: "amber",
         id: "penetration",
         label: game.i18n.localize("ROBOTECH.Item.Property.Penetration.tag", { val: penetration.value }),
-        color: "amber",
         title: game.i18n.localize("ROBOTECH.Item.Property.Penetration.name"),
       });
     }
     return {
-      weaponName: contextActor.name,
-      damageType,
       armorPenetration: penetration.active ? penetration.value : 0,
+      attackSuccesses: successes,
+      calledShot,
+      damageType,
       multiplier: 1,
       multiplierTargetType: null,
       tags,
-      attackSuccesses: successes,
-      calledShot,
+      weaponName: contextActor.name,
     };
   }
   return undefined;
@@ -659,20 +703,28 @@ function weaponPenetrationOf(weapon: ItemOf<"weapon"> | undefined): WeaponAmount
 
 function combatantFromPrefill(prefill: ActionCenterPrefill | undefined): Combatant | undefined {
   const id = prefill?.combatantId;
-  if (!id) return undefined;
+  if (!id) {
+    return undefined;
+  }
   return game.combat?.combatants.get(id);
 }
 
 function defaultCombatAction(consumeSlot: boolean): ActionValue {
-  if (!consumeSlot || !game.combat) return "assist";
+  if (!consumeSlot || !game.combat) {
+    return "assist";
+  }
   const phase = combatPhaseOf(game.combat);
   return CONFLICT_ACTION_OPTIONS.find((option) => option.phase === phase)?.value ?? "attack";
 }
 
 function actionIsHeightened(action: ActionValue): boolean {
-  if (!game.combat || !isConflictAction(action)) return false;
+  if (!game.combat || !isConflictAction(action)) {
+    return false;
+  }
   const phase = combatPhaseOf(game.combat);
-  if (phase === "communication") return false;
+  if (phase === "communication") {
+    return false;
+  }
   return isHeightened(action, phase);
 }
 
@@ -680,22 +732,28 @@ function sourcedOptionsOf<T extends ItemType>(actors: Actor[], type: T): Sourced
   const options: SourcedOption<T>[] = [];
   for (const actor of actors) {
     const uuid = actor.uuid;
-    if (!uuid) continue;
+    if (!uuid) {
+      continue;
+    }
     for (const item of filterItemsOf(actor, type)) {
-      if (isFullyDestroyed(item) || !item.id) continue;
+      if (isFullyDestroyed(item) || !item.id) {
+        continue;
+      }
       options.push({
-        key: `${uuid}:${item.id}`,
         item,
+        key: `${uuid}:${item.id}`,
         sourceName: actor.name,
         sourceUuid: uuid,
       });
     }
   }
-  return options.sort((a, b) => a.item.name.localeCompare(b.item.name));
+  return options.toSorted((a, b) => a.item.name.localeCompare(b.item.name));
 }
 
 function prefillSkillKey(skills: SourcedOption<"skill">[], contextActor: Actor, prefillId?: string): string {
-  if (!prefillId) return "";
+  if (!prefillId) {
+    return "";
+  }
   return skills.find((skill) => skill.item.id === prefillId && skill.sourceUuid === contextActor.uuid)?.key ?? "";
 }
 
@@ -704,7 +762,7 @@ function livingSwarmCount(actor: Actor): number {
 }
 
 function optionLabel(name: string, value: number, source: string): string {
-  return game.i18n.localize("ROBOTECH.Roll.OptionWithSource", { name, value, source });
+  return game.i18n.localize("ROBOTECH.Roll.OptionWithSource", { name, source, value });
 }
 
 function sourcedMethodNames(
@@ -712,21 +770,31 @@ function sourcedMethodNames(
   skill2: SourcedOption<"skill"> | undefined,
   suite: SourcedOption<"equipment_suite"> | undefined,
   swarmDice: number,
-  contextActor: Actor,
+  contextActor: Actor
 ): string[] {
   const names: string[] = [];
   if (swarmDice > 0 && isActorOf(contextActor, "swarm")) {
     names.push(optionLabel(game.i18n.localize("ROBOTECH.Roll.SwarmVessels"), swarmDice, contextActor.name));
   }
-  if (skill1) names.push(optionLabel(skill1.item.name, skill1.item.system.value, skill1.sourceName));
-  if (skill2) names.push(optionLabel(skill2.item.name, skill2.item.system.value, skill2.sourceName));
-  if (suite) names.push(optionLabel(suite.item.name, suite.item.system.skill, suite.sourceName));
+  if (skill1) {
+    names.push(optionLabel(skill1.item.name, skill1.item.system.value, skill1.sourceName));
+  }
+  if (skill2) {
+    names.push(optionLabel(skill2.item.name, skill2.item.system.value, skill2.sourceName));
+  }
+  if (suite) {
+    names.push(optionLabel(suite.item.name, suite.item.system.skill, suite.sourceName));
+  }
   return names;
 }
 
 async function resolveSuiteActors(contextActor: Actor, crew: ActorOf<"character">[]): Promise<Actor[]> {
-  if (isActorOf(contextActor, "character")) return [contextActor];
-  if (isActorOf(contextActor, "vessel")) return [contextActor, ...crew];
+  if (isActorOf(contextActor, "character")) {
+    return [contextActor];
+  }
+  if (isActorOf(contextActor, "vessel")) {
+    return [contextActor, ...crew];
+  }
   if (isActorOf(contextActor, "swarm")) {
     const vessels = await memberVesselsOf(contextActor);
     return [...vessels, ...crew];
@@ -735,29 +803,31 @@ async function resolveSuiteActors(contextActor: Actor, crew: ActorOf<"character"
 }
 
 async function resolveWeaponActors(contextActor: Actor): Promise<Actor[]> {
-  if (isActorOf(contextActor, "swarm")) return memberVesselsOf(contextActor);
+  if (isActorOf(contextActor, "swarm")) {
+    return await memberVesselsOf(contextActor);
+  }
   return [contextActor];
 }
 
 export class ActionCenterApp extends ReactDialog {
   constructor(
-    private contextActor: Actor,
-    private items: ActionCenterItems,
-    private prefill?: ActionCenterPrefill,
-    options: AppOptions = {},
+    private readonly contextActor: Actor,
+    private readonly items: ActionCenterItems,
+    private readonly prefill?: ActionCenterPrefill,
+    options: AppOptions = {}
   ) {
     super(options);
   }
 
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    id: "robotech-action-center",
     classes: ["robotech", "dialog", "action-center"],
-    position: { width: 480, height: "auto" },
+    id: "robotech-action-center",
+    position: { height: "auto", width: 480 },
     window: {
       ...super.DEFAULT_OPTIONS.window,
-      title: "ROBOTECH.Roll.Title",
       resizable: false,
+      title: "ROBOTECH.Roll.Title",
     },
   };
 
@@ -773,7 +843,9 @@ export class ActionCenterApp extends ReactDialog {
   }
 
   override _onClose(options: CloseOptions): void {
-    if (currentApp === this) currentApp = null;
+    if (currentApp === this) {
+      currentApp = null;
+    }
     super._onClose(options);
   }
 }
@@ -799,7 +871,9 @@ export async function openActionCenter(contextActor: Actor, prefill?: ActionCent
     suites: sourcedOptionsOf(suiteActors, "equipment_suite"),
     weapons: sourcedOptionsOf(weaponActors, "weapon"),
   };
-  if (currentApp) await currentApp.close();
+  if (currentApp) {
+    await currentApp.close();
+  }
   currentApp = new ActionCenterApp(contextActor, items, prefill);
   void currentApp.render(true);
 }

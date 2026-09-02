@@ -1,6 +1,7 @@
-﻿import type { JSX } from "react";
+import type { JSX } from "react";
 import { flushSync } from "react-dom";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
 import { createSheetContainer } from "@/utils";

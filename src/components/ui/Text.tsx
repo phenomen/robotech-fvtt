@@ -1,9 +1,11 @@
-import { type JSX, type ReactNode } from "react";
+import { createElement } from "react";
+import type { JSX, ReactNode } from "react";
 
-import { typoClass, type TextSize, type TextVariant } from "@/components/ui/typo";
+import { typoClass } from "@/components/ui/typo";
+import type { TextSize, TextVariant } from "@/components/ui/typo";
 import { cn } from "@/utils";
 
-export type { TextSize, TextVariant };
+export type { TextSize, TextVariant } from "@/components/ui/typo";
 
 export type TextColor =
   | "foreground"
@@ -23,32 +25,36 @@ export type TextWidth = "num" | "full";
 type TextTag = "p" | "span" | "div" | "h1" | "h2" | "h3" | "h4" | "label" | "strong" | "subtle";
 
 const COLOR_CLASS: Record<TextColor, string> = {
+  amber: "text-rt-custom-amber",
+  blue: "text-rt-custom-blue",
+  danger: "text-rt-danger",
   foreground: "text-rt-foreground",
+  green: "text-rt-custom-green",
+  inherit: "text-inherit",
   muted: "text-rt-muted",
   primary: "text-rt-primary",
   secondary: "text-rt-secondary-foreground",
-  danger: "text-rt-danger",
-  green: "text-rt-custom-green",
-  amber: "text-rt-custom-amber",
   teal: "text-rt-custom-teal",
-  blue: "text-rt-custom-blue",
-  inherit: "text-inherit",
 };
 
 const ALIGN_CLASS: Record<TextAlign, string> = {
-  start: "text-left",
   center: "text-center",
   end: "text-right",
+  start: "text-left",
 };
 
 const WIDTH_CLASS: Record<TextWidth, string> = {
-  num: "inline-block w-12",
   full: "block w-full",
+  num: "inline-block w-12",
 };
 
 function defaultTag(variant: TextVariant): TextTag {
-  if (variant === "title") return "h3";
-  if (variant === "copy") return "p";
+  if (variant === "title") {
+    return "h3";
+  }
+  if (variant === "copy") {
+    return "p";
+  }
   return "span";
 }
 
@@ -77,21 +83,21 @@ export function Text({
   title,
   children,
 }: TextProps): JSX.Element {
-  const Component = as ?? defaultTag(variant);
-  return (
-    <Component
-      {...(Component === "label" ? { htmlFor } : {})}
-      title={title}
-      className={cn(
+  const tag = as ?? defaultTag(variant);
+  return createElement(
+    tag === "subtle" ? "span" : tag,
+    {
+      className: cn(
         "m-0",
         typoClass(variant, size),
         COLOR_CLASS[color],
         align ? ALIGN_CLASS[align] : undefined,
         width ? WIDTH_CLASS[width] : undefined,
-        truncate && "min-w-0 truncate",
-      )}
-    >
-      {children}
-    </Component>
+        truncate && "min-w-0 truncate"
+      ),
+      ...(tag === "label" ? { htmlFor } : {}),
+      title,
+    },
+    children
   );
 }

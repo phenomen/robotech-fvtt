@@ -1,5 +1,5 @@
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
-import { type CombatPhaseValue } from "@/config/options";
+import type { CombatPhaseValue } from "@/config/options";
 import {
   announceCombatEnd,
   announceRoundPhase,
@@ -26,7 +26,9 @@ type OnDelete = CombatBase["_onDelete"];
 export class RobotechCombat extends foundry.documents.Combat {
   protected override _initializeSource(...args: Parameters<InitSource>): ReturnType<InitSource> {
     const data = args[0];
-    if (data && typeof data === "object") applyCombatType(data);
+    if (data && typeof data === "object") {
+      applyCombatType(data);
+    }
     return super._initializeSource(...args);
   }
 
@@ -35,7 +37,9 @@ export class RobotechCombat extends foundry.documents.Combat {
   }
 
   _canChangeTurn(user: { isGM: boolean }): boolean {
-    if (user.isGM) return true;
+    if (user.isGM) {
+      return true;
+    }
     return this.combatant?.isOwner ?? false;
   }
 
@@ -45,7 +49,7 @@ export class RobotechCombat extends foundry.documents.Combat {
 
   override async startCombat(): Promise<this> {
     this._playCombatSound("startEncounter");
-    const updateData = { round: 1, turn: null, "system.phase": "communication" };
+    const updateData = { round: 1, "system.phase": "communication", turn: null };
     foundry.helpers.Hooks.callAll("combatStart", this, updateData);
     await this.update(updateData);
     await foundry.documents.ActiveEffect.registry.refresh("combatStart", { combat: this });
@@ -53,7 +57,9 @@ export class RobotechCombat extends foundry.documents.Combat {
   }
 
   override async nextTurn(): Promise<this> {
-    if (this.round === 0) return this.startCombat();
+    if (this.round === 0) {
+      return await this.startCombat();
+    }
 
     const phase = combatPhaseOf(this);
     if (phase === "communication") {
@@ -61,7 +67,7 @@ export class RobotechCombat extends foundry.documents.Combat {
         ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.WaitForPhase"));
         return this;
       }
-      return this.setPhase("support");
+      return await this.setPhase("support");
     }
 
     const next = nextLivingIndex(this, this.turn ?? -1);
@@ -70,14 +76,16 @@ export class RobotechCombat extends foundry.documents.Combat {
         ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.WaitForPhase"));
         return this;
       }
-      return this.advancePhase();
+      return await this.advancePhase();
     }
 
-    return this.setTurn(next, 1);
+    return await this.setTurn(next, 1);
   }
 
   override async previousTurn(): Promise<this> {
-    if (this.round === 0) return this;
+    if (this.round === 0) {
+      return this;
+    }
 
     const phase = combatPhaseOf(this);
     if (phase === "communication") {
@@ -85,7 +93,7 @@ export class RobotechCombat extends foundry.documents.Combat {
         ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.WaitForPhase"));
         return this;
       }
-      return this.previousRound();
+      return await this.previousRound();
     }
 
     const previous = previousLivingIndex(this, this.turn ?? 0);
@@ -94,17 +102,19 @@ export class RobotechCombat extends foundry.documents.Combat {
         ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.WaitForPhase"));
         return this;
       }
-      return this.rewindPhase();
+      return await this.rewindPhase();
     }
 
-    return this.setTurn(previous, -1);
+    return await this.setTurn(previous, -1);
   }
 
   override async nextRound(): Promise<this> {
-    if (!game.user?.isGM) return this;
+    if (!game.user?.isGM) {
+      return this;
+    }
     await clearRoundUses(this);
     const nextRound = this.round + 1;
-    const updateData = { round: nextRound, turn: null, "system.phase": "communication" };
+    const updateData = { round: nextRound, "system.phase": "communication", turn: null };
     const advanceTime = this.getTimeDelta(this.round, this.turn, nextRound, null);
     const updateOptions = { direction: 1, worldTime: { delta: advanceTime } };
     foundry.helpers.Hooks.callAll("combatRound", this, updateData, updateOptions);
@@ -113,10 +123,12 @@ export class RobotechCombat extends foundry.documents.Combat {
   }
 
   override async previousRound(): Promise<this> {
-    if (!game.user?.isGM || this.round === 0) return this;
+    if (!game.user?.isGM || this.round === 0) {
+      return this;
+    }
     await clearRoundUses(this);
     const previousRound = this.round - 1;
-    const updateData = { round: previousRound, turn: null, "system.phase": "communication" };
+    const updateData = { round: previousRound, "system.phase": "communication", turn: null };
     const advanceTime = this.getTimeDelta(this.round, this.turn, previousRound, null);
     const updateOptions = { direction: -1, worldTime: { delta: advanceTime } };
     foundry.helpers.Hooks.callAll("combatRound", this, updateData, updateOptions);
@@ -128,10 +140,14 @@ export class RobotechCombat extends foundry.documents.Combat {
     const ids = args[0];
     const list = typeof ids === "string" ? [ids] : ids;
     const id = list[0];
-    if (!id) return this;
+    if (!id) {
+      return this;
+    }
     const combatant = this.combatants.get(id);
     const actor = combatant?.actor;
-    if (!actor) return this;
+    if (!actor) {
+      return this;
+    }
     await openActionCenter(actor, { action: "initiative" });
     return this;
   }
@@ -148,13 +164,17 @@ export class RobotechCombat extends foundry.documents.Combat {
 
   private async advancePhase(): Promise<this> {
     const next = nextPhaseOf(combatPhaseOf(this));
-    if (!next) return this.nextRound();
-    return this.setPhase(next);
+    if (!next) {
+      return await this.nextRound();
+    }
+    return await this.setPhase(next);
   }
 
   private async rewindPhase(): Promise<this> {
     const previous = previousPhaseOf(combatPhaseOf(this));
-    if (!previous) return this.previousRound();
+    if (!previous) {
+      return await this.previousRound();
+    }
     await clearManualSort(this);
     const turn = previous === "communication" ? null : lastLivingIndex(this);
     const updateData = { "system.phase": previous, turn };
@@ -175,20 +195,28 @@ export class RobotechCombat extends foundry.documents.Combat {
 
   override _onUpdate(...args: Parameters<OnUpdate>): void {
     super._onUpdate(...args);
-    if (!this.started) return;
+    if (!this.started) {
+      return;
+    }
     const [changed, options] = args;
-    if (isRewind(options)) return;
+    if (isRewind(options)) {
+      return;
+    }
     const phase = foundry.utils.getProperty(changed, "system.phase");
     const phaseChanged = typeof phase === "string";
     const roundChanged = "round" in changed && typeof changed.round === "number";
-    if (!phaseChanged && !roundChanged) return;
+    if (!phaseChanged && !roundChanged) {
+      return;
+    }
     announceRoundPhase(this.round, phaseChanged ? phase : combatPhaseOf(this));
   }
 
   override _onDelete(...args: Parameters<OnDelete>): void {
     const started = this.started;
     super._onDelete(...args);
-    if (started) announceCombatEnd();
+    if (started) {
+      announceCombatEnd();
+    }
   }
 }
 

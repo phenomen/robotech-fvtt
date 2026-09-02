@@ -12,7 +12,7 @@ export async function createEffect(parent: Actor | Item): Promise<void> {
 
 /** Every effect that can modify an actor: its own plus the transferred effects of its items. */
 export function actorEffects(actor: Actor): ActiveEffect[] {
-  return Array.from(actor.allApplicableEffects());
+  return [...actor.allApplicableEffects()];
 }
 
 /** The document an effect came from: the owning item, or the actor for effects made on the actor. */
@@ -28,7 +28,7 @@ export function isOwnEffect(effect: ActiveEffect): boolean {
 export async function addChange(effect: ActiveEffect): Promise<void> {
   const next: EffectChange[] = [
     ...effect.system.changes,
-    { key: "", type: DEFAULT_CHANGE_TYPE, value: "", phase: "initial", priority: null },
+    { key: "", phase: "initial", priority: null, type: DEFAULT_CHANGE_TYPE, value: "" },
   ];
   await effect.update({ "system.changes": next });
 }

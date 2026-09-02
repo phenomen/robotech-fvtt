@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { Input } from "@/components/ui/Input";
 import { LabelGrid, LabelRow } from "@/components/ui/LabelGrid";
@@ -23,7 +23,9 @@ export function DramaTracker({ actor }: DramaTrackerProps): JSX.Element {
         <LabelRow key={key} label={game.i18n.localize("ROBOTECH.Stress.DramaN", { n: index + 1 })}>
           <Input
             value={stress[key]}
-            onChange={(e) => updateDramaText(key, e.target.value)}
+            onChange={(e) => {
+              updateDramaText(key, e.target.value);
+            }}
             placeholder={game.i18n.localize("ROBOTECH.Stress.DramaPlaceholder")}
             width="full"
           />

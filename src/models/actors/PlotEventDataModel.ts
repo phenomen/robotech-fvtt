@@ -1,4 +1,5 @@
-import { PLOT_EVENT_PHASE_VALUES, type PlotEventPhaseValue } from "@/config/options";
+import { PLOT_EVENT_PHASE_VALUES } from "@/config/options";
+import type { PlotEventPhaseValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 
 export interface PlotEventRounds {
@@ -18,20 +19,20 @@ export class PlotEventDataModel extends ActorDataModel {
     const roundField = () => new fields.NumberField({ initial: 0, integer: true, min: 0 });
     return {
       ...super.defineSchema(),
-      eventLevel: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      rounds: new fields.SchemaField({
-        risingAction: roundField(),
-        climax: roundField(),
-        conclusion: roundField(),
-      }),
       activePhase: new fields.StringField({
-        required: true,
         blank: true,
-        initial: "",
         choices: PLOT_EVENT_PHASE_VALUES,
+        initial: "",
+        required: true,
       }),
       conflictUuids: new fields.ArrayField(new fields.StringField({ initial: "" }), {
         initial: [],
+      }),
+      eventLevel: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      rounds: new fields.SchemaField({
+        climax: roundField(),
+        conclusion: roundField(),
+        risingAction: roundField(),
       }),
     };
   }

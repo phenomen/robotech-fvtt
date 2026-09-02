@@ -2,7 +2,8 @@ import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
 import type React from "react";
 import { flushSync } from "react-dom";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 
 import { CharacterSheetApp } from "@/components/apps/CharacterSheetApp";
 import { ConflictSheetApp } from "@/components/apps/ConflictSheetApp";
@@ -32,9 +33,9 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "sheet", "actor"],
-    position: { width: 710, height: "auto" },
-    window: { ...super.DEFAULT_OPTIONS.window, resizable: true },
     dragDrop: [{ dropSelector: null }],
+    position: { height: "auto", width: 710 },
+    window: { ...super.DEFAULT_OPTIONS.window, resizable: true },
   };
 
   override async _onFirstRender(...args: Parameters<ActorSheetBase["_onFirstRender"]>): Promise<void> {
@@ -45,13 +46,9 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
   }
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
-    if (!this.container) {
-      this.container = createSheetContainer("robotech-sheet-container");
-    }
+    this.container ??= createSheetContainer("robotech-sheet-container");
 
-    if (!this.reactRoot) {
-      this.reactRoot = createRoot(this.container);
-    }
+    this.reactRoot ??= createRoot(this.container);
 
     flushSync(() => {
       this.reactRoot?.render(this.renderSheetApp());
@@ -62,11 +59,21 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
 
   private renderSheetApp(): React.JSX.Element | null {
     const actor = this.actor;
-    if (isActorOf(actor, "vessel")) return <VesselSheetApp actor={actor} />;
-    if (isActorOf(actor, "character")) return <CharacterSheetApp actor={actor} />;
-    if (isActorOf(actor, "swarm")) return <SwarmSheetApp actor={actor} />;
-    if (isActorOf(actor, "conflict")) return <ConflictSheetApp actor={actor} />;
-    if (isActorOf(actor, "plot_event")) return <PlotEventSheetApp actor={actor} />;
+    if (isActorOf(actor, "vessel")) {
+      return <VesselSheetApp actor={actor} />;
+    }
+    if (isActorOf(actor, "character")) {
+      return <CharacterSheetApp actor={actor} />;
+    }
+    if (isActorOf(actor, "swarm")) {
+      return <SwarmSheetApp actor={actor} />;
+    }
+    if (isActorOf(actor, "conflict")) {
+      return <ConflictSheetApp actor={actor} />;
+    }
+    if (isActorOf(actor, "plot_event")) {
+      return <PlotEventSheetApp actor={actor} />;
+    }
     return null;
   }
 
@@ -77,11 +84,15 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
   }
 
   protected override async _onDropActor(event: DragEvent, droppedActor: Actor): DropActorResult {
-    if (!this.actor.isOwner || !this.isEditable) return null;
+    if (!this.actor.isOwner || !this.isEditable) {
+      return null;
+    }
 
     if (isActorOf(droppedActor, "character") && isActorOf(this.actor, "vessel")) {
       const uuid = droppedActor.uuid;
-      if (!uuid) return null;
+      if (!uuid) {
+        return null;
+      }
       await addCrewMember(this.actor, uuid);
       return droppedActor;
     }
@@ -93,14 +104,18 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
 
     if (isActorOf(this.actor, "swarm") && isActorOf(droppedActor, "vessel")) {
       const uuid = droppedActor.uuid;
-      if (!uuid) return null;
+      if (!uuid) {
+        return null;
+      }
       await this.addVesselToSwarm(this.actor, droppedActor, uuid);
       return droppedActor;
     }
 
     if (isActorOf(this.actor, "conflict")) {
       const uuid = droppedActor.uuid;
-      if (!uuid) return null;
+      if (!uuid) {
+        return null;
+      }
       if (
         isActorOf(droppedActor, "character") ||
         isActorOf(droppedActor, "vessel") ||
@@ -113,18 +128,20 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
 
     if (isActorOf(this.actor, "plot_event") && isActorOf(droppedActor, "conflict")) {
       const uuid = droppedActor.uuid;
-      if (!uuid) return null;
+      if (!uuid) {
+        return null;
+      }
       await addEventConflict(this.actor, uuid);
       return droppedActor;
     }
 
-    return super._onDropActor(event, droppedActor);
+    return await super._onDropActor(event, droppedActor);
   }
 
   private async addVesselToSwarm(
     swarm: ActorOf<"swarm">,
     droppedActor: ActorOf<"vessel">,
-    uuid: string,
+    uuid: string
   ): Promise<void> {
     const existing = swarm.system.members.find((member) => member.actorUuid === uuid);
 
@@ -134,10 +151,10 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
           ? {
               ...member,
               count: member.count + 1,
-              maxCount: member.maxCount + 1,
               currentStructure: member.currentStructure > 0 ? member.currentStructure : member.reducedStructure,
+              maxCount: member.maxCount + 1,
             }
-          : member,
+          : member
       );
       await swarm.update({ "system.members": members });
       return;
@@ -149,31 +166,37 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
   }
 
   protected override async _onDropItem(event: DragEvent, item: Item): DropItemResult {
-    if (!this.actor.isOwner || !this.isEditable) return null;
+    if (!this.actor.isOwner || !this.isEditable) {
+      return null;
+    }
     if (item.parent instanceof foundry.documents.Actor && item.parent.uuid === this.actor.uuid) {
-      return super._onDropItem(event, item);
+      return await super._onDropItem(event, item);
     }
 
     if (!isAllowedOnActor(this.actor.type, item.type)) {
       ui.notifications.warn(
         game.i18n.localize("ROBOTECH.Item.ItemNotAllowed", {
-          itemType: game.i18n.localize(`TYPES.Item.${item.type}`),
           actorType: game.i18n.localize(`TYPES.Actor.${this.actor.type}`),
-        }),
+          itemType: game.i18n.localize(`TYPES.Item.${item.type}`),
+        })
       );
       return null;
     }
 
     await this.clearUniqueItem(item);
-    return super._onDropItem(event, item);
+    return await super._onDropItem(event, item);
   }
 
   private async clearUniqueItem(item: Item): Promise<void> {
-    if (!UNIQUE_ITEM_TYPES.some((type) => type === item.type)) return;
+    if (!UNIQUE_ITEM_TYPES.some((type) => type === item.type)) {
+      return;
+    }
 
     const ids: string[] = [];
     for (const owned of this.actor.items) {
-      if (owned.type === item.type && owned.id) ids.push(owned.id);
+      if (owned.type === item.type && owned.id) {
+        ids.push(owned.id);
+      }
     }
     if (ids.length > 0) {
       await this.actor.deleteEmbeddedDocuments("Item", ids);
@@ -195,16 +218,16 @@ function buildSwarmMember(droppedActor: ActorOf<"vessel">, actorUuid: string): S
   const reducedStructure = calcReducedStructure(originalStructure);
 
   return {
-    id: foundry.utils.randomID(),
     actorUuid,
-    name: droppedActor.name,
-    img: droppedActor.img,
     armor: droppedActor.system.armor.max,
+    count: 1,
+    currentStructure: reducedStructure,
+    id: foundry.utils.randomID(),
+    img: droppedActor.img,
+    maxCount: 1,
+    name: droppedActor.name,
     originalStructure,
     reducedStructure,
-    currentStructure: reducedStructure,
-    count: 1,
-    maxCount: 1,
     speed: droppedActor.system.activeSpeed.game,
   };
 }

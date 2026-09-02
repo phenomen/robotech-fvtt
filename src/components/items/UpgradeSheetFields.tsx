@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
 import { Field } from "@/components/ui/Field";
@@ -9,7 +9,13 @@ export function UpgradeSheetFields({ item, handleFieldChange }: ItemFieldsProps<
 
   return (
     <Field label={game.i18n.localize("ROBOTECH.Character.Rank")}>
-      <NumberInput min={0} value={system.rank} onValueChange={(val) => handleFieldChange("system.rank", val ?? 1)} />
+      <NumberInput
+        min={0}
+        value={system.rank}
+        onValueChange={(val) => {
+          handleFieldChange("system.rank", val ?? 1);
+        }}
+      />
     </Field>
   );
 }

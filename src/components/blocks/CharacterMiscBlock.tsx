@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -29,7 +29,9 @@ export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Elem
         <Field icon="wealth" iconTone="green" label={game.i18n.localize("ROBOTECH.Character.Wealth")}>
           <Select
             value={system.wealth}
-            onChange={(e) => handleFieldChange("system.wealth", e.target.value)}
+            onChange={(e) => {
+              handleFieldChange("system.wealth", e.target.value);
+            }}
             width="medium"
           >
             {WEALTH_OPTIONS.map((option) => (
@@ -42,20 +44,29 @@ export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Elem
         <Field icon="armor" iconTone="teal" label={game.i18n.localize("ROBOTECH.Character.Armor")}>
           <NumberInput
             value={system.armor}
-            onValueChange={(val) => handleFieldChange("system.armor", val ?? 0)}
+            onValueChange={(val) => {
+              handleFieldChange("system.armor", val ?? 0);
+            }}
             min={0}
           />
         </Field>
         <Field icon="speed" iconTone="blue" label={game.i18n.localize("ROBOTECH.Character.Speed")}>
-          <NumberInput value={system.speed} onValueChange={(val) => handleFieldChange("system.speed", val ?? 0)} />
+          <NumberInput
+            value={system.speed}
+            onValueChange={(val) => {
+              handleFieldChange("system.speed", val ?? 0);
+            }}
+          />
         </Field>
         <Field icon="star" iconTone="amber" label={game.i18n.localize("ROBOTECH.HeroicMove.Title")}>
           <Checkbox
             size="large"
             checked={system.heroicMove.used}
-            onCheckedChange={(val) => handleFieldChange("system.heroicMove.used", val)}
+            onCheckedChange={(val) => {
+              handleFieldChange("system.heroicMove.used", val);
+            }}
             title={game.i18n.localize(
-              system.heroicMove.used ? "ROBOTECH.HeroicMove.Used" : "ROBOTECH.HeroicMove.Ready",
+              system.heroicMove.used ? "ROBOTECH.HeroicMove.Used" : "ROBOTECH.HeroicMove.Ready"
             )}
           />
         </Field>

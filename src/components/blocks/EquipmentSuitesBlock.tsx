@@ -1,5 +1,5 @@
 import type Actor from "@client/documents/actor.mjs";
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { ItemList } from "@/components/blocks/ItemList";
 

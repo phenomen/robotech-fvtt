@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
@@ -7,7 +7,8 @@ import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Tag } from "@/components/ui/Tag";
-import { WEAPON_PROPERTIES, type WeaponPropertyDef } from "@/config/weaponProperties";
+import { WEAPON_PROPERTIES } from "@/config/weaponProperties";
+import type { WeaponPropertyDef } from "@/config/weaponProperties";
 import type { FieldValue, WeaponProperties } from "@/models";
 import { weaponPropertyTags } from "@/utils/weaponUtils";
 
@@ -32,7 +33,9 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
       {isActive && def.inputType === "damage" && (
         <Select
           value={properties[def.key].type}
-          onChange={(e) => setProp(`${def.key}.type`, e.target.value)}
+          onChange={(e) => {
+            setProp(`${def.key}.type`, e.target.value);
+          }}
           width="medium"
         >
           {def.selectOptions.map((opt) => (
@@ -46,7 +49,9 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
       {isActive && def.inputType === "select" && (
         <Select
           value={properties[def.key].value}
-          onChange={(e) => setProp(`${def.key}.value`, e.target.value)}
+          onChange={(e) => {
+            setProp(`${def.key}.value`, e.target.value);
+          }}
           width="medium"
         >
           {def.selectOptions.map((opt) => (
@@ -61,7 +66,9 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
         <NumberInput
           min={0}
           value={properties[def.key].value}
-          onValueChange={(val) => setProp(`${def.key}.value`, val ?? 0)}
+          onValueChange={(val) => {
+            setProp(`${def.key}.value`, val ?? 0);
+          }}
         />
       )}
 
@@ -69,7 +76,9 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
         <NumberInput
           min={0}
           value={properties[def.key].value}
-          onValueChange={(val) => setProp(`${def.key}.value`, val ?? 0)}
+          onValueChange={(val) => {
+            setProp(`${def.key}.value`, val ?? 0);
+          }}
         />
       )}
 
@@ -79,12 +88,16 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
             min={2}
             max={5}
             value={properties[def.key].value}
-            onValueChange={(val) => setProp(`${def.key}.value`, val ?? 2)}
+            onValueChange={(val) => {
+              setProp(`${def.key}.value`, val ?? 2);
+            }}
             width="small"
           />
           <Select
             value={properties[def.key].targetType}
-            onChange={(e) => setProp(`${def.key}.targetType`, e.target.value)}
+            onChange={(e) => {
+              setProp(`${def.key}.targetType`, e.target.value);
+            }}
           >
             {def.selectOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>

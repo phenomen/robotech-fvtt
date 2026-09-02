@@ -12,7 +12,7 @@ function memberShareOf(total: number, member: number): number {
 }
 
 function woundRefsOf(type: WoundType, offset: number, count: number): WoundRef[] {
-  return Array.from({ length: count }, (_unused, i) => ({ type, index: offset + i }));
+  return Array.from({ length: count }, (_unused, i) => ({ index: offset + i, type }));
 }
 
 /** Wound boxes split across the three triumvirate members; brawl boxes precede critical ones within a member. */
@@ -43,18 +43,24 @@ export function filledWoundStates(
   group: readonly WoundRef[],
   count: number,
   brawl: readonly boolean[],
-  critical: readonly boolean[],
+  critical: readonly boolean[]
 ): { brawl: boolean[]; critical: boolean[] } {
   const nextBrawl = [...brawl];
   const nextCritical = [...critical];
   let remaining = count;
   for (const ref of group) {
-    if (remaining <= 0) break;
+    if (remaining <= 0) {
+      break;
+    }
     if (ref.type === "brawl") {
-      if (nextBrawl[ref.index]) continue;
+      if (nextBrawl[ref.index]) {
+        continue;
+      }
       nextBrawl[ref.index] = true;
     } else {
-      if (nextCritical[ref.index]) continue;
+      if (nextCritical[ref.index]) {
+        continue;
+      }
       nextCritical[ref.index] = true;
     }
     remaining -= 1;
@@ -68,11 +74,13 @@ export function toggledWoundStates(
   type: WoundType,
   index: number,
   brawl: readonly boolean[],
-  critical: readonly boolean[],
+  critical: readonly boolean[]
 ): { brawl: boolean[]; critical: boolean[] } {
   const pos = group.findIndex((ref) => ref.type === type && ref.index === index);
   const target = group[pos];
-  if (!target) return { brawl: [...brawl], critical: [...critical] };
+  if (!target) {
+    return { brawl: [...brawl], critical: [...critical] };
+  }
 
   const checked = (type === "brawl" ? brawl[index] : critical[index]) ?? false;
   const fill = !checked;

@@ -10,12 +10,13 @@ import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
-import { EFFECT_ATTRIBUTE_GROUPS, EFFECT_CHANGE_TYPE_OPTIONS, type EffectChangeType } from "@/config/effects";
+import { EFFECT_ATTRIBUTE_GROUPS, EFFECT_CHANGE_TYPE_OPTIONS } from "@/config/effects";
+import type { EffectChangeType } from "@/config/effects";
 import type { EffectChange } from "@/models";
 import { addChange, patchChange, removeChange } from "@/utils";
 
 const PREMADE_KEYS = new Set<string>(
-  EFFECT_ATTRIBUTE_GROUPS.flatMap((group) => group.options.map((option) => option.value)),
+  EFFECT_ATTRIBUTE_GROUPS.flatMap((group) => group.options.map((option) => option.value))
 );
 
 function isChangeType(value: string): value is EffectChangeType {
@@ -49,8 +50,9 @@ export function EffectChangesTable({ effect }: EffectChangesTableProps): JSX.Ele
         <Table>
           <ChangeHeaders />
           <TableBody>
-            {/* Foundry stores changes as a plain array, so the row index is the only available key. */}
             {changes.map((change, index) => (
+              // Foundry stores changes as a plain array, so the row index is the only available key.
+              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               <ChangeRow key={index} effect={effect} change={change} index={index} />
             ))}
           </TableBody>
@@ -144,7 +146,9 @@ function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
           width="medium"
           aria-label={game.i18n.localize("ROBOTECH.Effect.Type")}
           onChange={(event) => {
-            if (!isChangeType(event.target.value)) return;
+            if (!isChangeType(event.target.value)) {
+              return;
+            }
             void patchChange(effect, index, { type: event.target.value });
           }}
         >

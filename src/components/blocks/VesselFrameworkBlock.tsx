@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -23,7 +23,9 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
           <CardTitle>{game.i18n.localize("ROBOTECH.Vessel.FrameworkTitle")}</CardTitle>
           <Checkbox
             checked={isBasic}
-            onCheckedChange={(val) => onFieldChange("system.isBasic", val)}
+            onCheckedChange={(val) => {
+              onFieldChange("system.isBasic", val);
+            }}
             label={game.i18n.localize("ROBOTECH.Vessel.Basic")}
           />
         </Stack>
@@ -44,12 +46,16 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
           <NumberInput
             min={0}
             value={structure.max}
-            onValueChange={(val) => onFieldChange("system.structure.max", Math.max(0, val ?? 0))}
+            onValueChange={(val) => {
+              onFieldChange("system.structure.max", Math.max(0, val ?? 0));
+            }}
           />
           <NumberInput
             min={0}
             value={structure.value}
-            onValueChange={(val) => onFieldChange("system.structure.value", Math.max(0, val ?? 0))}
+            onValueChange={(val) => {
+              onFieldChange("system.structure.value", Math.max(0, val ?? 0));
+            }}
           />
         </Stack>
       </Stack>
@@ -62,12 +68,16 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
           <NumberInput
             min={0}
             value={armor.max}
-            onValueChange={(val) => onFieldChange("system.armor.max", Math.max(0, val ?? 0))}
+            onValueChange={(val) => {
+              onFieldChange("system.armor.max", Math.max(0, val ?? 0));
+            }}
           />
           <NumberInput
             min={0}
             value={armor.value}
-            onValueChange={(val) => onFieldChange("system.armor.value", Math.max(0, val ?? 0))}
+            onValueChange={(val) => {
+              onFieldChange("system.armor.value", Math.max(0, val ?? 0));
+            }}
           />
         </Stack>
       </Stack>

@@ -1,4 +1,4 @@
-import { type JSX, type ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { Icon } from "@/components/ui/Icon";
 import { Stack } from "@/components/ui/Stack";
@@ -14,9 +14,9 @@ export interface CalloutProps {
 }
 
 const FRAME_CLASS: Record<CalloutTone, string> = {
+  danger: "bg-rt-danger/10 border-rt-danger",
   default: "",
   info: "bg-rt-primary/10 border-rt-primary",
-  danger: "bg-rt-danger/10 border-rt-danger",
 };
 
 export function Callout({ children, icon, tone = "default" }: CalloutProps): JSX.Element {

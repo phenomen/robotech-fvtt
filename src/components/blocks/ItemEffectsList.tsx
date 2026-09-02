@@ -16,7 +16,7 @@ interface ItemEffectsListProps {
 }
 
 export function ItemEffectsList({ item }: ItemEffectsListProps): JSX.Element {
-  const effects = Array.from(item.effects);
+  const effects = [...item.effects];
 
   return (
     <Stack gap={1}>

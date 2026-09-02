@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
 import { Field } from "@/components/ui/Field";
@@ -15,14 +15,18 @@ export function GearSheetFields({ item, handleFieldChange }: ItemFieldsProps<"ge
         <NumberInput
           min={0}
           value={system.quantity}
-          onValueChange={(val) => handleFieldChange("system.quantity", val ?? 1)}
+          onValueChange={(val) => {
+            handleFieldChange("system.quantity", val ?? 1);
+          }}
         />
       </Field>
       <Field label={game.i18n.localize("ROBOTECH.Item.Category")}>
         <Input
           width="full"
           value={system.category}
-          onChange={(e) => handleFieldChange("system.category", e.target.value)}
+          onChange={(e) => {
+            handleFieldChange("system.category", e.target.value);
+          }}
         />
       </Field>
     </Stack>

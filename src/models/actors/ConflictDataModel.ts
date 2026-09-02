@@ -1,11 +1,5 @@
-import {
-  CONFLICT_RECOGNITION_VALUES,
-  CONFLICT_THREAT_VALUES,
-  CONFLICT_TYPE_VALUES,
-  type ConflictRecognitionValue,
-  type ConflictThreatValue,
-  type ConflictTypeValue,
-} from "@/config/options";
+import { CONFLICT_RECOGNITION_VALUES, CONFLICT_THREAT_VALUES, CONFLICT_TYPE_VALUES } from "@/config/options";
+import type { ConflictRecognitionValue, ConflictThreatValue, ConflictTypeValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { syncBoxTracker } from "@/utils/trackers";
 
@@ -29,26 +23,26 @@ export class ConflictDataModel extends ActorDataModel {
     const fields = foundry.data.fields;
     return {
       ...super.defineSchema(),
-      plotEventUuid: new fields.StringField({ initial: "" }),
+      actorUuids: new fields.ArrayField(new fields.StringField({ initial: "" }), { initial: [] }),
+      armor: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       conflictType: new fields.StringField({
-        initial: CONFLICT_TYPE_VALUES[0],
         choices: CONFLICT_TYPE_VALUES,
+        initial: CONFLICT_TYPE_VALUES[0],
       }),
+      plotEventUuid: new fields.StringField({ initial: "" }),
+      pool: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       recognition: new fields.StringField({
-        initial: CONFLICT_RECOGNITION_VALUES[4],
         choices: CONFLICT_RECOGNITION_VALUES,
+        initial: CONFLICT_RECOGNITION_VALUES[4],
       }),
       threat: new fields.StringField({
-        initial: CONFLICT_THREAT_VALUES[0],
         choices: CONFLICT_THREAT_VALUES,
+        initial: CONFLICT_THREAT_VALUES[0],
       }),
-      pool: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      armor: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      actorUuids: new fields.ArrayField(new fields.StringField({ initial: "" }), { initial: [] }),
       tracker: new fields.SchemaField({
         max: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
+        value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       }),
     };
   }

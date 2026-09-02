@@ -1,6 +1,7 @@
 import { RobotechTokenRuler } from "@/canvas";
 import { RobotechCombat, RobotechCombatant, RobotechCombatTracker } from "@/combat";
-import { STATUS_EFFECTS, THEME_OPTIONS, THEME_VALUES, type ThemeValue } from "@/config";
+import { STATUS_EFFECTS, THEME_OPTIONS, THEME_VALUES } from "@/config";
+import type { ThemeValue } from "@/config";
 import {
   CharacterDataModel,
   ConflictDataModel,
@@ -28,22 +29,22 @@ import { bindChatButtons } from "@/utils/chatActions";
 function registerDataModels(): void {
   Object.assign(CONFIG.Actor.dataModels, {
     character: CharacterDataModel,
-    vessel: VesselDataModel,
-    swarm: SwarmDataModel,
     conflict: ConflictDataModel,
     plot_event: PlotEventDataModel,
+    swarm: SwarmDataModel,
+    vessel: VesselDataModel,
   });
 
   Object.assign(CONFIG.Item.dataModels, {
     career: CareerDataModel,
-    race: RaceDataModel,
+    equipment_suite: EquipmentSuiteDataModel,
+    feature: FeatureDataModel,
     gear: GearDataModel,
+    race: RaceDataModel,
     skill: SkillDataModel,
     talent: TalentDataModel,
-    equipment_suite: EquipmentSuiteDataModel,
-    weapon: WeaponDataModel,
-    feature: FeatureDataModel,
     upgrade: UpgradeDataModel,
+    weapon: WeaponDataModel,
   });
 
   Object.assign(CONFIG.Combat.dataModels, {
@@ -57,14 +58,14 @@ function registerDataModels(): void {
 function registerSystemSheets(): void {
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("robotech", RobotechActorSheet, {
-    makeDefault: true,
     label: "ROBOTECH.Sheet.Actor",
+    makeDefault: true,
   });
 
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("robotech", RobotechItemSheet, {
-    makeDefault: true,
     label: "ROBOTECH.Sheet.Item",
+    makeDefault: true,
   });
 
   registerEffectSheet();
@@ -83,8 +84,8 @@ function registerEffectSheet(): void {
 
   sheetConfig.unregisterSheet(foundry.documents.ActiveEffect, "core", coreSheet);
   sheetConfig.registerSheet(foundry.documents.ActiveEffect, "robotech", systemSheet, {
-    makeDefault: true,
     label: "ROBOTECH.Sheet.Effect",
+    makeDefault: true,
   });
 }
 
@@ -95,81 +96,75 @@ function isTheme(value: string): value is ThemeValue {
 function applyTheme(theme?: string): void {
   const selectedTheme = theme ?? (game.settings?.get("robotech", "theme") as string | undefined) ?? "dark";
   const root = document.documentElement;
-  if (!root) return;
-  root.setAttribute("data-theme", isTheme(selectedTheme) ? selectedTheme : "dark");
+  if (!root) {
+    return;
+  }
+  root.dataset.theme = isTheme(selectedTheme) ? selectedTheme : "dark";
 }
 
 function registerStatusEffects(): void {
-  for (const id of Object.keys(CONFIG.statusEffects)) {
-    delete CONFIG.statusEffects[id];
-  }
-  for (const effect of STATUS_EFFECTS) {
-    CONFIG.statusEffects[effect.id] = {
-      id: effect.id,
-      name: effect.name,
-      img: effect.img,
-      order: effect.order,
-    };
-  }
+  const config = CONFIG as unknown as {
+    statusEffects: { id: string; img: string; name: string; order: number }[];
+  };
+  config.statusEffects = STATUS_EFFECTS.map((effect) => ({
+    id: effect.id,
+    img: effect.img,
+    name: effect.name,
+    order: effect.order,
+  }));
 }
 
 function registerSystemSettings(): void {
   game.settings.register("robotech", "applyTokenDefaults", {
-    key: "applyTokenDefaults",
-    namespace: "robotech",
-    name: "ROBOTECH.Settings.TokenDefaults.Name",
-    hint: "ROBOTECH.Settings.TokenDefaults.Hint",
-    scope: "world",
     config: true,
-    type: Boolean,
     default: true,
+    hint: "ROBOTECH.Settings.TokenDefaults.Hint",
+    key: "applyTokenDefaults",
+    name: "ROBOTECH.Settings.TokenDefaults.Name",
+    namespace: "robotech",
+    scope: "world",
+    type: Boolean,
   });
 
   game.settings.register("robotech", "simpleActions", {
-    key: "simpleActions",
-    namespace: "robotech",
-    name: "ROBOTECH.Settings.SimpleActions.Name",
-    hint: "ROBOTECH.Settings.SimpleActions.Hint",
-    scope: "world",
     config: true,
-    type: Boolean,
     default: false,
+    hint: "ROBOTECH.Settings.SimpleActions.Hint",
+    key: "simpleActions",
+    name: "ROBOTECH.Settings.SimpleActions.Name",
+    namespace: "robotech",
+    scope: "world",
+    type: Boolean,
   });
 
   game.settings.register("robotech", "theme", {
-    key: "theme",
-    namespace: "robotech",
-    name: "ROBOTECH.Settings.Theme.Name",
-    hint: "ROBOTECH.Settings.Theme.Hint",
-    scope: "client",
-    config: true,
-    type: String,
     choices: Object.fromEntries(
-      THEME_OPTIONS.map(({ value, labelKey, groupKey }) => [value, { label: labelKey, group: groupKey }]),
+      THEME_OPTIONS.map(({ value, labelKey, groupKey }) => [value, { group: groupKey, label: labelKey }])
     ),
+    config: true,
     default: "dark",
-    onChange: (value: unknown) => applyTheme(String(value)),
+    hint: "ROBOTECH.Settings.Theme.Hint",
+    key: "theme",
+    name: "ROBOTECH.Settings.Theme.Name",
+    namespace: "robotech",
+    onChange: (value: unknown) => {
+      applyTheme(String(value));
+    },
+    scope: "client",
+    type: String,
   });
 }
 
 foundry.helpers.Hooks.once("init", () => {
   CONFIG.Token.rulerClass = RobotechTokenRuler;
   CONFIG.Combat.documentClass = RobotechCombat;
-  CONFIG.Combatant.documentClass = RobotechCombatant as typeof foundry.documents.Combatant;
+  CONFIG.Combatant.documentClass = RobotechCombatant;
   CONFIG.ui.combat = RobotechCombatTracker as unknown as typeof foundry.applications.sidebar.tabs.CombatTracker;
   registerStatusEffects();
   CONFIG.Actor.trackableAttributes = {
     character: {
       bar: ["vitals.wounds", "vitals.stress"],
       value: ["armor"],
-    },
-    vessel: {
-      bar: ["structure"],
-      value: ["armor"],
-    },
-    swarm: {
-      bar: ["structure", "vessels"],
-      value: [],
     },
     conflict: {
       bar: ["tracker"],
@@ -178,6 +173,14 @@ foundry.helpers.Hooks.once("init", () => {
     plot_event: {
       bar: [],
       value: ["eventLevel"],
+    },
+    swarm: {
+      bar: ["structure", "vessels"],
+      value: [],
+    },
+    vessel: {
+      bar: ["structure"],
+      value: ["armor"],
     },
   };
   registerDataModels();

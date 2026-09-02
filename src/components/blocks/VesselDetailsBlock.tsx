@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
@@ -27,7 +27,9 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
       >
         <NumberInput
           value={system.hardwarePoints}
-          onValueChange={(val) => handleFieldChange("system.hardwarePoints", val ?? 0)}
+          onValueChange={(val) => {
+            handleFieldChange("system.hardwarePoints", val ?? 0);
+          }}
           min={0}
         />
       </Field>
@@ -40,7 +42,9 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
       >
         <NumberInput
           value={system.requiredRank}
-          onValueChange={(val) => handleFieldChange("system.requiredRank", val ?? 0)}
+          onValueChange={(val) => {
+            handleFieldChange("system.requiredRank", val ?? 0);
+          }}
           min={0}
         />
       </Field>
@@ -53,7 +57,9 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
       >
         <Input
           value={system.faction}
-          onChange={(e) => handleFieldChange("system.faction", e.target.value)}
+          onChange={(e) => {
+            handleFieldChange("system.faction", e.target.value);
+          }}
           width="medium"
         />
       </Field>

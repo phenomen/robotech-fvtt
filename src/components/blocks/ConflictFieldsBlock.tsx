@@ -1,4 +1,5 @@
-import { useId, type ChangeEvent, type JSX } from "react";
+import { useId } from "react";
+import type { ChangeEvent, JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
@@ -52,7 +53,9 @@ export function ConflictFieldsBlock({ actor }: ConflictFieldsBlockProps): JSX.El
         <NumberInput
           value={system.armor}
           min={0}
-          onValueChange={(val) => handleFieldChange("system.armor", val ?? 0)}
+          onValueChange={(val) => {
+            handleFieldChange("system.armor", val ?? 0);
+          }}
         />
       </Field>
 
@@ -63,7 +66,9 @@ export function ConflictFieldsBlock({ actor }: ConflictFieldsBlockProps): JSX.El
             id={poolId}
             value={system.pool}
             min={0}
-            onValueChange={(val) => handleFieldChange("system.pool", val ?? 0)}
+            onValueChange={(val) => {
+              handleFieldChange("system.pool", val ?? 0);
+            }}
           />
           <Button type="button" variant="primary" size="large" onClick={() => void rollConflictPool(actor)}>
             {game.i18n.localize("ROBOTECH.Buttons.Roll")}

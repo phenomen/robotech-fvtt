@@ -1,4 +1,4 @@
-import { type ChangeEvent, type JSX } from "react";
+import type { ChangeEvent, JSX } from "react";
 
 import { ConflictPlotLink } from "@/components/blocks/ConflictPlotLink";
 import { Field } from "@/components/ui/Field";

@@ -10,7 +10,7 @@ export interface LinkedActor<T extends ActorType> {
 }
 
 function resolveAll<T extends ActorType>(uuids: readonly string[], types: readonly T[]): LinkedActor<T>[] {
-  return uuids.map((uuid) => ({ uuid, actor: actorFromUuidSync(uuid, types) }));
+  return uuids.map((uuid) => ({ actor: actorFromUuidSync(uuid, types), uuid }));
 }
 
 /**
@@ -21,29 +21,36 @@ function resolveAll<T extends ActorType>(uuids: readonly string[], types: readon
  * driven by content, not array identity.
  */
 export function useLinkedActors<T extends ActorType>(uuids: readonly string[], types: readonly T[]): LinkedActor<T>[] {
-  const inputsRef = useRef({ uuids, types });
-  inputsRef.current = { uuids, types };
-
+  const inputsRef = useRef({ types, uuids });
   const [actors, setActors] = useState<LinkedActor<T>[]>(() => resolveAll(uuids, types));
   const [, bumpVersion] = useReducer((count: number): number => count + 1, 0);
 
   const signature = `${uuids.length}:${uuids.join("|")}#${types.join("|")}`;
 
   useEffect(() => {
+    inputsRef.current = { types, uuids };
+  });
+
+  useEffect(() => {
     let cancelled = false;
     const { uuids: currentUuids, types: currentTypes } = inputsRef.current;
     setActors(resolveAll(currentUuids, currentTypes));
-    void Promise.all(
-      currentUuids.map(async (uuid) => ({
-        uuid,
-        actor: await actorFromUuid(uuid, currentTypes),
-      })),
-    ).then((resolved) => {
-      if (!cancelled) setActors(resolved);
-    });
+    void (async () => {
+      const resolved = await Promise.all(
+        currentUuids.map(async (uuid) => ({
+          actor: await actorFromUuid(uuid, currentTypes),
+          uuid,
+        }))
+      );
+      if (!cancelled) {
+        setActors(resolved);
+      }
+    })();
     return () => {
       cancelled = true;
     };
+    // Signature is the content-based trigger; the effect reads the latest inputs from the ref.
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies
   }, [signature]);
 
   const idKey = actors.map((entry) => entry.actor?.id ?? "-").join("|");
@@ -52,12 +59,20 @@ export function useLinkedActors<T extends ActorType>(uuids: readonly string[], t
     const ids = new Set(idKey.split("|"));
     ids.delete("-");
     ids.delete("");
-    if (ids.size === 0) return;
+    if (ids.size === 0) {
+      return () => {
+        /* no linked actors to watch */
+      };
+    }
     const handleUpdate = (actor: foundry.documents.Actor): void => {
-      if (actor.id !== null && ids.has(actor.id)) bumpVersion();
+      if (actor.id !== null && ids.has(actor.id)) {
+        bumpVersion();
+      }
     };
     const handleDelete = (actor: foundry.documents.Actor): void => {
-      if (actor.id === null || !ids.has(actor.id)) return;
+      if (actor.id === null || !ids.has(actor.id)) {
+        return;
+      }
       const { uuids: currentUuids, types: currentTypes } = inputsRef.current;
       setActors(resolveAll(currentUuids, currentTypes));
     };

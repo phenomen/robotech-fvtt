@@ -1,4 +1,5 @@
-import { WEALTH_VALUES, type WealthValue } from "@/config/options";
+import { WEALTH_VALUES } from "@/config/options";
+import type { WealthValue } from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID } from "@/config/statuses";
 import {
   MAX_BRAWL_WOUNDS,
@@ -83,89 +84,90 @@ export class CharacterDataModel extends ActorDataModel {
     const fields = foundry.data.fields;
     return {
       ...super.defineSchema(),
-      level: new fields.NumberField({ initial: 1, integer: true, min: 1 }),
-      experience: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      armor: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       buildPoints: new fields.NumberField({
         initial: 0,
         integer: true,
         min: 0,
       }),
-      armor: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      burnout: new fields.NumberField({ initial: 5, integer: true, min: 1 }),
       career: new fields.StringField({ initial: "" }),
       element: new fields.StringField({ initial: "" }),
+      experience: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      heroicMove: new fields.SchemaField({
+        description: new fields.StringField({ initial: "" }),
+        name: new fields.StringField({ initial: "" }),
+        used: new fields.BooleanField({ initial: false }),
+      }),
+      level: new fields.NumberField({ initial: 1, integer: true, min: 1 }),
       nature: new fields.SchemaField({
-        disposition: new fields.StringField({ initial: "" }),
         demeanor: new fields.StringField({ initial: "" }),
+        disposition: new fields.StringField({ initial: "" }),
       }),
-      burnout: new fields.NumberField({ initial: 5, integer: true, min: 1 }),
+      proficiencies: new fields.ArrayField(new fields.StringField()),
+      skills: new fields.ObjectField({ initial: {} }),
       speed: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
-      wealth: new fields.StringField({
-        initial: WEALTH_VALUES[1], // "standard"
-        choices: WEALTH_VALUES,
-      }),
-      vitalsSettings: new fields.SchemaField({
-        brawl: new fields.NumberField({
+      stress: new fields.SchemaField({
+        boxes: new fields.ArrayField(new fields.StringField({ initial: "" })),
+        drama: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+        drama1: new fields.StringField({ initial: "" }),
+        drama2: new fields.StringField({ initial: "" }),
+        drama3: new fields.StringField({ initial: "" }),
+        fatigue: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+        value: new fields.NumberField({
+          initial: 0,
           integer: true,
+          max: STRESS_BOX_COUNT,
           min: 0,
-          max: MAX_BRAWL_WOUNDS,
-          nullable: true,
         }),
-        critical: new fields.NumberField({
-          integer: true,
-          min: 0,
-          max: MAX_CRITICAL_WOUNDS,
-          nullable: true,
-        }),
-        isMechaWounds: new fields.BooleanField({ initial: false }),
-        isTriumvirateWounds: new fields.BooleanField({ initial: false }),
       }),
       vitals: new fields.SchemaField({
-        wounds: new fields.SchemaField({
-          value: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
-          max: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
-        }),
         stress: new fields.SchemaField({
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
           max: new fields.NumberField({
             initial: STRESS_BOX_COUNT,
             integer: true,
             min: 0,
           }),
+          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         }),
+        wounds: new fields.SchemaField({
+          max: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
+          value: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
+        }),
+      }),
+      vitalsSettings: new fields.SchemaField({
+        brawl: new fields.NumberField({
+          integer: true,
+          max: MAX_BRAWL_WOUNDS,
+          min: 0,
+          nullable: true,
+        }),
+        critical: new fields.NumberField({
+          integer: true,
+          max: MAX_CRITICAL_WOUNDS,
+          min: 0,
+          nullable: true,
+        }),
+        isMechaWounds: new fields.BooleanField({ initial: false }),
+        isTriumvirateWounds: new fields.BooleanField({ initial: false }),
+      }),
+      wealth: new fields.StringField({
+        choices: WEALTH_VALUES,
+        // "standard"
+        initial: WEALTH_VALUES[1],
       }),
       wounds: new fields.SchemaField({
         brawl: new fields.SchemaField({
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
           max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
           states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
+          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         }),
         critical: new fields.SchemaField({
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
           max: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
           states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
+          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         }),
       }),
-      stress: new fields.SchemaField({
-        value: new fields.NumberField({
-          initial: 0,
-          integer: true,
-          min: 0,
-          max: STRESS_BOX_COUNT,
-        }),
-        drama: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        fatigue: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        drama1: new fields.StringField({ initial: "" }),
-        drama2: new fields.StringField({ initial: "" }),
-        drama3: new fields.StringField({ initial: "" }),
-        boxes: new fields.ArrayField(new fields.StringField({ initial: "" })),
-      }),
-      heroicMove: new fields.SchemaField({
-        name: new fields.StringField({ initial: "" }),
-        used: new fields.BooleanField({ initial: false }),
-        description: new fields.StringField({ initial: "" }),
-      }),
-      proficiencies: new fields.ArrayField(new fields.StringField()),
-      skills: new fields.ObjectField({ initial: {} }),
     };
   }
 
@@ -223,10 +225,12 @@ export class CharacterDataModel extends ActorDataModel {
   override _onUpdate(
     changed: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[0],
     options: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[1],
-    userId: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[2],
+    userId: Parameters<foundry.abstract.TypeDataModel["_onUpdate"]>[2]
   ): void {
     super._onUpdate(changed, options, userId);
-    if (game.user?.id !== userId) return;
+    if (game.user?.id !== userId) {
+      return;
+    }
     applyMentalBreak(this, changed);
   }
 }
@@ -240,7 +244,9 @@ function syncWoundCategory(category: WoundCategory, max: number) {
   const previous = category.states;
   if (previous.length !== max) {
     category.states = Array.from({ length: max }, (_unused, index) => {
-      if (index < previous.length) return previous[index] ?? false;
+      if (index < previous.length) {
+        return previous[index] ?? false;
+      }
       return previous.length === 0 && index < category.value;
     });
   }
@@ -248,23 +254,33 @@ function syncWoundCategory(category: WoundCategory, max: number) {
 }
 
 function syncStressBoxes(boxes: string[], value: number): string[] {
-  if (boxes.length === STRESS_BOX_COUNT) return boxes;
+  if (boxes.length === STRESS_BOX_COUNT) {
+    return boxes;
+  }
   return Array.from({ length: STRESS_BOX_COUNT }, (_unused, index) => {
-    if (index < boxes.length) return boxes[index] ?? "";
+    if (index < boxes.length) {
+      return boxes[index] ?? "";
+    }
     return boxes.length === 0 && index < value ? "F" : "";
   });
 }
 
 function applyMentalBreak(system: CharacterDataModel, changed: object): void {
-  if (system.stress.value < MENTAL_BREAK_THRESHOLD) return;
-  if (!stressChanged(changed)) return;
+  if (system.stress.value < MENTAL_BREAK_THRESHOLD) {
+    return;
+  }
+  if (!stressChanged(changed)) {
+    return;
+  }
   const actor = system.parent;
-  if (actor.statuses.has(MENTAL_BREAK_STATUS_ID)) return;
+  if (actor.statuses.has(MENTAL_BREAK_STATUS_ID)) {
+    return;
+  }
   void actor.toggleStatusEffect(MENTAL_BREAK_STATUS_ID, { active: true });
 }
 
 function stressChanged(changed: object): boolean {
   return Object.keys(foundry.utils.flattenObject(changed)).some(
-    (key) => key === "system.stress" || key.startsWith("system.stress."),
+    (key) => key === "system.stress" || key.startsWith("system.stress.")
   );
 }

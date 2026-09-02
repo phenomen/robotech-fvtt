@@ -1,4 +1,4 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
 
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Field } from "@/components/ui/Field";
@@ -27,14 +27,18 @@ export function CharacterNatureBlock({ actor }: CharacterNatureBlockProps): JSX.
           <Input
             width="full"
             value={system.nature.disposition}
-            onChange={(e) => handleFieldChange("system.nature.disposition", e.target.value)}
+            onChange={(e) => {
+              handleFieldChange("system.nature.disposition", e.target.value);
+            }}
           />
         </Field>
         <Field label={game.i18n.localize("ROBOTECH.Character.Demeanor")}>
           <Input
             width="full"
             value={system.nature.demeanor}
-            onChange={(e) => handleFieldChange("system.nature.demeanor", e.target.value)}
+            onChange={(e) => {
+              handleFieldChange("system.nature.demeanor", e.target.value);
+            }}
           />
         </Field>
       </Stack>

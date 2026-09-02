@@ -1,4 +1,4 @@
-import { type TagColor } from "@/components/ui/Tag";
+import type { TagColor } from "@/components/ui/Tag";
 import type { DamageTypeValue } from "@/config/options";
 import { WEAPON_PROPERTIES } from "@/config/weaponProperties";
 import type { ItemOf, WeaponAmount, WeaponProperties } from "@/models";
@@ -25,12 +25,12 @@ export function weaponAttackStats(weapon: ItemOf<"weapon">, penetration?: Weapon
   const tagged: WeaponProperties = { ...properties, penetration: nextPenetration };
   const multiplier = properties.multiplier;
   return {
-    weaponName: weapon.name,
-    damageType: properties.damage.type,
     armorPenetration: nextPenetration.active ? nextPenetration.value : 0,
+    damageType: properties.damage.type,
     multiplier: multiplier.active ? multiplier.value : 1,
     multiplierTargetType: multiplier.active ? multiplier.targetType : null,
     tags: weaponPropertyTags(tagged),
+    weaponName: weapon.name,
   };
 }
 
@@ -43,26 +43,28 @@ export function weaponPropertyTags(properties: WeaponProperties): WeaponTag[] {
   const tags: WeaponTag[] = [];
 
   for (const def of WEAPON_PROPERTIES) {
-    if (!def.formatTag || !isPropertyActive(properties[def.key])) continue;
+    if (!def.formatTag || !isPropertyActive(properties[def.key])) {
+      continue;
+    }
 
     const title = game.i18n.localize(def.nameKey);
     const formatted = def.formatTag(properties);
 
     if (Array.isArray(formatted)) {
-      formatted.forEach((label, index) => {
+      for (const [index, label] of formatted.entries()) {
         tags.push({
+          color: def.tagColor,
           id: `${def.key}-${index}`,
           label,
-          color: def.tagColor,
           title: game.i18n.localize("ROBOTECH.Item.TagCount", {
-            name: title,
             current: index + 1,
+            name: title,
             total: formatted.length,
           }),
         });
-      });
+      }
     } else {
-      tags.push({ id: def.key, label: formatted, color: def.tagColor, title });
+      tags.push({ color: def.tagColor, id: def.key, label: formatted, title });
     }
   }
 

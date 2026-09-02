@@ -1,6 +1,7 @@
-import { type DragEvent, type JSX, type ReactNode } from "react";
+import type { DragEvent, JSX, ReactNode } from "react";
 
-import { Card, type CardTone } from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
+import type { CardTone } from "@/components/ui/Card";
 import { cn } from "@/utils";
 
 export interface CombatantFrameProps {
