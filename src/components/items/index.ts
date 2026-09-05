@@ -1,10 +1,10 @@
 export type * from "./types";
 export * from "./CareerSheetFields";
+export * from "./ElementSheetFields";
 export * from "./EquipmentSuiteSheetFields";
 export * from "./FeatureSheetFields";
 export * from "./GearSheetFields";
 export * from "./RaceSheetFields";
 export * from "./SkillSheetFields";
 export * from "./TalentSheetFields";
-export * from "./UpgradeSheetFields";
 export * from "./WeaponSheetFields";

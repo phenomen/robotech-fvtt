@@ -2,7 +2,7 @@ import type { ActorType, ItemType } from "@/models/documents";
 
 /** Item subtypes that may be embedded on each Actor subtype. */
 export const ACTOR_ITEM_TYPES = {
-  character: ["career", "race", "skill", "talent", "equipment_suite", "weapon", "gear"],
+  character: ["career", "element", "race", "skill", "talent", "equipment_suite", "weapon", "gear"],
   conflict: [],
   plot_event: [],
   swarm: [],

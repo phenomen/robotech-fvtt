@@ -32,6 +32,8 @@ export interface StressData {
   drama1: string;
   drama2: string;
   drama3: string;
+  drama4: string;
+  drama5: string;
   boxes: string[];
 }
 
@@ -61,8 +63,8 @@ export class CharacterDataModel extends ActorDataModel {
   declare experience: number;
   declare buildPoints: number;
   declare armor: number;
-  declare career: string;
-  declare element: string;
+  declare callsign: string;
+  declare faction: string;
   declare nature: CharacterNature;
   declare burnout: number;
   declare speed: number;
@@ -91,9 +93,9 @@ export class CharacterDataModel extends ActorDataModel {
         min: 0,
       }),
       burnout: new fields.NumberField({ initial: 5, integer: true, min: 1 }),
-      career: new fields.StringField({ initial: "" }),
-      element: new fields.StringField({ initial: "" }),
+      callsign: new fields.StringField({ initial: "" }),
       experience: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      faction: new fields.StringField({ initial: "" }),
       heroicMove: new fields.SchemaField({
         description: new fields.StringField({ initial: "" }),
         name: new fields.StringField({ initial: "" }),
@@ -113,6 +115,8 @@ export class CharacterDataModel extends ActorDataModel {
         drama1: new fields.StringField({ initial: "" }),
         drama2: new fields.StringField({ initial: "" }),
         drama3: new fields.StringField({ initial: "" }),
+        drama4: new fields.StringField({ initial: "" }),
+        drama5: new fields.StringField({ initial: "" }),
         fatigue: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         value: new fields.NumberField({
           initial: 0,

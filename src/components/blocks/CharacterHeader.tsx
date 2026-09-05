@@ -1,8 +1,8 @@
 import type { ChangeEvent, JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
-import { DragDropSlots } from "@/components/blocks/DragDropSlots";
 import { Button } from "@/components/ui/Button";
+import { Field } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
 import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
@@ -14,6 +14,8 @@ interface HeaderProps {
 }
 
 export function Header({ actor }: HeaderProps): JSX.Element {
+  const system = actor.system;
+
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     void actor.update({ name: e.target.value });
   };
@@ -43,7 +45,28 @@ export function Header({ actor }: HeaderProps): JSX.Element {
             {game.i18n.localize("ROBOTECH.Roll.Title")}
           </Button>
         </Stack>
-        <DragDropSlots actor={actor} />
+        <Stack direction="row" gap={2}>
+          <Field grow label={game.i18n.localize("ROBOTECH.Character.Callsign")}>
+            <Input
+              width="full"
+              value={system.callsign}
+              onChange={(e) => {
+                void actor.update({ "system.callsign": e.target.value });
+              }}
+              placeholder={game.i18n.localize("ROBOTECH.Character.CallsignPlaceholder")}
+            />
+          </Field>
+          <Field grow label={game.i18n.localize("ROBOTECH.Character.Faction")}>
+            <Input
+              width="full"
+              value={system.faction}
+              onChange={(e) => {
+                void actor.update({ "system.faction": e.target.value });
+              }}
+              placeholder={game.i18n.localize("ROBOTECH.Character.FactionPlaceholder")}
+            />
+          </Field>
+        </Stack>
       </Stack>
     </Stack>
   );

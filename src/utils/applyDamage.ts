@@ -256,13 +256,12 @@ export function damagePreviewOf(incoming: IncomingAttack, defendSuccesses: numbe
     return null;
   }
 
-  const multiplier = appliedMultiplierOf(incoming, target.targetType);
   const cascade = calcDamageCascade({
     armorPenetration: incoming.armorPenetration,
     attackHits: incoming.attackSuccesses,
     attackType: incoming.damageType,
     defendHits: defendSuccesses,
-    multiplier,
+    multiplier: Math.max(1, incoming.multiplier),
     targetArmor: isActorOf(actor, "swarm") ? 0 : target.targetArmor,
     targetType: target.targetType,
   });
@@ -292,10 +291,6 @@ export async function commitDamage(preview: DamagePreview, amounts: DamageAmount
   }
 
   await postDamageCard({ ...preview.breakdown, distribution });
-}
-
-function appliedMultiplierOf(incoming: IncomingAttack, targetType: DamageTypeValue): number {
-  return incoming.multiplierTargetType === targetType ? incoming.multiplier : 1;
 }
 
 function damageTargetOf(actor: Actor): DamageTarget | null {
@@ -423,7 +418,7 @@ function damageBreakdownOf(
   cascade: CascadeResult,
   actor: Actor
 ): DamageBreakdown {
-  const multiplierApplied = incoming.multiplier > 1 && incoming.multiplierTargetType === target.targetType;
+  const multiplier = Math.max(1, incoming.multiplier);
   return {
     armor: target.targetArmor,
     armorPenetration: incoming.armorPenetration,
@@ -441,10 +436,8 @@ function damageBreakdownOf(
     ),
     hitsOverArmor: cascade.hitsOverArmor,
     isOverkill: cascade.isOverkill,
-    multipliedHits: cascade.netHits * Math.max(1, multiplierApplied ? incoming.multiplier : 1),
-    multiplier: incoming.multiplier,
-    multiplierApplied,
-    multiplierTargetType: incoming.multiplierTargetType,
+    multipliedHits: cascade.netHits * multiplier,
+    multiplier,
     netHits: cascade.netHits,
     summaryKey: cascade.summaryKey,
     swarmArmor: isActorOf(actor, "swarm"),

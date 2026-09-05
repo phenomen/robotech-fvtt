@@ -15,6 +15,7 @@
     },
     "Item": {
       "career": "Career",
+      "element": "Element",
       "race": "Race",
       "gear": "Gear",
       "skill": "Skill",
@@ -47,12 +48,14 @@
       "Stats": "Stats",
       "Skills": "Skills",
       "Talents": "Talents",
+      "Career": "Career",
       "Equipment": "Equipment",
       "Vessel": "Vessel",
       "Crew": "Crew",
       "Data": "Data",
       "Effects": "Effects",
-      "Description": "Description"
+      "Description": "Description",
+      "Personal": "Personal"
     },
     "Effect": {
       "Title": "Active Effect",
@@ -86,6 +89,10 @@
     },
     "Character": {
       "ChangePortrait": "Change portrait",
+      "Callsign": "Callsign",
+      "CallsignPlaceholder": "Callsign",
+      "Faction": "Faction",
+      "FactionPlaceholder": "Faction",
       "Level": "Level",
       "Experience": "Experience",
       "BuildPoints": "Build Points",
@@ -110,8 +117,8 @@
       "Miscellaneous": "Misc",
       "Proficiencies": "Proficiencies",
       "ProficienciesPlaceholder": "Special weapons, vehicle proficiencies, specialized training...",
-      "DragDropCareer": "Drag & Drop a Career here",
-      "DragDropRace": "Drag & Drop a Race here",
+      "DragDropCareer": "Click to create or drop a Career here",
+      "DragDropRace": "Click to create or drop a Race here",
       "AddCareer": "Add Career",
       "AddRace": "Add Race",
       "AddGenericSkills": "Add Generic Skills"
@@ -237,8 +244,7 @@
       },
       "Breakdown": {
         "Opposed": "{attack} Attack − {defend} Defend = {net} hits",
-        "MultiplierApplied": "×{value} vs {type} applied → {hits} hits",
-        "MultiplierSkipped": "×{value} vs {type} skipped (target is {target})",
+        "MultiplierApplied": "×{value} → {hits} hits",
         "Armor": "Armor {armor} − Penetration {ap} = {effective} soak",
         "ArmorSkipped": "Armor {armor} soak (Penetration {ap} ignored vs {target})",
         "HitsOverArmor": "{hits} hits over armor",
@@ -273,7 +279,7 @@
       "EquipmentSuite": "Equipment Suite",
       "EquipmentSuitePl": "Equipment Suites",
       "Upgrade": "Mecha Upgrade",
-      "UpgradePl": "Upgrades",
+      "UpgradePl": "Mecha Upgrades",
       "Quantity": "Quantity",
       "Value": "Value",
       "Uses": "Uses",
@@ -284,14 +290,14 @@
       "Prerequisites": "Prerequisites",
       "SlotType": "Slot Type",
       "Element": "Element",
+      "ElementPl": "Elements",
+      "ElementTalent": "Element Talent",
+      "ElementTalentPlaceholder": "Element talent...",
+      "StartingRank": "Starting Rank",
       "RankTitle": "Rank Title",
       "FameTitle": "Fame Title",
-      "Equipment": "Equipment",
-      "ElementPlaceholder": "Career element...",
-      "TalentPlaceholder": "Career talent...",
       "RankTitlePlaceholder": "Rank title...",
       "FameTitlePlaceholder": "Fame title...",
-      "EquipmentPlaceholder": "Granted equipment...",
       "PrerequisitePlaceholder": "",
       "Benefit": "Benefit",
       "Cost": "Cost",
@@ -308,7 +314,11 @@
       "Property": {
         "Damage": {
           "name": "Damage",
-          "tag": "D={val}"
+          "tag": "{mult}x{typeLetter}",
+          "multiplier": "Multiplier",
+          "light": "L",
+          "mecha": "M",
+          "naval": "N"
         },
         "Ammunition": {
           "name": "Ammunition"
@@ -385,13 +395,6 @@
         "Penetration": {
           "name": "Penetration",
           "tag": "P{val}"
-        },
-        "Multiplier": {
-          "name": "Multiplier",
-          "tag": "{typeLetter}x{mult}",
-          "light": "L",
-          "mecha": "M",
-          "naval": "N"
         }
       }
     },
@@ -488,8 +491,6 @@
       "Weapon": "Weapon",
       "DamageClass": "Damage Class",
       "ArmorPenetration": "Armor Penetration",
-      "Multiplier": "Multiplier",
-      "MultiplierValue": "{value}x vs {type}",
       "IncomingAttack": "Incoming Attack",
       "AttackSuccesses": "Attack Successes",
       "DefendSuccesses": "Defend Successes",
@@ -521,6 +522,7 @@
       "Edit": "Edit",
       "Roll": "Roll",
       "Use": "Use",
+      "SendToChat": "Send to chat",
       "Save": "Save",
       "Cancel": "Cancel",
       "Decrement": "Decrease",

@@ -1,5 +1,5 @@
 export * from "./ActorEffectsList";
-export * from "./DragDropSlots";
+export * from "./UniqueItemSlot";
 export * from "./EffectChangesTable";
 export * from "./ItemEffectsList";
 export * from "./CharacterDramaTracker";

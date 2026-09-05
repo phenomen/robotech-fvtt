@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/foundryvtt-system-manifest.json",
   "id": "robotech",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "license": "MIT",
   "title": "Robotech RPG",
   "description": "Robotech: The Roleplaying Game by Strange Machine Games",
@@ -45,6 +45,9 @@
     },
     "Item": {
       "career": {
+        "htmlFields": ["description"]
+      },
+      "element": {
         "htmlFields": ["description"]
       },
       "race": {

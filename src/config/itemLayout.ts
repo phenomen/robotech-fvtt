@@ -1,7 +1,8 @@
 export type ItemSheetLayoutMode = "tabs" | "stacked";
 
 export const ITEM_SHEET_LAYOUTS: Record<string, ItemSheetLayoutMode> = {
-  career: "tabs",
+  career: "stacked",
+  element: "stacked",
   equipment_suite: "tabs",
   feature: "tabs",
   gear: "tabs",

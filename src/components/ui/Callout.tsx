@@ -11,6 +11,8 @@ export interface CalloutProps {
   children: ReactNode;
   icon?: string;
   tone?: CalloutTone;
+  onClick?: () => void;
+  title?: string;
 }
 
 const FRAME_CLASS: Record<CalloutTone, string> = {
@@ -19,18 +21,32 @@ const FRAME_CLASS: Record<CalloutTone, string> = {
   info: "bg-rt-primary/10 border-rt-primary",
 };
 
-export function Callout({ children, icon, tone = "default" }: CalloutProps): JSX.Element {
+export function Callout({ children, icon, tone = "default", onClick, title }: CalloutProps): JSX.Element {
+  const frameClass = cn(
+    "flex h-full w-full items-center justify-center border border-dashed",
+    onClick && "cursor-pointer bg-transparent p-0",
+    FRAME_CLASS[tone]
+  );
+  const inner = (
+    <Stack direction="row" gap={2} align="center" justify="center" pad={2}>
+      {icon ? <Icon name={icon} tone={tone === "danger" ? "danger" : "primary"} /> : null}
+      <Text variant="mono" color={tone === "danger" ? "danger" : "muted"} align="center">
+        {children}
+      </Text>
+    </Stack>
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" className={frameClass} data-slot="callout" onClick={onClick} title={title}>
+        {inner}
+      </button>
+    );
+  }
+
   return (
-    <div
-      className={cn("flex h-full w-full items-center justify-center border border-dashed", FRAME_CLASS[tone])}
-      data-slot="callout"
-    >
-      <Stack direction="row" gap={2} align="center" justify="center" pad={2}>
-        {icon ? <Icon name={icon} tone={tone === "danger" ? "danger" : "primary"} /> : null}
-        <Text variant="mono" color={tone === "danger" ? "danger" : "muted"} align="center">
-          {children}
-        </Text>
-      </Stack>
+    <div className={frameClass} data-slot="callout" title={title}>
+      {inner}
     </div>
   );
 }

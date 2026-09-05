@@ -26,6 +26,7 @@ import {
   modifierLabelOf,
 } from "@/config/options";
 import type { ActionValue, RollModifierValue } from "@/config/options";
+import { damageTagLabel } from "@/config/weaponProperties";
 import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
 import type { ActionUsage } from "@/models/combat";
 import type { AppOptions, CloseOptions } from "@/types/application";
@@ -668,7 +669,8 @@ function incomingAttackOf(
       {
         color: "red",
         id: "damage",
-        label: game.i18n.localize(`ROBOTECH.Damage.DamageClass.${damageType}`),
+        label: damageTagLabel(1, damageType),
+        title: game.i18n.localize("ROBOTECH.Item.Property.Damage.name"),
       },
     ];
     if (penetration.active) {
@@ -685,7 +687,6 @@ function incomingAttackOf(
       calledShot,
       damageType,
       multiplier: 1,
-      multiplierTargetType: null,
       tags,
       weaponName: contextActor.name,
     };

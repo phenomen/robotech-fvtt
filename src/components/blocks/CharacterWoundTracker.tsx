@@ -10,7 +10,7 @@ import { TrackerHex } from "@/components/ui/TrackerHex";
 import { GRADATION } from "@/config";
 import type { ActorOf } from "@/models";
 import { countCheckedBoxes } from "@/utils/trackers";
-import { flatWoundGroup, toggledWoundStates, triumvirateGroupsOf } from "@/utils/woundUtils";
+import { flatWoundGroup, triumvirateGroupsOf } from "@/utils/woundUtils";
 import type { WoundRef, WoundType } from "@/utils/woundUtils";
 
 interface WoundTrackerProps {
@@ -82,18 +82,18 @@ export function WoundTracker({ actor }: WoundTrackerProps): JSX.Element {
     : [flatWoundGroup(system.wounds.brawl.max, system.wounds.critical.max)];
 
   const toggleWoundHex = (ref: WoundRef) => {
-    const group = groups.find((candidate) =>
-      candidate.some((item) => item.type === ref.type && item.index === ref.index)
-    );
-    if (!group) {
-      return;
+    const nextBrawl = [...brawlStates];
+    const nextCritical = [...criticalStates];
+    if (ref.type === "brawl") {
+      nextBrawl[ref.index] = !(nextBrawl[ref.index] ?? false);
+    } else {
+      nextCritical[ref.index] = !(nextCritical[ref.index] ?? false);
     }
-    const next = toggledWoundStates(group, ref.type, ref.index, brawlStates, criticalStates);
     void actor.update({
-      "system.wounds.brawl.states": next.brawl,
-      "system.wounds.brawl.value": countCheckedBoxes(next.brawl),
-      "system.wounds.critical.states": next.critical,
-      "system.wounds.critical.value": countCheckedBoxes(next.critical),
+      "system.wounds.brawl.states": nextBrawl,
+      "system.wounds.brawl.value": countCheckedBoxes(nextBrawl),
+      "system.wounds.critical.states": nextCritical,
+      "system.wounds.critical.value": countCheckedBoxes(nextCritical),
     });
   };
 

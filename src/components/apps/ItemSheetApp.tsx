@@ -5,13 +5,13 @@ import type { ChangeEvent, JSX } from "react";
 import { ItemEffectsList } from "@/components/blocks/ItemEffectsList";
 import {
   CareerSheetFields,
+  ElementSheetFields,
   EquipmentSuiteSheetFields,
   FeatureSheetFields,
   GearSheetFields,
   RaceSheetFields,
   SkillSheetFields,
   TalentSheetFields,
-  UpgradeSheetFields,
   WeaponSheetFields,
 } from "@/components/items";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
@@ -30,10 +30,8 @@ import { isItemOf } from "@/utils";
 
 export type ItemTabType = "stats" | "description" | "effects";
 
-const ITEM_TABS: TabItem<ItemTabType>[] = [
-  { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
-  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
-];
+const ITEM_STATS_TAB: TabItem<ItemTabType> = { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" };
+const ITEM_DESCRIPTION_TAB: TabItem<ItemTabType> = { key: "description", labelKey: "ROBOTECH.Tabs.Description" };
 const ITEM_EFFECTS_TAB: TabItem<ItemTabType> = { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" };
 
 interface ItemSheetAppProps {
@@ -41,7 +39,7 @@ interface ItemSheetAppProps {
 }
 
 export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<ItemTabType>("stats");
+  const [activeTab, setActiveTab] = useState<ItemTabType>(isItemOf(item, "upgrade") ? "description" : "stats");
   const layoutMode = getLayoutMode(item.type);
   const hasEffects = itemHasEffects(item.type);
   const system = item.system;
@@ -54,14 +52,15 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
     void item.update({ [path]: val });
   };
 
-  const itemTabs = hasEffects ? [...ITEM_TABS, ITEM_EFFECTS_TAB] : ITEM_TABS;
-
   const renderItemFields = () => {
     if (isItemOf(item, "race")) {
       return <RaceSheetFields item={item} handleFieldChange={handleFieldChange} />;
     }
     if (isItemOf(item, "career")) {
       return <CareerSheetFields item={item} handleFieldChange={handleFieldChange} />;
+    }
+    if (isItemOf(item, "element")) {
+      return <ElementSheetFields item={item} handleFieldChange={handleFieldChange} />;
     }
     if (isItemOf(item, "weapon")) {
       return <WeaponSheetFields item={item} handleFieldChange={handleFieldChange} />;
@@ -75,9 +74,6 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
     if (isItemOf(item, "equipment_suite")) {
       return <EquipmentSuiteSheetFields item={item} handleFieldChange={handleFieldChange} />;
     }
-    if (isItemOf(item, "upgrade")) {
-      return <UpgradeSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
     if (isItemOf(item, "gear")) {
       return <GearSheetFields item={item} handleFieldChange={handleFieldChange} />;
     }
@@ -88,7 +84,13 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
   };
 
   const renderedFields = renderItemFields();
+  const hasStats = renderedFields !== null;
   const stackedRows = renderedFields ? 2 : 1;
+  const itemTabs: TabItem<ItemTabType>[] = [
+    ...(hasStats ? [ITEM_STATS_TAB] : []),
+    ITEM_DESCRIPTION_TAB,
+    ...(hasEffects ? [ITEM_EFFECTS_TAB] : []),
+  ];
 
   const descriptionBlock = (
     <Stack gap={1}>

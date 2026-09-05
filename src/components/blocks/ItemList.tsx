@@ -43,6 +43,14 @@ function isWeapon(itemType: ListedItemType): boolean {
   return itemType === "weapon";
 }
 
+function isElement(itemType: ListedItemType): boolean {
+  return itemType === "element";
+}
+
+function nameCellWidth(itemType: ListedItemType): "32" | "grow" {
+  return isWeapon(itemType) || isElement(itemType) ? "32" : "grow";
+}
+
 function SkillCells({ item, onRoll }: { item: ItemOf<"skill">; onRoll: () => void }): JSX.Element {
   return (
     <>
@@ -57,6 +65,16 @@ function SkillCells({ item, onRoll }: { item: ItemOf<"skill">; onRoll: () => voi
         </Button>
       </TableCell>
     </>
+  );
+}
+
+function ElementCells({ item }: { item: ItemOf<"element"> }): JSX.Element {
+  return (
+    <TableCell width="grow">
+      <Text variant="label" truncate>
+        {item.system.talent}
+      </Text>
+    </TableCell>
   );
 }
 
@@ -230,7 +248,7 @@ async function spendUse(item: UsableItem): Promise<void> {
 
 function NameHeader({ itemType }: { itemType: ListedItemType }): JSX.Element {
   return (
-    <TableCell width={isWeapon(itemType) ? "32" : "grow"}>
+    <TableCell width={nameCellWidth(itemType)}>
       <Text variant="label" color="muted">
         {game.i18n.localize("ROBOTECH.List.HeaderName")}
       </Text>
@@ -274,6 +292,13 @@ function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element 
               </Text>
             </TableCell>
           </>
+        )}
+        {isElement(itemType) && (
+          <TableCell width="grow">
+            <Text variant="label" color="muted">
+              {game.i18n.localize("ROBOTECH.Item.ElementTalent")}
+            </Text>
+          </TableCell>
         )}
         {isUsable(itemType) && (
           <>
@@ -329,7 +354,7 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
 
   return (
     <TableRow tone={isDestroyed ? "danger" : "default"}>
-      <TableCell width={isItemOf(item, "weapon") ? "32" : "grow"}>
+      <TableCell width={nameCellWidth(itemType)}>
         <Stack direction="row" gap={2} align="center">
           <Text variant="label" color={isDestroyed ? "danger" : "foreground"} truncate title={item.name}>
             {item.name}
@@ -354,6 +379,8 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
           }}
         />
       )}
+
+      {isItemOf(item, "element") && <ElementCells item={item} />}
 
       {isUsableItem(item) && <UsesCells item={item} onUse={() => void spendItemUse(actor, item)} />}
 

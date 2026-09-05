@@ -23,15 +23,12 @@ export interface WeaponAmmunition extends WeaponAmount {
 export interface WeaponDamage {
   active: boolean;
   type: DamageTypeValue;
+  multiplier: number;
 }
 
 export interface WeaponRange {
   active: boolean;
   value: WeaponRangeValue;
-}
-
-export interface WeaponMultiplier extends WeaponAmount {
-  targetType: DamageTypeValue;
 }
 
 export interface WeaponProperties {
@@ -53,7 +50,6 @@ export interface WeaponProperties {
   quiet: WeaponFlag;
   hardware: WeaponHardware;
   penetration: WeaponAmount;
-  multiplier: WeaponMultiplier;
 }
 
 export class WeaponDataModel extends ItemDataModel {
@@ -78,6 +74,11 @@ export class WeaponDataModel extends ItemDataModel {
         corrosive: new fields.BooleanField({ initial: false }),
         damage: new fields.SchemaField({
           active: new fields.BooleanField({ initial: true }),
+          multiplier: new fields.NumberField({
+            initial: 1,
+            integer: true,
+            min: 1,
+          }),
           type: new fields.StringField({
             choices: DAMAGE_TYPE_VALUES,
             initial: "mecha",
@@ -95,19 +96,6 @@ export class WeaponDataModel extends ItemDataModel {
         }),
         melee: new fields.BooleanField({ initial: false }),
         missile: new fields.BooleanField({ initial: false }),
-        multiplier: new fields.SchemaField({
-          active: new fields.BooleanField({ initial: false }),
-          targetType: new fields.StringField({
-            choices: DAMAGE_TYPE_VALUES,
-            initial: "light",
-          }),
-          value: new fields.NumberField({
-            initial: 2,
-            integer: true,
-            max: 5,
-            min: 2,
-          }),
-        }),
         parry: new fields.BooleanField({ initial: false }),
         penetration: new fields.SchemaField({
           active: new fields.BooleanField({ initial: false }),

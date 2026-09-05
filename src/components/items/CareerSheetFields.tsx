@@ -11,26 +11,6 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
 
   return (
     <Stack gap={3}>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Element")}>
-        <Input
-          width="full"
-          value={system.element}
-          onChange={(e) => {
-            handleFieldChange("system.element", e.target.value);
-          }}
-          placeholder={game.i18n.localize("ROBOTECH.Item.ElementPlaceholder")}
-        />
-      </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Talent")}>
-        <Input
-          width="full"
-          value={system.talent}
-          onChange={(e) => {
-            handleFieldChange("system.talent", e.target.value);
-          }}
-          placeholder={game.i18n.localize("ROBOTECH.Item.TalentPlaceholder")}
-        />
-      </Field>
       <Stack direction="row" gap={3}>
         <Field label={game.i18n.localize("ROBOTECH.Character.Rank")}>
           <NumberInput
@@ -75,16 +55,6 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
           />
         </Field>
       </Stack>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Equipment")}>
-        <Input
-          width="full"
-          value={system.equipment}
-          onChange={(e) => {
-            handleFieldChange("system.equipment", e.target.value);
-          }}
-          placeholder={game.i18n.localize("ROBOTECH.Item.EquipmentPlaceholder")}
-        />
-      </Field>
     </Stack>
   );
 }

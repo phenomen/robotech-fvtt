@@ -15,7 +15,6 @@ export interface WeaponAttackStats {
   damageType: DamageTypeValue;
   armorPenetration: number;
   multiplier: number;
-  multiplierTargetType: DamageTypeValue | null;
   tags: WeaponTag[];
 }
 
@@ -23,12 +22,10 @@ export function weaponAttackStats(weapon: ItemOf<"weapon">, penetration?: Weapon
   const properties = weapon.system.properties;
   const nextPenetration = penetration ?? properties.penetration;
   const tagged: WeaponProperties = { ...properties, penetration: nextPenetration };
-  const multiplier = properties.multiplier;
   return {
     armorPenetration: nextPenetration.active ? nextPenetration.value : 0,
     damageType: properties.damage.type,
-    multiplier: multiplier.active ? multiplier.value : 1,
-    multiplierTargetType: multiplier.active ? multiplier.targetType : null,
+    multiplier: Math.max(1, properties.damage.multiplier),
     tags: weaponPropertyTags(tagged),
     weaponName: weapon.name,
   };

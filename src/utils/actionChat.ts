@@ -140,8 +140,6 @@ export interface DamageBreakdown {
   defendSuccesses: number;
   netHits: number;
   multiplier: number;
-  multiplierTargetType: DamageTypeValue | null;
-  multiplierApplied: boolean;
   multipliedHits: number;
   armor: number;
   armorPenetration: number;
@@ -339,20 +337,11 @@ function damageRowsHtml(breakdown: DamageBreakdown): string {
 }
 
 function multiplierRow(breakdown: DamageBreakdown): string {
-  if (breakdown.multiplier <= 1 || !breakdown.multiplierTargetType) {
+  if (breakdown.multiplier <= 1) {
     return "";
   }
-  const type = classLabel(breakdown.multiplierTargetType);
-  if (breakdown.multiplierApplied) {
-    return damageRow("ROBOTECH.Damage.Breakdown.MultiplierApplied", {
-      hits: breakdown.multipliedHits,
-      type,
-      value: breakdown.multiplier,
-    });
-  }
-  return damageRow("ROBOTECH.Damage.Breakdown.MultiplierSkipped", {
-    target: classLabel(breakdown.damageType),
-    type,
+  return damageRow("ROBOTECH.Damage.Breakdown.MultiplierApplied", {
+    hits: breakdown.multipliedHits,
     value: breakdown.multiplier,
   });
 }

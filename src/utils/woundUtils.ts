@@ -67,32 +67,3 @@ export function filledWoundStates(
   }
   return { brawl: nextBrawl, critical: nextCritical };
 }
-
-/** Fills every box of the group up to and including the target, or clears it and every box after it. */
-export function toggledWoundStates(
-  group: readonly WoundRef[],
-  type: WoundType,
-  index: number,
-  brawl: readonly boolean[],
-  critical: readonly boolean[]
-): { brawl: boolean[]; critical: boolean[] } {
-  const pos = group.findIndex((ref) => ref.type === type && ref.index === index);
-  const target = group[pos];
-  if (!target) {
-    return { brawl: [...brawl], critical: [...critical] };
-  }
-
-  const checked = (type === "brawl" ? brawl[index] : critical[index]) ?? false;
-  const fill = !checked;
-  const range = fill ? group.slice(0, pos + 1) : group.slice(pos);
-  const nextBrawl = [...brawl];
-  const nextCritical = [...critical];
-  for (const ref of range) {
-    if (ref.type === "brawl") {
-      nextBrawl[ref.index] = fill;
-    } else {
-      nextCritical[ref.index] = fill;
-    }
-  }
-  return { brawl: nextBrawl, critical: nextCritical };
-}

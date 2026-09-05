@@ -1,5 +1,6 @@
 export { ItemDataModel } from "@/models/items/ItemDataModel";
 export { CareerDataModel } from "@/models/items/CareerDataModel";
+export { ElementDataModel } from "@/models/items/ElementDataModel";
 export { RaceDataModel } from "@/models/items/RaceDataModel";
 export { GearDataModel } from "@/models/items/GearDataModel";
 export { SkillDataModel } from "@/models/items/SkillDataModel";
@@ -17,7 +18,6 @@ export type {
   WeaponDamage,
   WeaponFlag,
   WeaponHardware,
-  WeaponMultiplier,
   WeaponProperties,
   WeaponRange,
 } from "@/models/items/WeaponDataModel";

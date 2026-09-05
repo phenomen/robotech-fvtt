@@ -10,6 +10,7 @@ import type {
 } from "@/models/actors";
 import type {
   CareerDataModel,
+  ElementDataModel,
   EquipmentSuiteDataModel,
   FeatureDataModel,
   GearDataModel,
@@ -32,6 +33,7 @@ export interface ActorSystemMap {
 /** Maps each registered Item subtype to the data model that backs its `system` data. */
 export interface ItemSystemMap {
   career: CareerDataModel;
+  element: ElementDataModel;
   race: RaceDataModel;
   gear: GearDataModel;
   skill: SkillDataModel;

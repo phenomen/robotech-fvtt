@@ -12,6 +12,7 @@ import {
 import { CombatantDataModel, CombatDataModel } from "@/models/combat";
 import {
   CareerDataModel,
+  ElementDataModel,
   EquipmentSuiteDataModel,
   FeatureDataModel,
   GearDataModel,
@@ -37,6 +38,7 @@ function registerDataModels(): void {
 
   Object.assign(CONFIG.Item.dataModels, {
     career: CareerDataModel,
+    element: ElementDataModel,
     equipment_suite: EquipmentSuiteDataModel,
     feature: FeatureDataModel,
     gear: GearDataModel,

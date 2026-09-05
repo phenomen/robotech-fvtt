@@ -25,36 +25,27 @@ export type WeaponPropertyDef = PropertyDefBase &
     | { inputType: "hardware"; key: "hardware" }
     | { inputType: "select"; key: "range"; selectOptions: readonly Option[] }
     | { inputType: "damage"; key: "damage"; selectOptions: readonly Option[] }
-    | { inputType: "multiplier"; key: "multiplier"; selectOptions: readonly Option[] }
   );
 
 const DAMAGE_LETTER_KEYS: Record<DamageTypeValue, string> = {
-  light: "ROBOTECH.Item.Property.Multiplier.light",
-  mecha: "ROBOTECH.Item.Property.Multiplier.mecha",
-  naval: "ROBOTECH.Item.Property.Multiplier.naval",
+  light: "ROBOTECH.Item.Property.Damage.light",
+  mecha: "ROBOTECH.Item.Property.Damage.mecha",
+  naval: "ROBOTECH.Item.Property.Damage.naval",
 };
+
+export function damageTagLabel(multiplier: number, type: DamageTypeValue): string {
+  return game.i18n.localize("ROBOTECH.Item.Property.Damage.tag", {
+    mult: Math.max(1, multiplier),
+    typeLetter: game.i18n.localize(DAMAGE_LETTER_KEYS[type]),
+  });
+}
 
 export const WEAPON_PROPERTIES: WeaponPropertyDef[] = [
   {
-    formatTag: ({ damage }) =>
-      game.i18n.localize("ROBOTECH.Item.Property.Damage.tag", {
-        val: game.i18n.localize(DAMAGE_LETTER_KEYS[damage.type]),
-      }),
+    formatTag: ({ damage }) => damageTagLabel(damage.multiplier, damage.type),
     inputType: "damage",
     key: "damage",
     nameKey: "ROBOTECH.Item.Property.Damage.name",
-    selectOptions: WEAPON_DAMAGE_OPTIONS,
-    tagColor: "red",
-  },
-  {
-    formatTag: ({ multiplier }) =>
-      game.i18n.localize("ROBOTECH.Item.Property.Multiplier.tag", {
-        mult: multiplier.value,
-        typeLetter: game.i18n.localize(DAMAGE_LETTER_KEYS[multiplier.targetType]),
-      }),
-    inputType: "multiplier",
-    key: "multiplier",
-    nameKey: "ROBOTECH.Item.Property.Multiplier.name",
     selectOptions: WEAPON_DAMAGE_OPTIONS,
     tagColor: "red",
   },

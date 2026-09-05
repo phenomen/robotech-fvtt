@@ -63,7 +63,6 @@ export const EFFECT_ACTOR_TYPES = ["character", "vessel"] as const satisfies rea
 
 /** Item subtypes whose sheets expose an Effects tab; their effects transfer to the owning actor. */
 export const EFFECT_ITEM_TYPES = [
-  "career",
   "race",
   "talent",
   "gear",

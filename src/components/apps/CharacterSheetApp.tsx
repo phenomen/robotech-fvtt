@@ -12,9 +12,9 @@ import { StressTracker } from "@/components/blocks/CharacterStressTracker";
 import { WoundTracker } from "@/components/blocks/CharacterWoundTracker";
 import { EquipmentSuitesBlock } from "@/components/blocks/EquipmentSuitesBlock";
 import { ItemList } from "@/components/blocks/ItemList";
+import { UniqueItemSlot } from "@/components/blocks/UniqueItemSlot";
 import { Button } from "@/components/ui/Button";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
-import { Field } from "@/components/ui/Field";
 import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
@@ -26,14 +26,15 @@ import { GENERIC_SKILL_LABEL_KEYS } from "@/config/options";
 import type { ActorOf, FieldValue, ItemOf } from "@/models";
 import { filterItemsOf } from "@/utils";
 
-export type ActorTabType = "stats" | "skills" | "talents" | "equipment" | "description" | "effects";
+export type ActorTabType = "stats" | "skills" | "talents" | "career" | "equipment" | "personal" | "effects";
 
 const ACTOR_TABS: TabItem<ActorTabType>[] = [
   { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
+  { key: "career", labelKey: "ROBOTECH.Tabs.Career" },
+  { key: "personal", labelKey: "ROBOTECH.Tabs.Personal" },
   { key: "skills", labelKey: "ROBOTECH.Tabs.Skills" },
   { key: "talents", labelKey: "ROBOTECH.Tabs.Talents" },
   { key: "equipment", labelKey: "ROBOTECH.Tabs.Equipment" },
-  { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
   { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" },
 ];
 
@@ -86,7 +87,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
       <SheetBody>
         {activeTab === "stats" && (
           <GridSystem guideWidth={1}>
-            <Grid columns={10} rows={3}>
+            <Grid columns={10} rows={2}>
               <GridCell
                 column="1/6"
                 row={1}
@@ -104,12 +105,6 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
               </GridCell>
               <GridCell column="7/11" row={2} solid pad={3}>
                 <CharacterExperienceBlock actor={actor} />
-              </GridCell>
-              <GridCell column="1/7" row={3} solid pad={3}>
-                <DramaTracker actor={actor} />
-              </GridCell>
-              <GridCell column="7/11" row={3} solid pad={3}>
-                <CharacterNatureBlock actor={actor} />
               </GridCell>
             </Grid>
           </GridSystem>
@@ -137,21 +132,38 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
 
         {activeTab === "talents" && (
           <GridSystem guideWidth={1}>
-            <Grid columns={1} rows={2}>
+            <Grid columns={1} rows={1}>
               <GridCell solid pad={3}>
-                <Field label={game.i18n.localize("ROBOTECH.Character.Proficiencies")}>
+                <ItemList actor={actor} itemType="talent" title={game.i18n.localize("ROBOTECH.Tabs.Talents")} />
+              </GridCell>
+            </Grid>
+          </GridSystem>
+        )}
+
+        {activeTab === "career" && (
+          <GridSystem guideWidth={1}>
+            <Grid columns={10} rows={2}>
+              <GridCell column="1/6" row={1} solid pad={3}>
+                <UniqueItemSlot actor={actor} itemType="career" />
+              </GridCell>
+              <GridCell column="6/11" row={1} solid pad={3}>
+                <Stack gap={1}>
+                  <CardHeader>
+                    <CardTitle>{game.i18n.localize("ROBOTECH.Character.Proficiencies")}</CardTitle>
+                  </CardHeader>
                   <Textarea
                     value={system.proficiencies.join("\n")}
                     onChange={(e) => {
                       void actor.update({ "system.proficiencies": e.target.value.split("\n") });
                     }}
                     rows={3}
+                    aria-label={game.i18n.localize("ROBOTECH.Character.Proficiencies")}
                     placeholder={game.i18n.localize("ROBOTECH.Character.ProficienciesPlaceholder")}
                   />
-                </Field>
+                </Stack>
               </GridCell>
-              <GridCell solid pad={3}>
-                <ItemList actor={actor} itemType="talent" title={game.i18n.localize("ROBOTECH.Tabs.Talents")} />
+              <GridCell column="1/11" row={2} solid pad={3}>
+                <ItemList actor={actor} itemType="element" title={game.i18n.localize("ROBOTECH.Item.ElementPl")} />
               </GridCell>
             </Grid>
           </GridSystem>
@@ -173,10 +185,19 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
           </GridSystem>
         )}
 
-        {activeTab === "description" && (
+        {activeTab === "personal" && (
           <GridSystem guideWidth={1}>
-            <Grid columns={1} rows={1}>
-              <GridCell solid pad={3}>
+            <Grid columns={10} rows={3}>
+              <GridCell column="1/6" row={1} solid pad={3}>
+                <UniqueItemSlot actor={actor} itemType="race" />
+              </GridCell>
+              <GridCell column="6/11" row={1} solid pad={3}>
+                <CharacterNatureBlock actor={actor} />
+              </GridCell>
+              <GridCell column="1/11" row={2} solid pad={3}>
+                <DramaTracker actor={actor} />
+              </GridCell>
+              <GridCell column="1/11" row={3} solid pad={3}>
                 <Stack gap={3}>
                   <CardHeader>
                     <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Description")}</CardTitle>
