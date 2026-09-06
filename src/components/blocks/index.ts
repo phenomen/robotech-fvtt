@@ -3,6 +3,7 @@ export * from "./UniqueItemSlot";
 export * from "./EffectChangesTable";
 export * from "./ItemEffectsList";
 export * from "./CharacterDramaTracker";
+export * from "./CharacterCombatBlock";
 export * from "./CharacterExperienceBlock";
 export * from "./CharacterHeader";
 export * from "./CharacterMiscBlock";

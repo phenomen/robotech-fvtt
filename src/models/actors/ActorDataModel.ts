@@ -12,7 +12,7 @@ const TOKEN_BARS: Record<ActorType, { bar1: string | null; bar2: string | null }
   conflict: { bar1: "tracker", bar2: null },
   plot_event: { bar1: null, bar2: null },
   swarm: { bar1: "structure", bar2: "vessels" },
-  vessel: { bar1: "structure", bar2: null },
+  vessel: { bar1: "structure", bar2: "armor" },
 };
 
 export class ActorDataModel extends foundry.abstract.TypeDataModel {

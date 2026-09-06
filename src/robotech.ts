@@ -166,7 +166,7 @@ foundry.helpers.Hooks.once("init", () => {
   CONFIG.Actor.trackableAttributes = {
     character: {
       bar: ["vitals.wounds", "vitals.stress"],
-      value: ["armor"],
+      value: ["armor.max"],
     },
     conflict: {
       bar: ["tracker"],
@@ -181,8 +181,8 @@ foundry.helpers.Hooks.once("init", () => {
       value: [],
     },
     vessel: {
-      bar: ["structure"],
-      value: ["armor"],
+      bar: ["structure", "armor"],
+      value: [],
     },
   };
   registerDataModels();

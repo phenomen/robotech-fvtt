@@ -9,6 +9,8 @@ import {
   woundBaselines,
 } from "@/config/wounds";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
+import { gaugeSchema } from "@/models/actors/gauges";
+import type { Gauge } from "@/models/actors/gauges";
 import { findItemOf } from "@/utils/documents";
 import { countCheckedBoxes } from "@/utils/trackers";
 
@@ -61,7 +63,7 @@ export class CharacterDataModel extends ActorDataModel {
   declare level: number;
   declare experience: number;
   declare buildPoints: number;
-  declare armor: number;
+  declare armor: Gauge;
   declare armorClass: ArmorClassValue;
   declare resistance: number;
   declare callsign: string;
@@ -87,7 +89,7 @@ export class CharacterDataModel extends ActorDataModel {
     const fields = foundry.data.fields;
     return {
       ...super.defineSchema(),
-      armor: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      armor: gaugeSchema(),
       armorClass: new fields.StringField({
         choices: ARMOR_CLASS_VALUES,
         // "light"
@@ -181,12 +183,32 @@ export class CharacterDataModel extends ActorDataModel {
     };
   }
 
+  /* Remove armor migration later after the new version adoption */
+  static override migrateData(source: object, options?: object): object {
+    const data = super.migrateData(source, options) as { armor?: unknown };
+    const armor = gaugeOf(data.armor);
+    if (armor) {
+      data.armor = armor;
+    }
+    return data;
+  }
+
   override prepareDerivedData() {
     super.prepareDerivedData();
+    this.armor.value = this.armor.max;
     this.prepareCareerInfo();
     this.prepareWounds();
     this.prepareStress();
     this.prepareVitals();
+  }
+
+  override async _preUpdate(
+    changes: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[0],
+    options: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[1],
+    user: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[2]
+  ): Promise<boolean | void> {
+    syncArmorValue(this.armor, changes);
+    return await super._preUpdate(changes, options, user);
   }
 
   private prepareCareerInfo() {
@@ -293,4 +315,42 @@ function stressChanged(changed: object): boolean {
   return Object.keys(foundry.utils.flattenObject(changed)).some(
     (key) => key === "system.stress" || key.startsWith("system.stress.")
   );
+}
+
+function gaugeOf(value: unknown): Gauge | null {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return null;
+  }
+  const rating = Math.max(0, Math.round(value));
+  return { max: rating, value: rating };
+}
+
+function syncArmorValue(armor: Gauge, changes: object): void {
+  if (!armorTouched(changes)) {
+    return;
+  }
+  const nextMax = armorMaxOf(changes) ?? armor.max;
+  foundry.utils.setProperty(changes, "system.armor.value", nextMax);
+}
+
+function armorTouched(changes: object): boolean {
+  return Object.keys(foundry.utils.flattenObject(changes)).some(
+    (key) => key === "system.armor" || key.startsWith("system.armor.")
+  );
+}
+
+function armorMaxOf(changes: object): number | null {
+  const nested = foundry.utils.getProperty(changes, "system.armor");
+  if (isGaugePatch(nested) && typeof nested.max === "number") {
+    return Math.max(0, nested.max);
+  }
+  const dotted = foundry.utils.getProperty(changes, "system.armor.max");
+  if (typeof dotted === "number") {
+    return Math.max(0, dotted);
+  }
+  return null;
+}
+
+function isGaugePatch(value: unknown): value is Partial<Gauge> {
+  return typeof value === "object" && value !== null;
 }

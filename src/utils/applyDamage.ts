@@ -296,14 +296,7 @@ export async function commitDamage(preview: DamagePreview, amounts: DamageAmount
 }
 
 function damageTargetOf(actor: Actor): DamageTarget | null {
-  if (isActorOf(actor, "character")) {
-    return {
-      armorClass: actor.system.armorClass,
-      resistance: actor.system.resistance,
-      targetArmor: actor.system.armor,
-    };
-  }
-  if (isActorOf(actor, "vessel")) {
+  if (isActorOf(actor, "character") || isActorOf(actor, "vessel")) {
     return {
       armorClass: actor.system.armorClass,
       resistance: actor.system.resistance,

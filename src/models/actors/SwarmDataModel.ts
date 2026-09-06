@@ -1,7 +1,7 @@
 import { ARMOR_CLASS_VALUES } from "@/config/options";
 import type { ArmorClassValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
-import type { VesselGauge } from "@/models/actors/VesselDataModel";
+import type { Gauge } from "@/models/actors/gauges";
 import { isMemberAlive } from "@/utils/swarmUtils";
 
 export interface SwarmMember {
@@ -29,8 +29,8 @@ export class SwarmDataModel extends ActorDataModel {
   declare members: SwarmMember[];
   declare armorClass: ArmorClassValue;
 
-  declare vessels: VesselGauge;
-  declare structure: VesselGauge;
+  declare vessels: Gauge;
+  declare structure: Gauge;
   declare minSpeed: number;
   declare maxSpeed: number;
   declare averageSpeed: number;
@@ -78,7 +78,7 @@ export class SwarmDataModel extends ActorDataModel {
     this.speed = speeds.average;
   }
 
-  private computeVessels(): VesselGauge {
+  private computeVessels(): Gauge {
     let value = 0;
     let max = 0;
     for (const member of this.members) {
@@ -90,7 +90,7 @@ export class SwarmDataModel extends ActorDataModel {
     return { max, value };
   }
 
-  private computeStructure(): VesselGauge {
+  private computeStructure(): Gauge {
     let value = 0;
     let max = 0;
     for (const member of this.members) {

@@ -3,6 +3,7 @@ import type { JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { ActorEffectsList } from "@/components/blocks/ActorEffectsList";
+import { CharacterCombatBlock } from "@/components/blocks/CharacterCombatBlock";
 import { DramaTracker } from "@/components/blocks/CharacterDramaTracker";
 import { CharacterExperienceBlock } from "@/components/blocks/CharacterExperienceBlock";
 import { Header } from "@/components/blocks/CharacterHeader";
@@ -95,7 +96,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
                 <StressTracker actor={actor} />
               </GridCell>
               <GridCell column="1/7" row={2} solid pad={3}>
-                <CharacterMiscBlock actor={actor} />
+                <CharacterCombatBlock actor={actor} />
               </GridCell>
               <GridCell column="7/11" row={2} solid pad={3}>
                 <CharacterExperienceBlock actor={actor} />
@@ -181,7 +182,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
 
         {activeTab === "personal" && (
           <GridSystem guideWidth={1}>
-            <Grid columns={10} rows={3}>
+            <Grid columns={10} rows={4}>
               <GridCell column="1/6" row={1} solid pad={3}>
                 <UniqueItemSlot actor={actor} itemType="race" />
               </GridCell>
@@ -189,9 +190,12 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
                 <CharacterNatureBlock actor={actor} />
               </GridCell>
               <GridCell column="1/11" row={2} solid pad={3}>
-                <DramaTracker actor={actor} />
+                <CharacterMiscBlock actor={actor} />
               </GridCell>
               <GridCell column="1/11" row={3} solid pad={3}>
+                <DramaTracker actor={actor} />
+              </GridCell>
+              <GridCell column="1/11" row={4} solid pad={3}>
                 <Stack gap={3}>
                   <CardHeader>
                     <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Description")}</CardTitle>

@@ -13,6 +13,8 @@ import type {
   VesselTypeValue,
 } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
+import { gaugeSchema } from "@/models/actors/gauges";
+import type { Gauge } from "@/models/actors/gauges";
 import { calcEngineSpeed } from "@/utils/vesselUtils";
 
 export interface SpeedUnit {
@@ -21,11 +23,6 @@ export interface SpeedUnit {
   ground: number;
   planetary: number;
   space: number;
-}
-
-export interface VesselGauge {
-  value: number;
-  max: number;
 }
 
 export interface VesselSystems {
@@ -52,8 +49,8 @@ export class VesselDataModel extends ActorDataModel {
   declare isBasic: boolean;
   declare armorClass: ArmorClassValue;
   declare resistance: number;
-  declare structure: VesselGauge;
-  declare armor: VesselGauge;
+  declare structure: Gauge;
+  declare armor: Gauge;
   declare systems: VesselSystems;
   declare speedModes: Record<SpeedModeName, SpeedUnit>;
   declare hardwarePoints: number;
@@ -79,10 +76,7 @@ export class VesselDataModel extends ActorDataModel {
 
     return {
       ...super.defineSchema(),
-      armor: new fields.SchemaField({
-        max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
-        value: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
-      }),
+      armor: gaugeSchema(2),
       armorClass: new fields.StringField({
         choices: ARMOR_CLASS_VALUES,
         // "mecha"
@@ -110,10 +104,7 @@ export class VesselDataModel extends ActorDataModel {
         general: speedUnitSchema(),
         guardian: speedUnitSchema(),
       }),
-      structure: new fields.SchemaField({
-        max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
-        value: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
-      }),
+      structure: gaugeSchema(2),
       systems: new fields.SchemaField({
         engines: new fields.NumberField({
           initial: 4,

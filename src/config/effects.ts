@@ -27,7 +27,7 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
   {
     labelKey: "TYPES.Actor.character",
     options: [
-      { labelKey: "ROBOTECH.Character.Armor", value: "system.armor" },
+      { labelKey: "ROBOTECH.Character.Armor", value: "system.armor.max" },
       { labelKey: "ROBOTECH.Character.Resistance", value: "system.resistance" },
       { labelKey: "ROBOTECH.Character.Speed", value: "system.speed" },
       //{ value: "system.burnout", labelKey: "ROBOTECH.Character.Burnout" },
