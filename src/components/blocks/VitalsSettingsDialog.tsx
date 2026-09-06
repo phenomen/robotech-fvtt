@@ -45,7 +45,7 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
   };
 
   return (
-    <Stack pad={4} gap={4}>
+    <Stack pad={4} gap={3}>
       <Field
         orientation="horizontal"
         label={
@@ -88,32 +88,31 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
         />
       </Field>
 
-      <Stack gap={3}>
-        <Divider />
-        <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.ArmorClass.Title")}>
-          <Select
-            width="medium"
-            value={armorClass}
-            onChange={(e) => {
-              const next = e.target.value;
-              if (isChoiceValue(ARMOR_CLASS_OPTIONS, next)) {
-                setArmorClass(next);
-              }
-            }}
-          >
-            {ARMOR_CLASS_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {game.i18n.localize(option.labelKey)}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Checkbox
-          checked={isTriumvirateWounds}
-          onCheckedChange={setIsTriumvirateWounds}
-          label={game.i18n.localize("ROBOTECH.Wounds.Triumvirate")}
-        />
-      </Stack>
+      <Divider />
+
+      <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.ArmorClass.Title")}>
+        <Select
+          width="medium"
+          value={armorClass}
+          onChange={(e) => {
+            const next = e.target.value;
+            if (isChoiceValue(ARMOR_CLASS_OPTIONS, next)) {
+              setArmorClass(next);
+            }
+          }}
+        >
+          {ARMOR_CLASS_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {game.i18n.localize(option.labelKey)}
+            </option>
+          ))}
+        </Select>
+      </Field>
+      <Checkbox
+        checked={isTriumvirateWounds}
+        onCheckedChange={setIsTriumvirateWounds}
+        label={game.i18n.localize("ROBOTECH.Wounds.Triumvirate")}
+      />
 
       <Stack direction="row" gap={2} justify="end" shrink>
         <Button size="medium" variant="outline" onClick={onClose}>

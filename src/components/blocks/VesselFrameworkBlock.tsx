@@ -34,12 +34,12 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
             <Icon name="settings" />
           </Button>
         </Stack>
-        <Stack direction="row" gap={2} shrink>
+        <Stack direction="row" gap={1} shrink align="center">
           <Text variant="label" color="muted" align="center" width="num">
             {game.i18n.localize("ROBOTECH.Vessel.Total")}
           </Text>
           <Text variant="label" color="muted" align="center" width="num">
-            {game.i18n.localize("ROBOTECH.Vessel.Left")}
+            {game.i18n.localize("ROBOTECH.Vessel.Current")}
           </Text>
         </Stack>
       </CardHeader>
@@ -47,16 +47,13 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
         <Label icon="structure" iconTone="green">
           {game.i18n.localize("ROBOTECH.Vessel.Structure")}
         </Label>
-        <Stack direction="row" gap={2} shrink>
+        <Stack direction="row" gap={1} shrink align="center">
+          <Text variant="mono" color="muted" align="center" width="num">
+            {structure.max}
+          </Text>
           <NumberInput
             min={0}
-            value={structure.max}
-            onValueChange={(val) => {
-              onFieldChange("system.structure.max", Math.max(0, val ?? 0));
-            }}
-          />
-          <NumberInput
-            min={0}
+            max={structure.max}
             value={structure.value}
             onValueChange={(val) => {
               onFieldChange("system.structure.value", Math.max(0, val ?? 0));
@@ -70,16 +67,13 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
           {game.i18n.localize("ROBOTECH.Vessel.Armor")}
           {` [${game.i18n.localize(`ROBOTECH.ArmorClass.${armorClass}`)}]`}
         </Label>
-        <Stack direction="row" gap={2} shrink>
+        <Stack direction="row" gap={1} shrink align="center">
+          <Text variant="mono" color="muted" align="center" width="num">
+            {armor.max}
+          </Text>
           <NumberInput
             min={0}
-            value={armor.max}
-            onValueChange={(val) => {
-              onFieldChange("system.armor.max", Math.max(0, val ?? 0));
-            }}
-          />
-          <NumberInput
-            min={0}
+            max={armor.max}
             value={armor.value}
             onValueChange={(val) => {
               onFieldChange("system.armor.value", Math.max(0, val ?? 0));

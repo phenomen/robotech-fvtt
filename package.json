@@ -21,13 +21,13 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "bun-plugin-tailwind": "^0.1.2",
-    "cn": "^0.2.5",
+    "cn": "^0.2.6",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
     "oxlint-plugin-react-doctor": "^0.9.13",
     "oxlint-tsgolint": "^7.0.2001",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "ultracite": "7.10.8"
+    "ultracite": "7.11.0"
   }
 }

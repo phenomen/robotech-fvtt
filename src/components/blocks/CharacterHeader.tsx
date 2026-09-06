@@ -43,17 +43,17 @@ function CharacterTags({ actor }: HeaderProps): JSX.Element | null {
   return (
     <Stack direction="row" gap={1} wrap>
       {race ? (
-        <Tag label={race.name} color="teal" size="small" title={game.i18n.localize("ROBOTECH.Character.Race")} />
+        <Tag label={race.name} color="teal" size="medium" title={game.i18n.localize("ROBOTECH.Character.Race")} />
       ) : null}
       {career ? (
-        <Tag label={career.name} color="blue" size="small" title={game.i18n.localize("ROBOTECH.Character.Career")} />
+        <Tag label={career.name} color="blue" size="medium" title={game.i18n.localize("ROBOTECH.Character.Career")} />
       ) : null}
       {elements.map((element) => (
         <Tag
           key={element.id}
           label={element.name}
           color="green"
-          size="small"
+          size="medium"
           title={game.i18n.localize("ROBOTECH.Character.Element")}
         />
       ))}
@@ -61,12 +61,12 @@ function CharacterTags({ actor }: HeaderProps): JSX.Element | null {
         <Tag
           label={rankTagLabel(actor.system.rank, actor.system.rankTitle)}
           color="purple"
-          size="small"
+          size="medium"
           title={game.i18n.localize("ROBOTECH.Character.Rank")}
         />
       ) : null}
       {fameLabel ? (
-        <Tag label={fameLabel} color="amber" size="small" title={game.i18n.localize("ROBOTECH.Character.Fame")} />
+        <Tag label={fameLabel} color="amber" size="medium" title={game.i18n.localize("ROBOTECH.Character.Fame")} />
       ) : null}
     </Stack>
   );
