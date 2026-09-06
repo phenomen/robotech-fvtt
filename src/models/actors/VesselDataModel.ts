@@ -51,6 +51,7 @@ export class VesselDataModel extends ActorDataModel {
   declare mode: VesselModeValue;
   declare isBasic: boolean;
   declare armorClass: ArmorClassValue;
+  declare resistance: number;
   declare structure: VesselGauge;
   declare armor: VesselGauge;
   declare systems: VesselSystems;
@@ -102,6 +103,7 @@ export class VesselDataModel extends ActorDataModel {
         initial: VESSEL_MODE_VALUES[0],
       }),
       requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+      resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       speedModes: new fields.SchemaField({
         battloid: speedUnitSchema(),
         fighter: speedUnitSchema(),

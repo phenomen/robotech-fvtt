@@ -1,13 +1,13 @@
 import type { JSX } from "react";
 
+import { openFrameworkDialog } from "@/components/blocks/FrameworkSettingsDialog";
+import { Button } from "@/components/ui/Button";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { Icon } from "@/components/ui/Icon";
 import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
-import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
-import { ARMOR_CLASS_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface VesselFrameworkBlockProps {
@@ -16,20 +16,23 @@ interface VesselFrameworkBlockProps {
 }
 
 export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBlockProps): JSX.Element {
-  const { armor, armorClass, structure, isBasic } = actor.system;
+  const { armor, armorClass, structure, resistance } = actor.system;
 
   return (
     <Stack gap={1}>
       <CardHeader>
-        <Stack direction="row" gap={4} align="center">
+        <Stack direction="row" gap={2} align="center">
           <CardTitle>{game.i18n.localize("ROBOTECH.Vessel.FrameworkTitle")}</CardTitle>
-          <Checkbox
-            checked={isBasic}
-            onCheckedChange={(val) => {
-              onFieldChange("system.isBasic", val);
+          <Button
+            size="icon"
+            variant="secondary"
+            onClick={() => {
+              openFrameworkDialog(actor);
             }}
-            label={game.i18n.localize("ROBOTECH.Vessel.Basic")}
-          />
+            title={game.i18n.localize("ROBOTECH.Vessel.Settings")}
+          >
+            <Icon name="settings" />
+          </Button>
         </Stack>
         <Stack direction="row" gap={2} shrink>
           <Text variant="label" color="muted" align="center" width="num">
@@ -65,6 +68,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
       <Stack direction="row" gap={2} align="center" justify="between">
         <Label icon="armor" iconTone="teal">
           {game.i18n.localize("ROBOTECH.Vessel.Armor")}
+          {` [${game.i18n.localize(`ROBOTECH.ArmorClass.${armorClass}`)}]`}
         </Label>
         <Stack direction="row" gap={2} shrink>
           <NumberInput
@@ -85,22 +89,18 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
       </Stack>
 
       <Stack direction="row" gap={2} align="center" justify="between">
-        <Label icon="armor-class" iconTone="teal">
-          {game.i18n.localize("ROBOTECH.ArmorClass.Title")}
+        <Label icon="resistance" iconTone="teal">
+          {game.i18n.localize("ROBOTECH.Vessel.Resistance")}
         </Label>
-        <Select
-          width="medium"
-          value={armorClass}
-          onChange={(e) => {
-            onFieldChange("system.armorClass", e.target.value);
-          }}
-        >
-          {ARMOR_CLASS_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {game.i18n.localize(option.labelKey)}
-            </option>
-          ))}
-        </Select>
+        <Stack direction="row" gap={2} shrink>
+          <NumberInput
+            min={0}
+            value={resistance}
+            onValueChange={(val) => {
+              onFieldChange("system.resistance", Math.max(0, val ?? 0));
+            }}
+          />
+        </Stack>
       </Stack>
     </Stack>
   );

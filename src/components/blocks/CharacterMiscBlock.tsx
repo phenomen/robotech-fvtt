@@ -50,6 +50,15 @@ export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Elem
             min={0}
           />
         </Field>
+        <Field icon="resistance" iconTone="teal" label={game.i18n.localize("ROBOTECH.Character.Resistance")}>
+          <NumberInput
+            value={system.resistance}
+            onValueChange={(val) => {
+              handleFieldChange("system.resistance", val ?? 0);
+            }}
+            min={0}
+          />
+        </Field>
         <Field icon="speed" iconTone="blue" label={game.i18n.localize("ROBOTECH.Character.Speed")}>
           <NumberInput
             value={system.speed}

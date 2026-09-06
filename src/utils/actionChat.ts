@@ -143,6 +143,7 @@ export interface DamageBreakdown {
   multipliedHits: number;
   armor: number;
   armorPenetration: number;
+  resistance: number;
   effectiveArmor: number;
   hitsOverArmor: number;
   damageInflicted: number;
@@ -355,6 +356,11 @@ function armorRow(breakdown: DamageBreakdown): string {
         target: classLabel(breakdown.damageType),
       });
     }
+    if (breakdown.armorPenetration > 0 && breakdown.resistance > 0) {
+      return damageRow("ROBOTECH.Damage.Breakdown.SwarmArmorResisted", {
+        ap: breakdown.armorPenetration,
+      });
+    }
     return damageRow("ROBOTECH.Damage.Breakdown.SwarmArmor", {
       ap: breakdown.armorPenetration,
     });
@@ -364,6 +370,14 @@ function armorRow(breakdown: DamageBreakdown): string {
       ap: breakdown.armorPenetration,
       armor: breakdown.armor,
       target: classLabel(breakdown.damageType),
+    });
+  }
+  if (breakdown.armorPenetration > 0 && breakdown.resistance > 0) {
+    return damageRow("ROBOTECH.Damage.Breakdown.ArmorResisted", {
+      ap: breakdown.armorPenetration,
+      armor: breakdown.armor,
+      effective: breakdown.effectiveArmor,
+      resist: breakdown.resistance,
     });
   }
   return damageRow("ROBOTECH.Damage.Breakdown.Armor", {

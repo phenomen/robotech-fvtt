@@ -63,6 +63,7 @@ export class CharacterDataModel extends ActorDataModel {
   declare buildPoints: number;
   declare armor: number;
   declare armorClass: ArmorClassValue;
+  declare resistance: number;
   declare callsign: string;
   declare faction: string;
   declare nature: CharacterNature;
@@ -112,6 +113,7 @@ export class CharacterDataModel extends ActorDataModel {
         disposition: new fields.StringField({ initial: "" }),
       }),
       proficiencies: new fields.ArrayField(new fields.StringField()),
+      resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       skills: new fields.ObjectField({ initial: {} }),
       speed: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
       stress: new fields.SchemaField({

@@ -10,6 +10,7 @@ export interface SwarmMember {
   name: string;
   img: string;
   armor: number;
+  resistance: number;
   originalStructure: number;
   reducedStructure: number;
   currentStructure: number;
@@ -50,6 +51,7 @@ export class SwarmDataModel extends ActorDataModel {
         name: new fields.StringField({ initial: "" }),
         originalStructure: new fields.NumberField({ initial: 3, integer: true, min: 1 }),
         reducedStructure: new fields.NumberField({ initial: 1, integer: true, min: 1 }),
+        resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         speed: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       });
 

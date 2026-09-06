@@ -8,27 +8,30 @@ export interface CascadeInput {
   targetArmor: number;
   armorPenetration?: number;
   multiplier?: number;
+  resistance?: number;
 }
 
 /** Penetration only reduces armor of the same class as the weapon's damage. */
 export function appliedPenetrationOf(
   armorPenetration: number,
   attackType: DamageTypeValue,
-  armorClass: ArmorClassValue
+  armorClass: ArmorClassValue,
+  resistance: number
 ): number {
   if (attackType !== armorClass) {
     return 0;
   }
-  return Math.max(0, armorPenetration);
+  return Math.max(0, armorPenetration - resistance);
 }
 
 export function effectiveArmorOf(
   targetArmor: number,
   armorPenetration: number,
   attackType: DamageTypeValue,
-  armorClass: ArmorClassValue
+  armorClass: ArmorClassValue,
+  resistance: number
 ): number {
-  return Math.max(0, targetArmor - appliedPenetrationOf(armorPenetration, attackType, armorClass));
+  return Math.max(0, targetArmor - appliedPenetrationOf(armorPenetration, attackType, armorClass, resistance));
 }
 
 export interface CascadeResult {
@@ -42,7 +45,16 @@ export interface CascadeResult {
 }
 
 export function calcDamageCascade(input: CascadeInput): CascadeResult {
-  const { attackType, attackHits, defendHits, armorClass, targetArmor, armorPenetration = 0, multiplier = 1 } = input;
+  const {
+    attackType,
+    attackHits,
+    defendHits,
+    armorClass,
+    targetArmor,
+    armorPenetration = 0,
+    multiplier = 1,
+    resistance = 0,
+  } = input;
 
   const netHits = Math.max(0, attackHits - defendHits);
   if (netHits <= 0) {
@@ -58,7 +70,7 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
   }
 
   const effectiveHits = netHits * Math.max(1, multiplier);
-  const effectiveArmor = effectiveArmorOf(targetArmor, armorPenetration, attackType, armorClass);
+  const effectiveArmor = effectiveArmorOf(targetArmor, armorPenetration, attackType, armorClass, resistance);
   const hitsOverArmor = Math.max(0, effectiveHits - effectiveArmor);
 
   if (hitsOverArmor <= 0) {

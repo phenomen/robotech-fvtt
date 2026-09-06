@@ -116,6 +116,16 @@ function SwarmMemberRow({
           />
         </Field>
 
+        <Field label={game.i18n.localize("ROBOTECH.Swarm.Members.Resistance")}>
+          <NumberInput
+            value={member.resistance}
+            min={0}
+            onValueChange={(val) => {
+              onUpdate(member.id, { resistance: val ?? 0 });
+            }}
+          />
+        </Field>
+
         <Field
           title={game.i18n.localize("ROBOTECH.Swarm.Members.ReducedStructureHint")}
           label={

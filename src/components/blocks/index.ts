@@ -15,6 +15,7 @@ export * from "./VitalsSettingsDialog";
 export * from "./CharacterWoundTracker";
 export * from "./VesselHeaderBlock";
 export * from "./VesselDetailsBlock";
+export * from "./FrameworkSettingsDialog";
 export * from "./VesselFrameworkBlock";
 export * from "./VesselSystemsBlock";
 export * from "./VesselSpeedBlock";

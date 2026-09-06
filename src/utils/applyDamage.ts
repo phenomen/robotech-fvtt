@@ -23,6 +23,7 @@ import { flatWoundGroup, filledWoundStates } from "@/utils/woundUtils";
 
 interface DamageTarget {
   armorClass: ArmorClassValue;
+  resistance: number;
   targetArmor: number;
 }
 
@@ -263,6 +264,7 @@ export function damagePreviewOf(incoming: IncomingAttack, defendSuccesses: numbe
     attackType: incoming.damageType,
     defendHits: defendSuccesses,
     multiplier: Math.max(1, incoming.multiplier),
+    resistance: isActorOf(actor, "swarm") ? 0 : target.resistance,
     targetArmor: isActorOf(actor, "swarm") ? 0 : target.targetArmor,
   });
 
@@ -297,22 +299,35 @@ function damageTargetOf(actor: Actor): DamageTarget | null {
   if (isActorOf(actor, "character")) {
     return {
       armorClass: actor.system.armorClass,
+      resistance: actor.system.resistance,
       targetArmor: actor.system.armor,
     };
   }
   if (isActorOf(actor, "vessel")) {
     return {
       armorClass: actor.system.armorClass,
+      resistance: actor.system.resistance,
       targetArmor: actor.system.armor.value,
     };
   }
   if (isActorOf(actor, "swarm")) {
     return {
       armorClass: actor.system.armorClass,
+      resistance: 0,
       targetArmor: 0,
     };
   }
   return null;
+}
+
+function maxMemberResistance(actor: ActorOf<"swarm">): number {
+  let max = 0;
+  for (const member of actor.system.members) {
+    if (member.resistance > max) {
+      max = member.resistance;
+    }
+  }
+  return max;
 }
 
 async function applyVesselDamage(actor: ActorOf<"vessel">, amounts: DamageAmounts): Promise<void> {
@@ -357,7 +372,7 @@ async function applySwarmHits(actor: ActorOf<"swarm">, preview: DamagePreview, h
 
 function appliedPenetration(preview: DamagePreview): number {
   const { incoming, breakdown } = preview;
-  return appliedPenetrationOf(incoming.armorPenetration, incoming.damageType, breakdown.damageType);
+  return appliedPenetrationOf(incoming.armorPenetration, incoming.damageType, breakdown.damageType, 0);
 }
 
 async function applyCharacterWounds(actor: ActorOf<"character">, damage: number): Promise<void> {
@@ -432,13 +447,15 @@ function damageBreakdownOf(
       target.targetArmor,
       incoming.armorPenetration,
       incoming.damageType,
-      target.armorClass
+      target.armorClass,
+      target.resistance
     ),
     hitsOverArmor: cascade.hitsOverArmor,
     isOverkill: cascade.isOverkill,
     multipliedHits: cascade.netHits * multiplier,
     multiplier,
     netHits: cascade.netHits,
+    resistance: isActorOf(actor, "swarm") ? maxMemberResistance(actor) : target.resistance,
     summaryKey: cascade.summaryKey,
     swarmArmor: isActorOf(actor, "swarm"),
     targetName: actor.name,

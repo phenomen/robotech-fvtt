@@ -28,6 +28,7 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
     labelKey: "TYPES.Actor.character",
     options: [
       { labelKey: "ROBOTECH.Character.Armor", value: "system.armor" },
+      { labelKey: "ROBOTECH.Character.Resistance", value: "system.resistance" },
       { labelKey: "ROBOTECH.Character.Speed", value: "system.speed" },
       //{ value: "system.burnout", labelKey: "ROBOTECH.Character.Burnout" },
       //{ value: "system.level", labelKey: "ROBOTECH.Character.Level" },
@@ -44,6 +45,7 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
       //{ value: "system.armor.value", labelKey: "ROBOTECH.Vessel.Armor" },
       { labelKey: "ROBOTECH.ArmorClass.Title", value: "system.armorClass" },
       { labelKey: "ROBOTECH.Vessel.Armor", value: "system.armor.max" },
+      { labelKey: "ROBOTECH.Vessel.Resistance", value: "system.resistance" },
       //{ value: "system.structure.value", labelKey: "ROBOTECH.Vessel.Structure" },
       { labelKey: "ROBOTECH.Vessel.Structure", value: "system.structure.max" },
       //{ value: "system.systems.sensors", labelKey: "ROBOTECH.Vessel.Sensors" },

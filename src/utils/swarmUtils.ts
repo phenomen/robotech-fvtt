@@ -53,7 +53,7 @@ export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack):
   const damage = applySwarmDamage(
     members,
     cascade.damageInflicted,
-    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.armorClass)
+    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.armorClass, 0)
   );
   return { ...damage, cascade };
 }
@@ -100,7 +100,7 @@ function didMembersChange(before: SwarmMember[], after: SwarmMember[]): boolean 
 }
 
 function resolveVesselHit(member: SwarmMember, remaining: number, penetration: number): VesselHit {
-  const armor = Math.max(0, member.armor - penetration);
+  const armor = Math.max(0, member.armor - Math.max(0, penetration - member.resistance));
   if (remaining <= armor) {
     return { destroyed: 0, remaining: 0, stopped: true };
   }

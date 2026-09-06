@@ -228,6 +228,7 @@ function buildSwarmMember(droppedActor: ActorOf<"vessel">, actorUuid: string): S
     name: droppedActor.name,
     originalStructure,
     reducedStructure,
+    resistance: droppedActor.system.resistance,
     speed: droppedActor.system.activeSpeed.game,
   };
 }
