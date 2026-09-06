@@ -21,7 +21,7 @@ export function CharacterCombatBlock({ actor }: CharacterCombatBlockProps): JSX.
   return (
     <Stack gap={1}>
       <CardHeader>
-        <CardTitle>{game.i18n.localize("ROBOTECH.Character.Combat")}</CardTitle>
+        <CardTitle>{game.i18n.localize("ROBOTECH.Character.Conflict")}</CardTitle>
       </CardHeader>
       <Stack direction="row" gap={2} justify="between">
         <Field icon="armor" iconTone="teal" label={game.i18n.localize("ROBOTECH.Character.Armor")}>
