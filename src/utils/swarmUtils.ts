@@ -1,4 +1,4 @@
-import type { DamageTypeValue, DefenseClassValue } from "@/config/options";
+import type { DamageTypeValue, ArmorClassValue } from "@/config/options";
 import type { SwarmMember } from "@/models";
 import { appliedPenetrationOf, calcDamageCascade } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
@@ -26,7 +26,7 @@ export interface SwarmAttack {
   attackType: DamageTypeValue;
   attackSuccesses: number;
   defendSuccesses: number;
-  defenseClass: DefenseClassValue;
+  armorClass: ArmorClassValue;
   armorPenetration: number;
   multiplier?: number;
 }
@@ -42,10 +42,10 @@ export interface SwarmAttackResult extends SwarmDamageResult {
  */
 export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack): SwarmAttackResult {
   const cascade = calcDamageCascade({
+    armorClass: attack.armorClass,
     attackHits: attack.attackSuccesses,
     attackType: attack.attackType,
     defendHits: attack.defendSuccesses,
-    defenseClass: attack.defenseClass,
     multiplier: attack.multiplier,
     targetArmor: 0,
   });
@@ -53,7 +53,7 @@ export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack):
   const damage = applySwarmDamage(
     members,
     cascade.damageInflicted,
-    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.defenseClass)
+    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.armorClass)
   );
   return { ...damage, cascade };
 }

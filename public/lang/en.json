@@ -139,7 +139,7 @@
       "Min": "Min {min}",
       "Triumvirate": "Triumvirate"
     },
-    "DefenseClass": {
+    "ArmorClass": {
       "Title": "Armor Class",
       "light": "Light",
       "mecha": "Mecha",

@@ -74,7 +74,7 @@ function WoundGroup({ refs, brawlStates, criticalStates, onToggle, justify = "st
 export function WoundTracker({ actor }: WoundTrackerProps): JSX.Element {
   const system = actor.system;
   const { isTriumvirateWounds } = system.vitalsSettings;
-  const isLightDefense = system.defenseClass === "light";
+  const isLightArmor = system.armorClass === "light";
   const brawlStates = system.wounds.brawl.states;
   const criticalStates = system.wounds.critical.states;
 
@@ -104,7 +104,7 @@ export function WoundTracker({ actor }: WoundTrackerProps): JSX.Element {
         <CardHeader>
           <CardTitle>
             {game.i18n.localize("ROBOTECH.Wounds.Title")}
-            {isLightDefense ? null : ` [${game.i18n.localize(`ROBOTECH.DefenseClass.${system.defenseClass}`)}]`}
+            {isLightArmor ? null : ` [${game.i18n.localize(`ROBOTECH.ArmorClass.${system.armorClass}`)}]`}
           </CardTitle>
           <Button
             size="icon"

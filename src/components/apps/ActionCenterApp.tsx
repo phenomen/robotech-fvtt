@@ -664,7 +664,7 @@ function incomingAttackOf(
     return { ...weaponAttackStats(weapon, penetration), attackSuccesses: successes, calledShot };
   }
   if (isActorOf(contextActor, "swarm")) {
-    const damageType = contextActor.system.defenseClass;
+    const damageType = contextActor.system.armorClass;
     const tags: WeaponTag[] = [
       {
         color: "red",

@@ -11,8 +11,8 @@ import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import { MAX_BRAWL_WOUNDS, MAX_CRITICAL_WOUNDS, woundBaselines } from "@/config";
-import { DEFENSE_CLASS_OPTIONS, isChoiceValue } from "@/config/options";
-import type { DefenseClassValue } from "@/config/options";
+import { ARMOR_CLASS_OPTIONS, isChoiceValue } from "@/config/options";
+import type { ArmorClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import type { AppOptions } from "@/types/application";
 
@@ -31,12 +31,12 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
 
   const [brawl, setBrawl] = useState<number>(settings.brawl ?? baseline.brawl);
   const [critical, setCritical] = useState<number>(settings.critical ?? baseline.critical);
-  const [defenseClass, setDefenseClass] = useState<DefenseClassValue>(actor.system.defenseClass);
+  const [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass);
   const [isTriumvirateWounds, setIsTriumvirateWounds] = useState<boolean>(settings.isTriumvirateWounds);
 
   const handleSave = () => {
     void actor.update({
-      "system.defenseClass": defenseClass,
+      "system.armorClass": armorClass,
       "system.vitalsSettings.brawl": brawl,
       "system.vitalsSettings.critical": critical,
       "system.vitalsSettings.isTriumvirateWounds": isTriumvirateWounds,
@@ -90,18 +90,18 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
 
       <Stack gap={3}>
         <Divider />
-        <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.DefenseClass.Title")}>
+        <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.ArmorClass.Title")}>
           <Select
             width="medium"
-            value={defenseClass}
+            value={armorClass}
             onChange={(e) => {
               const next = e.target.value;
-              if (isChoiceValue(DEFENSE_CLASS_OPTIONS, next)) {
-                setDefenseClass(next);
+              if (isChoiceValue(ARMOR_CLASS_OPTIONS, next)) {
+                setArmorClass(next);
               }
             }}
           >
-            {DEFENSE_CLASS_OPTIONS.map((option) => (
+            {ARMOR_CLASS_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {game.i18n.localize(option.labelKey)}
               </option>

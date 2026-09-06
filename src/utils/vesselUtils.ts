@@ -1,10 +1,10 @@
-import type { DamageTypeValue, DefenseClassValue } from "@/config/options";
+import type { DamageTypeValue, ArmorClassValue } from "@/config/options";
 
 export interface CascadeInput {
   attackType: DamageTypeValue;
   attackHits: number;
   defendHits: number;
-  defenseClass: DefenseClassValue;
+  armorClass: ArmorClassValue;
   targetArmor: number;
   armorPenetration?: number;
   multiplier?: number;
@@ -14,9 +14,9 @@ export interface CascadeInput {
 export function appliedPenetrationOf(
   armorPenetration: number,
   attackType: DamageTypeValue,
-  defenseClass: DefenseClassValue
+  armorClass: ArmorClassValue
 ): number {
-  if (attackType !== defenseClass) {
+  if (attackType !== armorClass) {
     return 0;
   }
   return Math.max(0, armorPenetration);
@@ -26,29 +26,29 @@ export function effectiveArmorOf(
   targetArmor: number,
   armorPenetration: number,
   attackType: DamageTypeValue,
-  defenseClass: DefenseClassValue
+  armorClass: ArmorClassValue
 ): number {
-  return Math.max(0, targetArmor - appliedPenetrationOf(armorPenetration, attackType, defenseClass));
+  return Math.max(0, targetArmor - appliedPenetrationOf(armorPenetration, attackType, armorClass));
 }
 
 export interface CascadeResult {
   netHits: number;
   hitsOverArmor: number;
   damageInflicted: number;
-  damageTypeInflicted: DefenseClassValue;
+  damageTypeInflicted: ArmorClassValue;
   isOverkill: boolean;
   isImmune: boolean;
   summaryKey: string;
 }
 
 export function calcDamageCascade(input: CascadeInput): CascadeResult {
-  const { attackType, attackHits, defendHits, defenseClass, targetArmor, armorPenetration = 0, multiplier = 1 } = input;
+  const { attackType, attackHits, defendHits, armorClass, targetArmor, armorPenetration = 0, multiplier = 1 } = input;
 
   const netHits = Math.max(0, attackHits - defendHits);
   if (netHits <= 0) {
     return {
       damageInflicted: 0,
-      damageTypeInflicted: defenseClass,
+      damageTypeInflicted: armorClass,
       hitsOverArmor: 0,
       isImmune: false,
       isOverkill: false,
@@ -58,13 +58,13 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
   }
 
   const effectiveHits = netHits * Math.max(1, multiplier);
-  const effectiveArmor = effectiveArmorOf(targetArmor, armorPenetration, attackType, defenseClass);
+  const effectiveArmor = effectiveArmorOf(targetArmor, armorPenetration, attackType, armorClass);
   const hitsOverArmor = Math.max(0, effectiveHits - effectiveArmor);
 
   if (hitsOverArmor <= 0) {
     return {
       damageInflicted: 0,
-      damageTypeInflicted: defenseClass,
+      damageTypeInflicted: armorClass,
       hitsOverArmor: 0,
       isImmune: false,
       isOverkill: false,
@@ -73,7 +73,7 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
     };
   }
 
-  if (attackType === "light" && defenseClass === "naval") {
+  if (attackType === "light" && armorClass === "naval") {
     return {
       damageInflicted: 0,
       damageTypeInflicted: "naval",
@@ -88,26 +88,26 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
   let damageInflicted = 0;
   let isOverkill = false;
 
-  if (attackType === defenseClass) {
+  if (attackType === armorClass) {
     damageInflicted = hitsOverArmor;
-  } else if (attackType === "light" && defenseClass === "mecha") {
+  } else if (attackType === "light" && armorClass === "mecha") {
     damageInflicted = Math.floor(hitsOverArmor / 10);
-  } else if (attackType === "mecha" && defenseClass === "naval") {
+  } else if (attackType === "mecha" && armorClass === "naval") {
     damageInflicted = Math.floor(hitsOverArmor / 10);
-  } else if (attackType === "mecha" && defenseClass === "light") {
+  } else if (attackType === "mecha" && armorClass === "light") {
     isOverkill = true;
     damageInflicted = hitsOverArmor * 10;
-  } else if (attackType === "naval" && defenseClass === "mecha") {
+  } else if (attackType === "naval" && armorClass === "mecha") {
     isOverkill = true;
     damageInflicted = hitsOverArmor * 10;
-  } else if (attackType === "naval" && defenseClass === "light") {
+  } else if (attackType === "naval" && armorClass === "light") {
     isOverkill = true;
     damageInflicted = hitsOverArmor * 100;
   }
 
   return {
     damageInflicted,
-    damageTypeInflicted: defenseClass,
+    damageTypeInflicted: armorClass,
     hitsOverArmor,
     isImmune: false,
     isOverkill,

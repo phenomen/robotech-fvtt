@@ -1,5 +1,5 @@
-import { DEFENSE_CLASS_VALUES, WEALTH_VALUES } from "@/config/options";
-import type { DefenseClassValue, WealthValue } from "@/config/options";
+import { ARMOR_CLASS_VALUES, WEALTH_VALUES } from "@/config/options";
+import type { ArmorClassValue, WealthValue } from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID } from "@/config/statuses";
 import {
   MAX_BRAWL_WOUNDS,
@@ -62,7 +62,7 @@ export class CharacterDataModel extends ActorDataModel {
   declare experience: number;
   declare buildPoints: number;
   declare armor: number;
-  declare defenseClass: DefenseClassValue;
+  declare armorClass: ArmorClassValue;
   declare callsign: string;
   declare faction: string;
   declare nature: CharacterNature;
@@ -87,6 +87,11 @@ export class CharacterDataModel extends ActorDataModel {
     return {
       ...super.defineSchema(),
       armor: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      armorClass: new fields.StringField({
+        choices: ARMOR_CLASS_VALUES,
+        // "light"
+        initial: ARMOR_CLASS_VALUES[0],
+      }),
       buildPoints: new fields.NumberField({
         initial: 0,
         integer: true,
@@ -94,11 +99,6 @@ export class CharacterDataModel extends ActorDataModel {
       }),
       burnout: new fields.NumberField({ initial: 5, integer: true, min: 1 }),
       callsign: new fields.StringField({ initial: "" }),
-      defenseClass: new fields.StringField({
-        choices: DEFENSE_CLASS_VALUES,
-        // "light"
-        initial: DEFENSE_CLASS_VALUES[0],
-      }),
       experience: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       faction: new fields.StringField({ initial: "" }),
       heroicMove: new fields.SchemaField({

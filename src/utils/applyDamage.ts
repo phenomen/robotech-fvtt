@@ -1,7 +1,7 @@
 import type Actor from "@client/documents/actor.mjs";
 
 import type { IconTone } from "@/components/ui/Icon";
-import type { DefenseClassValue } from "@/config/options";
+import type { ArmorClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
 import { postDamageCard } from "@/utils/actionChat";
@@ -22,7 +22,7 @@ import type { CascadeResult } from "@/utils/vesselUtils";
 import { flatWoundGroup, filledWoundStates } from "@/utils/woundUtils";
 
 interface DamageTarget {
-  defenseClass: DefenseClassValue;
+  armorClass: ArmorClassValue;
   targetArmor: number;
 }
 
@@ -257,11 +257,11 @@ export function damagePreviewOf(incoming: IncomingAttack, defendSuccesses: numbe
   }
 
   const cascade = calcDamageCascade({
+    armorClass: target.armorClass,
     armorPenetration: incoming.armorPenetration,
     attackHits: incoming.attackSuccesses,
     attackType: incoming.damageType,
     defendHits: defendSuccesses,
-    defenseClass: target.defenseClass,
     multiplier: Math.max(1, incoming.multiplier),
     targetArmor: isActorOf(actor, "swarm") ? 0 : target.targetArmor,
   });
@@ -296,19 +296,19 @@ export async function commitDamage(preview: DamagePreview, amounts: DamageAmount
 function damageTargetOf(actor: Actor): DamageTarget | null {
   if (isActorOf(actor, "character")) {
     return {
-      defenseClass: actor.system.defenseClass,
+      armorClass: actor.system.armorClass,
       targetArmor: actor.system.armor,
     };
   }
   if (isActorOf(actor, "vessel")) {
     return {
-      defenseClass: actor.system.defenseClass,
+      armorClass: actor.system.armorClass,
       targetArmor: actor.system.armor.value,
     };
   }
   if (isActorOf(actor, "swarm")) {
     return {
-      defenseClass: actor.system.defenseClass,
+      armorClass: actor.system.armorClass,
       targetArmor: 0,
     };
   }
@@ -432,7 +432,7 @@ function damageBreakdownOf(
       target.targetArmor,
       incoming.armorPenetration,
       incoming.damageType,
-      target.defenseClass
+      target.armorClass
     ),
     hitsOverArmor: cascade.hitsOverArmor,
     isOverkill: cascade.isOverkill,
