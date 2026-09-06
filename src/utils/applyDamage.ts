@@ -1,7 +1,7 @@
 import type Actor from "@client/documents/actor.mjs";
 
 import type { IconTone } from "@/components/ui/Icon";
-import type { DamageTypeValue } from "@/config/options";
+import type { DefenseClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
 import { postDamageCard } from "@/utils/actionChat";
@@ -17,12 +17,12 @@ import {
 } from "@/utils/hardwareUtils";
 import { applySwarmDamage } from "@/utils/swarmUtils";
 import { countCheckedBoxes } from "@/utils/trackers";
-import { appliedPenetrationOf, calcDamageCascade, effectiveArmorOf, VESSEL_DAMAGE_CLASS } from "@/utils/vesselUtils";
+import { appliedPenetrationOf, calcDamageCascade, effectiveArmorOf } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
 import { flatWoundGroup, filledWoundStates } from "@/utils/woundUtils";
 
 interface DamageTarget {
-  targetType: DamageTypeValue;
+  defenseClass: DefenseClassValue;
   targetArmor: number;
 }
 
@@ -261,9 +261,9 @@ export function damagePreviewOf(incoming: IncomingAttack, defendSuccesses: numbe
     attackHits: incoming.attackSuccesses,
     attackType: incoming.damageType,
     defendHits: defendSuccesses,
+    defenseClass: target.defenseClass,
     multiplier: Math.max(1, incoming.multiplier),
     targetArmor: isActorOf(actor, "swarm") ? 0 : target.targetArmor,
-    targetType: target.targetType,
   });
 
   return {
@@ -296,20 +296,20 @@ export async function commitDamage(preview: DamagePreview, amounts: DamageAmount
 function damageTargetOf(actor: Actor): DamageTarget | null {
   if (isActorOf(actor, "character")) {
     return {
+      defenseClass: actor.system.defenseClass,
       targetArmor: actor.system.armor,
-      targetType: actor.system.vitalsSettings.isMechaWounds ? "mecha" : "light",
     };
   }
   if (isActorOf(actor, "vessel")) {
     return {
+      defenseClass: actor.system.defenseClass,
       targetArmor: actor.system.armor.value,
-      targetType: VESSEL_DAMAGE_CLASS[actor.system.vesselType],
     };
   }
   if (isActorOf(actor, "swarm")) {
     return {
+      defenseClass: actor.system.defenseClass,
       targetArmor: 0,
-      targetType: actor.system.damageClass,
     };
   }
   return null;
@@ -432,7 +432,7 @@ function damageBreakdownOf(
       target.targetArmor,
       incoming.armorPenetration,
       incoming.damageType,
-      target.targetType
+      target.defenseClass
     ),
     hitsOverArmor: cascade.hitsOverArmor,
     isOverkill: cascade.isOverkill,

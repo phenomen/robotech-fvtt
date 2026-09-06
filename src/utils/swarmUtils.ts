@@ -1,4 +1,4 @@
-import type { DamageTypeValue } from "@/config/options";
+import type { DamageTypeValue, DefenseClassValue } from "@/config/options";
 import type { SwarmMember } from "@/models";
 import { appliedPenetrationOf, calcDamageCascade } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
@@ -26,7 +26,7 @@ export interface SwarmAttack {
   attackType: DamageTypeValue;
   attackSuccesses: number;
   defendSuccesses: number;
-  swarmClass: DamageTypeValue;
+  defenseClass: DefenseClassValue;
   armorPenetration: number;
   multiplier?: number;
 }
@@ -36,7 +36,7 @@ export interface SwarmAttackResult extends SwarmDamageResult {
 }
 
 /**
- * The swarm is attacked as a single entity, so defence and damage-class scaling resolve against the
+ * The swarm is attacked as a single entity, so defence and class scaling resolve against the
  * swarm as a whole. Armor stays out of the cascade because each vessel must be bypassed in turn as
  * the surviving successes carry down the stack.
  */
@@ -45,15 +45,15 @@ export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack):
     attackHits: attack.attackSuccesses,
     attackType: attack.attackType,
     defendHits: attack.defendSuccesses,
+    defenseClass: attack.defenseClass,
     multiplier: attack.multiplier,
     targetArmor: 0,
-    targetType: attack.swarmClass,
   });
 
   const damage = applySwarmDamage(
     members,
     cascade.damageInflicted,
-    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.swarmClass)
+    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.defenseClass)
   );
   return { ...damage, cascade };
 }

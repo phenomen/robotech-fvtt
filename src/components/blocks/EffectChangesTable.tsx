@@ -81,8 +81,8 @@ function ChangeHeaders(): JSX.Element {
             {game.i18n.localize("ROBOTECH.Effect.Type")}
           </Text>
         </TableCell>
-        <TableCell width="20" align="center">
-          <Text variant="label" color="muted" align="center">
+        <TableCell width="auto">
+          <Text variant="label" color="muted">
             {game.i18n.localize("ROBOTECH.Effect.Value")}
           </Text>
         </TableCell>
@@ -160,11 +160,11 @@ function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
         </Select>
       </TableCell>
 
-      <TableCell width="20" align="center">
+      <TableCell width="auto">
         <Input
           id={valueId}
           value={change.value}
-          width="full"
+          width="medium"
           aria-label={game.i18n.localize("ROBOTECH.Effect.Value")}
           onChange={(event) => void patchChange(effect, index, { value: event.target.value })}
         />

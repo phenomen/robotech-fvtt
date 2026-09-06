@@ -59,6 +59,14 @@ export const DAMAGE_TYPE_OPTIONS = [
 export const DAMAGE_TYPE_VALUES = toValues(DAMAGE_TYPE_OPTIONS);
 export type DamageTypeValue = (typeof DAMAGE_TYPE_VALUES)[number];
 
+export const DEFENSE_CLASS_OPTIONS = [
+  { labelKey: "ROBOTECH.DefenseClass.light", value: "light" },
+  { labelKey: "ROBOTECH.DefenseClass.mecha", value: "mecha" },
+  { labelKey: "ROBOTECH.DefenseClass.naval", value: "naval" },
+] as const satisfies readonly Option[];
+export const DEFENSE_CLASS_VALUES = toValues(DEFENSE_CLASS_OPTIONS);
+export type DefenseClassValue = (typeof DEFENSE_CLASS_VALUES)[number];
+
 /** The same damage types, labelled for the compact weapon property editor. */
 export const WEAPON_DAMAGE_OPTIONS: {
   value: DamageTypeValue;

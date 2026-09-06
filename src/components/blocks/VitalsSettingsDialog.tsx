@@ -7,9 +7,12 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Divider } from "@/components/ui/Divider";
 import { Field } from "@/components/ui/Field";
 import { NumberInput } from "@/components/ui/NumberInput";
+import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import { MAX_BRAWL_WOUNDS, MAX_CRITICAL_WOUNDS, woundBaselines } from "@/config";
+import { DEFENSE_CLASS_OPTIONS, isChoiceValue } from "@/config/options";
+import type { DefenseClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import type { AppOptions } from "@/types/application";
 
@@ -28,14 +31,14 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
 
   const [brawl, setBrawl] = useState<number>(settings.brawl ?? baseline.brawl);
   const [critical, setCritical] = useState<number>(settings.critical ?? baseline.critical);
-  const [isMechaWounds, setIsMechaWounds] = useState<boolean>(settings.isMechaWounds);
+  const [defenseClass, setDefenseClass] = useState<DefenseClassValue>(actor.system.defenseClass);
   const [isTriumvirateWounds, setIsTriumvirateWounds] = useState<boolean>(settings.isTriumvirateWounds);
 
   const handleSave = () => {
     void actor.update({
+      "system.defenseClass": defenseClass,
       "system.vitalsSettings.brawl": brawl,
       "system.vitalsSettings.critical": critical,
-      "system.vitalsSettings.isMechaWounds": isMechaWounds,
       "system.vitalsSettings.isTriumvirateWounds": isTriumvirateWounds,
     });
     onClose();
@@ -87,11 +90,24 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
 
       <Stack gap={3}>
         <Divider />
-        <Checkbox
-          checked={isMechaWounds}
-          onCheckedChange={setIsMechaWounds}
-          label={game.i18n.localize("ROBOTECH.Wounds.MechaClassWounds")}
-        />
+        <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.DefenseClass.Title")}>
+          <Select
+            width="medium"
+            value={defenseClass}
+            onChange={(e) => {
+              const next = e.target.value;
+              if (isChoiceValue(DEFENSE_CLASS_OPTIONS, next)) {
+                setDefenseClass(next);
+              }
+            }}
+          >
+            {DEFENSE_CLASS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {game.i18n.localize(option.labelKey)}
+              </option>
+            ))}
+          </Select>
+        </Field>
         <Checkbox
           checked={isTriumvirateWounds}
           onCheckedChange={setIsTriumvirateWounds}

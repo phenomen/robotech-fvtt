@@ -1,5 +1,5 @@
-import { WEALTH_VALUES } from "@/config/options";
-import type { WealthValue } from "@/config/options";
+import { DEFENSE_CLASS_VALUES, WEALTH_VALUES } from "@/config/options";
+import type { DefenseClassValue, WealthValue } from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID } from "@/config/statuses";
 import {
   MAX_BRAWL_WOUNDS,
@@ -21,7 +21,6 @@ export interface WoundCategory {
 export interface VitalsSettings {
   brawl: number | null;
   critical: number | null;
-  isMechaWounds: boolean;
   isTriumvirateWounds: boolean;
 }
 
@@ -63,6 +62,7 @@ export class CharacterDataModel extends ActorDataModel {
   declare experience: number;
   declare buildPoints: number;
   declare armor: number;
+  declare defenseClass: DefenseClassValue;
   declare callsign: string;
   declare faction: string;
   declare nature: CharacterNature;
@@ -94,6 +94,11 @@ export class CharacterDataModel extends ActorDataModel {
       }),
       burnout: new fields.NumberField({ initial: 5, integer: true, min: 1 }),
       callsign: new fields.StringField({ initial: "" }),
+      defenseClass: new fields.StringField({
+        choices: DEFENSE_CLASS_VALUES,
+        // "light"
+        initial: DEFENSE_CLASS_VALUES[0],
+      }),
       experience: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       faction: new fields.StringField({ initial: "" }),
       heroicMove: new fields.SchemaField({
@@ -152,7 +157,6 @@ export class CharacterDataModel extends ActorDataModel {
           min: 0,
           nullable: true,
         }),
-        isMechaWounds: new fields.BooleanField({ initial: false }),
         isTriumvirateWounds: new fields.BooleanField({ initial: false }),
       }),
       wealth: new fields.StringField({

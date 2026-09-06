@@ -137,9 +137,13 @@
       "Settings": "Vitals Settings",
       "Max": "Max {max}",
       "Min": "Min {min}",
-      "MechaClass": "Mecha Class",
-      "MechaClassWounds": "Mecha Class Wounds",
       "Triumvirate": "Triumvirate"
+    },
+    "DefenseClass": {
+      "Title": "Armor Class",
+      "light": "Light",
+      "mecha": "Mecha",
+      "naval": "Naval"
     },
     "Stress": {
       "Stress": "Stress",

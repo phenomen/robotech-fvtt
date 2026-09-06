@@ -88,13 +88,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
         {activeTab === "stats" && (
           <GridSystem guideWidth={1}>
             <Grid columns={10} rows={2}>
-              <GridCell
-                column="1/6"
-                row={1}
-                solid
-                pad={3}
-                tone={system.vitalsSettings.isMechaWounds ? "info" : "default"}
-              >
+              <GridCell column="1/6" row={1} solid pad={3} tone={system.defenseClass === "light" ? "default" : "info"}>
                 <WoundTracker actor={actor} />
               </GridCell>
               <GridCell column="6/11" row={1} solid pad={3} tone={system.isMentalBreak ? "danger" : "default"}>

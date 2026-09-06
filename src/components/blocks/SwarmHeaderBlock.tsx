@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Portrait } from "@/components/ui/Portrait";
+import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
+import { DEFENSE_CLASS_OPTIONS } from "@/config/options";
 import type { ActorOf } from "@/models";
 import { pickImage } from "@/utils";
 
@@ -53,6 +55,22 @@ export function SwarmHeaderBlock({ actor }: SwarmHeaderBlockProps): JSX.Element 
         </Stack>
 
         <Stack direction="row" gap={2}>
+          <Stack align="center" justify="center" grow>
+            <Label>{game.i18n.localize("ROBOTECH.DefenseClass.Title")}</Label>
+            <Select
+              width="medium"
+              value={system.defenseClass}
+              onChange={(e) => {
+                void actor.update({ "system.defenseClass": e.target.value });
+              }}
+            >
+              {DEFENSE_CLASS_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {game.i18n.localize(option.labelKey)}
+                </option>
+              ))}
+            </Select>
+          </Stack>
           <Stack align="center" justify="center" grow>
             <Label>{game.i18n.localize("ROBOTECH.Swarm.Stats.TotalVessels")}</Label>
             <Text variant="mono" color="primary" size="large">

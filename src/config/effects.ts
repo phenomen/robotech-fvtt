@@ -34,7 +34,7 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
       //{ value: "system.buildPoints", labelKey: "ROBOTECH.Character.BuildPoints" },
       { labelKey: "ROBOTECH.Wounds.Brawl", value: "system.vitalsSettings.brawl" },
       { labelKey: "ROBOTECH.Wounds.Critical", value: "system.vitalsSettings.critical" },
-      { labelKey: "ROBOTECH.Wounds.MechaClassWounds", value: "system.vitalsSettings.isMechaWounds" },
+      { labelKey: "ROBOTECH.DefenseClass.Title", value: "system.defenseClass" },
       { labelKey: "ROBOTECH.Wounds.Triumvirate", value: "system.vitalsSettings.isTriumvirateWounds" },
     ],
   },
@@ -42,6 +42,7 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
     labelKey: "TYPES.Actor.vessel",
     options: [
       //{ value: "system.armor.value", labelKey: "ROBOTECH.Vessel.Armor" },
+      { labelKey: "ROBOTECH.DefenseClass.Title", value: "system.defenseClass" },
       { labelKey: "ROBOTECH.Vessel.Armor", value: "system.armor.max" },
       //{ value: "system.structure.value", labelKey: "ROBOTECH.Vessel.Structure" },
       { labelKey: "ROBOTECH.Vessel.Structure", value: "system.structure.max" },

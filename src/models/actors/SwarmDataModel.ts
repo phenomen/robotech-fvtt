@@ -1,5 +1,5 @@
-import { DAMAGE_TYPE_VALUES } from "@/config/options";
-import type { DamageTypeValue } from "@/config/options";
+import { DEFENSE_CLASS_VALUES } from "@/config/options";
+import type { DefenseClassValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import type { VesselGauge } from "@/models/actors/VesselDataModel";
 import { isMemberAlive } from "@/utils/swarmUtils";
@@ -26,7 +26,7 @@ interface SwarmSpeeds {
 
 export class SwarmDataModel extends ActorDataModel {
   declare members: SwarmMember[];
-  declare damageClass: DamageTypeValue;
+  declare defenseClass: DefenseClassValue;
 
   declare vessels: VesselGauge;
   declare structure: VesselGauge;
@@ -55,10 +55,10 @@ export class SwarmDataModel extends ActorDataModel {
 
     return {
       ...super.defineSchema(),
-      damageClass: new fields.StringField({
-        choices: DAMAGE_TYPE_VALUES,
+      defenseClass: new fields.StringField({
+        choices: DEFENSE_CLASS_VALUES,
         // "mecha"
-        initial: DAMAGE_TYPE_VALUES[1],
+        initial: DEFENSE_CLASS_VALUES[1],
       }),
       members: new fields.ArrayField(swarmMemberSchema(), { initial: [] }),
     };

@@ -1,5 +1,17 @@
-import { ROLL_MODIFIER_VALUES, SPEED_UNIT_VALUES, VESSEL_MODE_VALUES, VESSEL_TYPE_VALUES } from "@/config/options";
-import type { RollModifierValue, SpeedUnitValue, VesselModeValue, VesselTypeValue } from "@/config/options";
+import {
+  DEFENSE_CLASS_VALUES,
+  ROLL_MODIFIER_VALUES,
+  SPEED_UNIT_VALUES,
+  VESSEL_MODE_VALUES,
+  VESSEL_TYPE_VALUES,
+} from "@/config/options";
+import type {
+  DefenseClassValue,
+  RollModifierValue,
+  SpeedUnitValue,
+  VesselModeValue,
+  VesselTypeValue,
+} from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { calcEngineSpeed } from "@/utils/vesselUtils";
 
@@ -38,6 +50,7 @@ export class VesselDataModel extends ActorDataModel {
   declare transformable: boolean;
   declare mode: VesselModeValue;
   declare isBasic: boolean;
+  declare defenseClass: DefenseClassValue;
   declare structure: VesselGauge;
   declare armor: VesselGauge;
   declare systems: VesselSystems;
@@ -74,6 +87,11 @@ export class VesselDataModel extends ActorDataModel {
       }),
       classification: new fields.StringField({ initial: "" }),
       crew: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+      defenseClass: new fields.StringField({
+        choices: DEFENSE_CLASS_VALUES,
+        // "mecha"
+        initial: DEFENSE_CLASS_VALUES[1],
+      }),
       designation: new fields.StringField({ initial: "" }),
       faction: new fields.StringField({ initial: "" }),
       hardwarePoints: new fields.NumberField({ initial: 4, integer: true, min: 0 }),

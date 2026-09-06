@@ -4,8 +4,10 @@ import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
+import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
+import { DEFENSE_CLASS_OPTIONS } from "@/config/options";
 import type { ActorOf, FieldValue } from "@/models";
 
 interface VesselFrameworkBlockProps {
@@ -14,7 +16,7 @@ interface VesselFrameworkBlockProps {
 }
 
 export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBlockProps): JSX.Element {
-  const { armor, structure, isBasic } = actor.system;
+  const { armor, defenseClass, structure, isBasic } = actor.system;
 
   return (
     <Stack gap={1}>
@@ -80,6 +82,25 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
             }}
           />
         </Stack>
+      </Stack>
+
+      <Stack direction="row" gap={2} align="center" justify="between">
+        <Label icon="armor-class" iconTone="teal">
+          {game.i18n.localize("ROBOTECH.DefenseClass.Title")}
+        </Label>
+        <Select
+          width="medium"
+          value={defenseClass}
+          onChange={(e) => {
+            onFieldChange("system.defenseClass", e.target.value);
+          }}
+        >
+          {DEFENSE_CLASS_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {game.i18n.localize(option.labelKey)}
+            </option>
+          ))}
+        </Select>
       </Stack>
     </Stack>
   );
