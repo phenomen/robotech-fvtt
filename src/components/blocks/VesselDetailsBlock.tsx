@@ -50,15 +50,15 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
       </Field>
 
       <Field
-        icon="faction"
+        icon="organization"
         iconTone="blue"
         orientation="horizontal"
-        label={game.i18n.localize("ROBOTECH.Vessel.Faction")}
+        label={game.i18n.localize("ROBOTECH.Vessel.Organization")}
       >
         <Input
-          value={system.faction}
+          value={system.organization}
           onChange={(e) => {
-            handleFieldChange("system.faction", e.target.value);
+            handleFieldChange("system.organization", e.target.value);
           }}
           width="medium"
         />

@@ -30,14 +30,14 @@ export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Elem
           placeholder={game.i18n.localize("ROBOTECH.Character.CallsignPlaceholder")}
         />
       </Field>
-      <Field grow label={game.i18n.localize("ROBOTECH.Character.Faction")}>
+      <Field grow label={game.i18n.localize("ROBOTECH.Character.Organization")}>
         <Input
           width="full"
-          value={system.faction}
+          value={system.organization}
           onChange={(e) => {
-            handleFieldChange("system.faction", e.target.value);
+            handleFieldChange("system.organization", e.target.value);
           }}
-          placeholder={game.i18n.localize("ROBOTECH.Character.FactionPlaceholder")}
+          placeholder={game.i18n.localize("ROBOTECH.Character.OrganizationPlaceholder")}
         />
       </Field>
       <Field icon="wealth" iconTone="green" label={game.i18n.localize("ROBOTECH.Character.Wealth")}>

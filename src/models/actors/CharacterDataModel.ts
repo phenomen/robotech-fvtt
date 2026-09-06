@@ -67,7 +67,7 @@ export class CharacterDataModel extends ActorDataModel {
   declare armorClass: ArmorClassValue;
   declare resistance: number;
   declare callsign: string;
-  declare faction: string;
+  declare organization: string;
   declare nature: CharacterNature;
   declare burnout: number;
   declare speed: number;
@@ -103,7 +103,6 @@ export class CharacterDataModel extends ActorDataModel {
       burnout: new fields.NumberField({ initial: 5, integer: true, min: 1 }),
       callsign: new fields.StringField({ initial: "" }),
       experience: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      faction: new fields.StringField({ initial: "" }),
       heroicMove: new fields.SchemaField({
         description: new fields.StringField({ initial: "" }),
         name: new fields.StringField({ initial: "" }),
@@ -114,6 +113,7 @@ export class CharacterDataModel extends ActorDataModel {
         demeanor: new fields.StringField({ initial: "" }),
         disposition: new fields.StringField({ initial: "" }),
       }),
+      organization: new fields.StringField({ initial: "" }),
       proficiencies: new fields.ArrayField(new fields.StringField()),
       resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       skills: new fields.ObjectField({ initial: {} }),

@@ -41,7 +41,7 @@ export type SpeedModeName = "general" | VesselModeValue;
 export class VesselDataModel extends ActorDataModel {
   declare vesselType: VesselTypeValue;
   declare designation: string;
-  declare faction: string;
+  declare organization: string;
   declare requiredRank: number;
   declare classification: string;
   declare transformable: boolean;
@@ -88,7 +88,6 @@ export class VesselDataModel extends ActorDataModel {
       classification: new fields.StringField({ initial: "" }),
       crew: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
       designation: new fields.StringField({ initial: "" }),
-      faction: new fields.StringField({ initial: "" }),
       hardwarePoints: new fields.NumberField({ initial: 4, integer: true, min: 0 }),
       isBasic: new fields.BooleanField({ initial: false }),
       mode: new fields.StringField({
@@ -96,6 +95,7 @@ export class VesselDataModel extends ActorDataModel {
         // "fighter"
         initial: VESSEL_MODE_VALUES[0],
       }),
+      organization: new fields.StringField({ initial: "" }),
       requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
       resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       speedModes: new fields.SchemaField({
