@@ -2,8 +2,14 @@ import type Actor from "@client/documents/actor.mjs";
 import type Combat from "@client/documents/combat.mjs";
 import type Combatant from "@client/documents/combatant.mjs";
 
-import { ACTION_OPTIONS, COMBAT_PHASE_OPTIONS, COMBAT_PHASE_VALUES, isChoiceValue } from "@/config/options";
-import type { CombatPhaseValue, ConflictActionValue, SlotPhaseValue } from "@/config/options";
+import {
+  ACTION_OPTIONS,
+  COMBAT_PHASE_OPTIONS,
+  COMBAT_PHASE_VALUES,
+  isChoiceValue,
+  isConflictAction,
+} from "@/config/options";
+import type { ActionValue, CombatPhaseValue, ConflictActionValue, SlotPhaseValue } from "@/config/options";
 import { MENTAL_BREAK_STATUS_ID, SLOWED_STATUS_ID } from "@/config/statuses";
 import { SKILL_USES_PER_ROUND, SUITE_USES_PER_ROUND } from "@/models/combat";
 import type { ActionLogEntry, ActionUsage, RoundUsage } from "@/models/combat";
@@ -77,8 +83,20 @@ export function homePhaseOf(action: ConflictActionValue): SlotPhaseValue {
   return option.phase;
 }
 
-export function isHeightened(action: ConflictActionValue, phase: SlotPhaseValue): boolean {
+export function isPushed(action: ConflictActionValue, phase: SlotPhaseValue): boolean {
   return phaseIndex(homePhaseOf(action)) > phaseIndex(phase);
+}
+
+/** Whether this action is Pushed in the current combat phase (earlier than its home phase). */
+export function actionIsPushed(action: ActionValue): boolean {
+  if (!game.combat || !isConflictAction(action)) {
+    return false;
+  }
+  const phase = combatPhaseOf(game.combat);
+  if (phase === "communication") {
+    return false;
+  }
+  return isPushed(action, phase);
 }
 
 export function remainingSkills(usage: RoundUsage): number {
@@ -225,7 +243,7 @@ export async function spendRoundUses(
   }
 
   await combatant.update({
-    "system.log": [...used.log, { action, heightened: isHeightened(action, currentPhase), phase: currentPhase }],
+    "system.log": [...used.log, { action, phase: currentPhase, pushed: isPushed(action, currentPhase) }],
     "system.skillsUsed": used.skillsUsed + usage.skills,
     "system.suiteUsed": used.suiteUsed || usage.suite,
   });
@@ -285,11 +303,11 @@ export function takenActionLabel(entry: ActionLogEntry): string {
   const phase = phaseLabelOf(entry.phase);
   const action = ACTION_OPTIONS.find((option) => option.value === entry.action)?.labelKey ?? entry.action;
   const actionLabel = game.i18n.localize(action);
-  if (entry.heightened) {
-    return game.i18n.localize("ROBOTECH.Combat.TakenHeightened", {
+  if (entry.pushed) {
+    return game.i18n.localize("ROBOTECH.Combat.TakenPushed", {
       action: actionLabel,
-      heightened: game.i18n.localize("ROBOTECH.Combat.Heightened"),
       phase,
+      pushed: game.i18n.localize("ROBOTECH.Combat.Pushed"),
     });
   }
   return game.i18n.localize("ROBOTECH.Combat.TakenAction", { action: actionLabel, phase });

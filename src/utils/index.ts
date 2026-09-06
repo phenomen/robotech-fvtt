@@ -11,6 +11,7 @@ export * from "./html";
 export * from "./linkedActors";
 export * from "./sheetContainer";
 export * from "./swarmUtils";
+export * from "./synergy";
 export * from "./trackers";
 export * from "./vesselUtils";
 export * from "./weaponUtils";

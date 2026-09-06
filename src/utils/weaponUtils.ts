@@ -1,7 +1,10 @@
+import type Actor from "@client/documents/actor.mjs";
+
 import type { TagColor } from "@/components/ui/Tag";
-import type { DamageTypeValue } from "@/config/options";
-import { WEAPON_PROPERTIES } from "@/config/weaponProperties";
+import type { ActionValue, DamageTypeValue } from "@/config/options";
+import { damageTagLabel, WEAPON_PROPERTIES } from "@/config/weaponProperties";
 import type { ItemOf, WeaponAmount, WeaponProperties } from "@/models";
+import { isActorOf } from "@/utils/documents";
 
 export interface WeaponTag {
   id: string;
@@ -16,6 +19,61 @@ export interface WeaponAttackStats {
   armorPenetration: number;
   multiplier: number;
   tags: WeaponTag[];
+}
+
+export interface IncomingAttack extends WeaponAttackStats {
+  attackSuccesses: number;
+  calledShot: boolean;
+}
+
+/** Attack/defend payload for a chat card: weapon stats, swarm default, or an existing incoming defend. */
+export function incomingAttackOf(
+  action: ActionValue,
+  successes: number,
+  incoming: IncomingAttack | undefined,
+  weapon: ItemOf<"weapon"> | undefined,
+  contextActor: Actor,
+  calledShot: boolean,
+  penetration: WeaponAmount
+): IncomingAttack | undefined {
+  if (action === "defend") {
+    return incoming;
+  }
+  if (action !== "attack") {
+    return undefined;
+  }
+  if (weapon) {
+    return { ...weaponAttackStats(weapon, penetration), attackSuccesses: successes, calledShot };
+  }
+  if (isActorOf(contextActor, "swarm")) {
+    const damageType = contextActor.system.armorClass;
+    const tags: WeaponTag[] = [
+      {
+        color: "red",
+        id: "damage",
+        label: damageTagLabel(1, damageType),
+        title: game.i18n.localize("ROBOTECH.Item.Property.Damage.name"),
+      },
+    ];
+    if (penetration.active) {
+      tags.push({
+        color: "amber",
+        id: "penetration",
+        label: game.i18n.localize("ROBOTECH.Item.Property.Penetration.tag", { val: penetration.value }),
+        title: game.i18n.localize("ROBOTECH.Item.Property.Penetration.name"),
+      });
+    }
+    return {
+      armorPenetration: penetration.active ? penetration.value : 0,
+      attackSuccesses: successes,
+      calledShot,
+      damageType,
+      multiplier: 1,
+      tags,
+      weaponName: contextActor.name,
+    };
+  }
+  return undefined;
 }
 
 export function weaponAttackStats(weapon: ItemOf<"weapon">, penetration?: WeaponAmount): WeaponAttackStats {

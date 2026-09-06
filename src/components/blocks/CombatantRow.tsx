@@ -162,7 +162,7 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
         </Text>
 
         {usage.log.map((entry, entryIndex) => (
-          <Text key={`taken-${entryIndex}`} variant="label" color={entry.heightened ? "danger" : "foreground"}>
+          <Text key={`taken-${entryIndex}`} variant="label" color={entry.pushed ? "danger" : "foreground"}>
             {takenActionLabel(entry)}
           </Text>
         ))}

@@ -2,10 +2,11 @@ import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
 
 import { dieSuccessGradation, modifierLabelOf } from "@/config";
+import { ACTION_OPTIONS, isConflictAction } from "@/config/options";
 import type { ActionValue, DamageTypeValue, RollModifierValue } from "@/config/options";
 import type { Ad6DieResult } from "@/utils/AD6Roll";
 import { enrichHtml, escapeHtml } from "@/utils/html";
-import type { WeaponAttackStats, WeaponTag } from "@/utils/weaponUtils";
+import type { IncomingAttack, WeaponTag } from "@/utils/weaponUtils";
 
 const TAG_COLOR_CLASS: Record<WeaponTag["color"], string> = {
   amber: "rt-chat-tag--amber",
@@ -19,11 +20,25 @@ const TAG_COLOR_CLASS: Record<WeaponTag["color"], string> = {
   teal: "rt-chat-tag--teal",
 };
 
-export type ActionChatKind = "action" | "attack" | "defend";
+export type { IncomingAttack } from "@/utils/weaponUtils";
 
-export interface IncomingAttack extends WeaponAttackStats {
-  attackSuccesses: number;
-  calledShot: boolean;
+export type ActionChatKind = "action" | "attack" | "defend";
+export type SynergyRole = "source" | "child";
+
+export interface ActionChatSnapshot {
+  title: string;
+  modifier: RollModifierValue;
+  diceCount: number;
+  dice: Ad6DieResult[];
+  rolledSuccesses: number;
+  bonusSuccesses: number;
+  skillNames: string[];
+  speed?: number;
+}
+
+export interface ActionSynergyFlags {
+  role: SynergyRole;
+  partnerId?: string;
 }
 
 export interface ActionChatFlags {
@@ -32,6 +47,10 @@ export interface ActionChatFlags {
   contextUuid: string;
   successes: number;
   incoming?: IncomingAttack;
+  pushed?: boolean;
+  snapshot?: ActionChatSnapshot;
+  synergy?: ActionSynergyFlags;
+  fatigueNotice?: boolean;
 }
 
 export interface ActionCardInput {
@@ -44,11 +63,13 @@ export interface ActionCardInput {
   rolledSuccesses: number;
   bonusSuccesses: number;
   successes: number;
-  roll: foundry.dice.Roll;
+  roll?: foundry.dice.Roll;
   skillNames: string[];
   incoming?: IncomingAttack;
-  heightened?: boolean;
+  pushed?: boolean;
   speed?: number;
+  synergy?: ActionSynergyFlags;
+  fatigueNotice?: boolean;
 }
 
 export function actionFlagsOf(message: foundry.documents.ChatMessage): ActionChatFlags | null {
@@ -59,24 +80,101 @@ export function actionFlagsOf(message: foundry.documents.ChatMessage): ActionCha
   return flags;
 }
 
-export async function postActionCard(input: ActionCardInput): Promise<void> {
-  const kind = cardKindOf(input.action, input.incoming);
-  const flags: ActionChatFlags = {
-    action: input.action,
-    contextUuid: input.actor.uuid ?? "",
-    incoming: input.incoming,
-    kind,
-    successes: input.successes,
-  };
+/** Whether this card can still open the Synergy split. */
+export function canSynergize(flags: ActionChatFlags): boolean {
+  if (!flags.snapshot) {
+    return false;
+  }
+  if (flags.successes < 1) {
+    return false;
+  }
+  if (!isConflictAction(flags.action)) {
+    return false;
+  }
+  if (flags.synergy?.role === "child") {
+    return false;
+  }
+  return !flags.synergy?.partnerId;
+}
 
-  await foundry.documents.ChatMessage.create({
-    content: actionCardHtml(input, kind),
+export function actionCardTitle(actor: Actor, action: ActionValue, pushed: boolean, synergy = false): string {
+  const fallbackKey = ACTION_OPTIONS[0]?.labelKey ?? "";
+  const actionLabel = game.i18n.localize(
+    ACTION_OPTIONS.find((option) => option.value === action)?.labelKey ?? fallbackKey
+  );
+  const key = titleKeyOf(pushed, synergy);
+  return game.i18n.localize(key, { action: actionLabel, name: actor.name });
+}
+
+export async function postActionCard(input: ActionCardInput): Promise<foundry.documents.ChatMessage | undefined> {
+  const flags = flagsFromInput(input);
+  const created = await foundry.documents.ChatMessage.create({
+    content: cardHtmlOf(flags),
     flags: { robotech: { action: flags } },
-    rolls: [input.roll],
+    ...(input.roll ? { rolls: [input.roll] } : {}),
     speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
     style: CONST.CHAT_MESSAGE_STYLES.OTHER,
     user: game.user?.id,
   });
+  if (created instanceof foundry.documents.ChatMessage) {
+    return created;
+  }
+  if (Array.isArray(created)) {
+    const first = created[0];
+    return first instanceof foundry.documents.ChatMessage ? first : undefined;
+  }
+  return undefined;
+}
+
+export async function updateActionCard(message: foundry.documents.ChatMessage, flags: ActionChatFlags): Promise<void> {
+  await message.update({
+    content: cardHtmlOf(flags),
+    "flags.robotech.action": flags,
+  });
+}
+
+function flagsFromInput(input: ActionCardInput): ActionChatFlags {
+  return {
+    action: input.action,
+    contextUuid: input.actor.uuid ?? "",
+    fatigueNotice: input.fatigueNotice,
+    incoming: input.incoming,
+    kind: cardKindOf(input.action, input.incoming),
+    pushed: input.pushed,
+    snapshot: {
+      bonusSuccesses: input.bonusSuccesses,
+      dice: input.dice,
+      diceCount: input.diceCount,
+      modifier: input.modifier,
+      rolledSuccesses: input.rolledSuccesses,
+      skillNames: input.skillNames,
+      speed: input.speed,
+      title: input.title,
+    },
+    successes: input.successes,
+    synergy: input.synergy,
+  };
+}
+
+function titleKeyOf(pushed: boolean, synergy: boolean): string {
+  if (synergy && pushed) {
+    return "ROBOTECH.Roll.PushedSynergyTitle";
+  }
+  if (synergy) {
+    return "ROBOTECH.Roll.SynergyTitleCard";
+  }
+  if (pushed) {
+    return "ROBOTECH.Roll.PushedTitle";
+  }
+  return "ROBOTECH.Roll.RollTitle";
+}
+
+function cardHtmlOf(flags: ActionChatFlags): string {
+  const snapshot = flags.snapshot;
+  if (!snapshot) {
+    return "";
+  }
+  return actionCardHtml(flags, snapshot);
 }
 
 export interface PoolCardInput {
@@ -174,45 +272,52 @@ function cardKindOf(action: ActionValue, incoming?: IncomingAttack): ActionChatK
   return "action";
 }
 
-function actionCardHtml(input: ActionCardInput, kind: ActionChatKind): string {
+function actionCardHtml(flags: ActionChatFlags, snapshot: ActionChatSnapshot): string {
+  const isChild = flags.synergy?.role === "child";
+  const skills = snapshot.skillNames.map((name) => `<div class="rt-chat-skill">${escapeHtml(name)}</div>`).join("");
+  const headerClass = flags.pushed ? "rt-chat-header rt-chat-header--danger" : "rt-chat-header";
+
+  return `
+    <div class="rt-chat-card">
+      <div class="${headerClass}">${escapeHtml(snapshot.title)}</div>
+      ${skills ? `<div class="rt-chat-skills">${skills}</div>` : ""}
+      ${isChild ? "" : metaBlockHtml(flags.action, snapshot)}
+      ${weaponBlockHtml(flags.incoming)}
+      ${opposedBlockHtml(flags)}
+      ${isChild ? "" : diceBlockHtml(snapshot)}
+      ${successFooterHtml(flags.successes, snapshot.rolledSuccesses, snapshot.bonusSuccesses, Boolean(flags.synergy?.partnerId))}
+      ${fatigueNoticeHtml(flags)}
+      ${actionButtonsHtml(flags)}
+    </div>
+  `;
+}
+
+function metaBlockHtml(action: ActionValue, snapshot: ActionChatSnapshot): string {
   const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier");
   const dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
-  const skills = input.skillNames.map((name) => `<div class="rt-chat-skill">${escapeHtml(name)}</div>`).join("");
-  const speedHtml = initiativeSpeedHtml(input);
+  return `<div class="rt-chat-meta">
+        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierLabelOf(snapshot.modifier)}</strong></span>
+        <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${snapshot.diceCount}d6</strong></span>
+        ${initiativeSpeedHtml(action, snapshot.speed)}
+      </div>`;
+}
 
-  const diceHtml = input.dice
+function diceBlockHtml(snapshot: ActionChatSnapshot): string {
+  const diceHtml = snapshot.dice
     .map((result) => {
       const variant = dieSuccessGradation(result.successes).dieClass;
       return `<span class="rt-die-box ${variant}">${result.die}</span>`;
     })
     .join("");
-
-  const headerClass = input.heightened ? "rt-chat-header rt-chat-header--danger" : "rt-chat-header";
-
-  return `
-    <div class="rt-chat-card">
-      <div class="${headerClass}">${escapeHtml(input.title)}</div>
-      ${skills ? `<div class="rt-chat-skills">${skills}</div>` : ""}
-      <div class="rt-chat-meta">
-        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierLabelOf(input.modifier)}</strong></span>
-        <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${input.diceCount}d6</strong></span>
-        ${speedHtml}
-      </div>
-      ${weaponBlockHtml(input.incoming)}
-      ${opposedBlockHtml(kind, input)}
-      <div class="rt-dice-grid">${diceHtml}${bonusChipHtml(input.bonusSuccesses)}</div>
-      ${successFooterHtml(input.successes, input.rolledSuccesses, input.bonusSuccesses)}
-      ${actionButtonsHtml(kind)}
-    </div>
-  `;
+  return `<div class="rt-dice-grid">${diceHtml}${bonusChipHtml(snapshot.bonusSuccesses)}</div>`;
 }
 
-function initiativeSpeedHtml(input: ActionCardInput): string {
-  if (input.action !== "initiative" || input.speed === undefined) {
+function initiativeSpeedHtml(action: ActionValue, speed: number | undefined): string {
+  if (action !== "initiative" || speed === undefined) {
     return "";
   }
   const speedLabel = game.i18n.localize("ROBOTECH.Roll.Speed");
-  return `<span>${speedLabel}: <strong class="rt-chat-meta-value">${input.speed}</strong></span>`;
+  return `<span>${speedLabel}: <strong class="rt-chat-meta-value">${speed}</strong></span>`;
 }
 
 function poolCardHtml(input: PoolCardInput): string {
@@ -249,10 +354,11 @@ function bonusChipHtml(bonus: number): string {
   return `<span class="rt-success-bonus ${tone}" title="${label}">${signed}</span>`;
 }
 
-function successFooterHtml(total: number, rolled: number, bonus: number): string {
+function successFooterHtml(total: number, rolled: number, bonus: number, hideDetail = false): string {
   const successClass = total > 0 ? "rt-chat-total-value--success" : "rt-chat-total-value--failure";
   const totalLabel = game.i18n.localize("ROBOTECH.Roll.TotalSuccesses");
-  const detail = bonus === 0 ? "" : `<span class="rt-chat-total-detail">${successDetailHtml(rolled, bonus)}</span>`;
+  const showDetail = !hideDetail && bonus !== 0;
+  const detail = showDetail ? `<span class="rt-chat-total-detail">${successDetailHtml(rolled, bonus)}</span>` : "";
   return `<div class="rt-chat-footer">
     <span class="rt-chat-total-copy">
       <span class="rt-chat-total-label">${totalLabel}:</span>
@@ -476,33 +582,52 @@ function signedDamage(amount: number): string {
   return `<span class="rt-chat-damage">−${amount}</span>`;
 }
 
-function opposedBlockHtml(kind: ActionChatKind, input: ActionCardInput): string {
-  if (kind !== "defend" || !input.incoming) {
+function opposedBlockHtml(flags: ActionChatFlags): string {
+  if (flags.kind !== "defend" || !flags.incoming) {
     return "";
   }
   return `<div class="rt-chat-opposed">${metaRow(
     "ROBOTECH.Roll.AttackSuccesses",
-    String(input.incoming.attackSuccesses)
-  )}${metaRow("ROBOTECH.Roll.DefendSuccesses", String(input.successes))}</div>`;
+    String(flags.incoming.attackSuccesses)
+  )}${metaRow("ROBOTECH.Roll.DefendSuccesses", String(flags.successes))}</div>`;
 }
 
-function actionButtonsHtml(kind: ActionChatKind): string {
-  if (kind !== "attack" && kind !== "defend") {
+function fatigueNoticeHtml(flags: ActionChatFlags): string {
+  if (!flags.fatigueNotice) {
     return "";
   }
+  return `<div class="rt-chat-summary rt-chat-summary--danger">${game.i18n.localize(
+    "ROBOTECH.Roll.PushedSynergyFatigue"
+  )}</div>`;
+}
 
-  const apply = `<button type="button" class="rt-chat-button" data-rt-action="apply-damage">${game.i18n.localize(
-    "ROBOTECH.Roll.ApplyDamage"
-  )}</button>`;
-
-  if (kind === "defend") {
-    return `<div class="rt-chat-actions">${apply}</div>`;
+function actionButtonsHtml(flags: ActionChatFlags): string {
+  const buttons: string[] = [];
+  if (canSynergize(flags)) {
+    buttons.push(
+      `<button type="button" class="rt-chat-button rt-chat-button--ghost" data-rt-action="synergy">${game.i18n.localize(
+        "ROBOTECH.Roll.SynergyButton"
+      )}</button>`
+    );
   }
-
-  const defend = `<button type="button" class="rt-chat-button rt-chat-button--ghost" data-rt-action="defend">${game.i18n.localize(
-    "ROBOTECH.Roll.DefendButton"
-  )}</button>`;
-  return `<div class="rt-chat-actions">${defend}${apply}</div>`;
+  if (flags.kind === "attack" || flags.kind === "defend") {
+    if (flags.kind === "attack") {
+      buttons.push(
+        `<button type="button" class="rt-chat-button rt-chat-button--ghost" data-rt-action="defend">${game.i18n.localize(
+          "ROBOTECH.Roll.DefendButton"
+        )}</button>`
+      );
+    }
+    buttons.push(
+      `<button type="button" class="rt-chat-button" data-rt-action="apply-damage">${game.i18n.localize(
+        "ROBOTECH.Roll.ApplyDamage"
+      )}</button>`
+    );
+  }
+  if (buttons.length === 0) {
+    return "";
+  }
+  return `<div class="rt-chat-actions">${buttons.join("")}</div>`;
 }
 
 function metaRow(labelKey: string, value: string): string {

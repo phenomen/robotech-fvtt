@@ -26,33 +26,33 @@ import {
   modifierLabelOf,
 } from "@/config/options";
 import type { ActionValue, RollModifierValue } from "@/config/options";
-import { damageTagLabel } from "@/config/weaponProperties";
 import type { ActorOf, ItemOf, ItemType, WeaponAmount } from "@/models";
 import type { ActionUsage } from "@/models/combat";
 import type { AppOptions, CloseOptions } from "@/types/application";
-import { postActionCard } from "@/utils/actionChat";
+import { actionCardTitle, actionFlagsOf, postActionCard } from "@/utils/actionChat";
 import type { IncomingAttack } from "@/utils/actionChat";
 import { evaluateAd6Roll, calcDieSuccess } from "@/utils/AD6Roll";
 import {
   actorSpeed,
   actionBudgetError,
+  actionIsPushed,
   applyInitiative,
   combatantOf,
   combatPhaseOf,
-  isHeightened,
   simpleActionsEnabled,
   spendRoundUses,
 } from "@/utils/combat";
 import { filterItemsOf, isActorOf, resolveLinkedCharacters, memberVesselsOf } from "@/utils/documents";
 import { isFullyDestroyed } from "@/utils/hardwareUtils";
-import { weaponAttackStats } from "@/utils/weaponUtils";
-import type { WeaponTag } from "@/utils/weaponUtils";
+import { applySynergy } from "@/utils/synergy";
+import { incomingAttackOf } from "@/utils/weaponUtils";
 
 export interface ActionCenterPrefill {
   action?: ActionValue;
   skill1Id?: string;
   incoming?: IncomingAttack;
   combatantId?: string;
+  synergyMessage?: foundry.documents.ChatMessage;
 }
 
 export interface SourcedOption<T extends ItemType> {
@@ -79,12 +79,15 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
   const incoming = prefill?.incoming;
   const combatant = combatantFromPrefill(prefill);
   const consumeSlot = Boolean(combatant);
-  const lockedAction: ActionValue | null = incoming ? "defend" : (prefill?.action ?? null);
+  const synergyFlags = prefill?.synergyMessage ? actionFlagsOf(prefill.synergyMessage) : null;
+  const isSynergy = Boolean(synergyFlags);
+  const lockedAction = lockedActionOf(prefill, isSynergy);
 
   const { skills: skillItems, suites: suiteItems, weapons: weaponItems } = items;
 
   const [action, setAction] = useState<ActionValue>(
-    lockedAction ?? prefill?.action ?? defaultCombatAction(consumeSlot)
+    lockedAction ??
+      (isSynergy && synergyFlags ? defaultSynergyAction(synergyFlags.action) : defaultCombatAction(consumeSlot))
   );
   const [skill1Id, setSkill1Id] = useState(() => prefillSkillKey(skillItems, contextActor, prefill?.skill1Id));
   const [skill2Id, setSkill2Id] = useState<string>("");
@@ -99,6 +102,9 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
   const [manualSuccesses, setManualSuccesses] = useState<number>(0);
   const livingVessels = livingSwarmCount(contextActor);
   const [swarmDice, setSwarmDice] = useState<number>(livingVessels);
+  const [transferred, setTransferred] = useState(() =>
+    synergyFlags ? Math.max(1, Math.floor(synergyFlags.successes / 2)) : 1
+  );
 
   const skill1 = skillItems.find((skill) => skill.key === skill1Id);
   const skill2 = skillItems.find((skill) => skill.key === skill2Id);
@@ -122,6 +128,17 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
   const needsWeapon = action === "attack" && !isActorOf(contextActor, "swarm");
   const canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon));
   const usage: ActionUsage = { skills: (skill1 ? 1 : 0) + (skill2 ? 1 : 0), suite: Boolean(suite) };
+  const sourceSuccesses = synergyFlags?.successes ?? 0;
+  const moved = transferred;
+  const remaining = Math.max(0, sourceSuccesses - moved);
+  const canConfirm =
+    isSynergy &&
+    isConflictAction(action) &&
+    action !== synergyFlags?.action &&
+    moved >= 1 &&
+    moved <= sourceSuccesses &&
+    (!needsWeapon || Boolean(weapon));
+  const pushedSynergy = isSynergy && (Boolean(synergyFlags?.pushed) || actionIsPushed(action));
 
   const handleRoll = async () => {
     if (!canRoll) {
@@ -151,7 +168,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     const result = await evaluateAd6Roll({ diceCount, modifier });
     const rolledSuccesses = result.successes;
     const successes = rolledSuccesses + manualSuccesses;
-    const heightened = consumeSlot && isConflictAction(action) && actionIsHeightened(action);
+    const pushed = consumeSlot && isConflictAction(action) && actionIsPushed(action);
 
     if (action === "initiative") {
       const applied = await applyInitiative(contextActor, successes, diceCount);
@@ -171,15 +188,15 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
       bonusSuccesses: manualSuccesses,
       dice: result.dice,
       diceCount,
-      heightened,
       incoming: incomingAttack,
       modifier,
+      pushed,
       roll: result.roll,
       rolledSuccesses,
       skillNames: sourcedMethodNames(skill1, skill2, suite, swarmDice, contextActor),
       speed: action === "initiative" ? actorSpeed(contextActor) : undefined,
       successes,
-      title: actionCardTitle(contextActor, action, heightened),
+      title: actionCardTitle(contextActor, action, pushed),
     });
 
     if (consumeSlot && combatant && isConflictAction(action)) {
@@ -189,37 +206,68 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     onClose();
   };
 
+  const handleSynergy = async (): Promise<void> => {
+    const message = prefill?.synergyMessage;
+    if (!message || !canConfirm || !isConflictAction(action)) {
+      return;
+    }
+    const incomingAttack = incomingAttackOf(action, moved, undefined, weapon?.item, contextActor, calledShot, {
+      active: penetrationActive,
+      value: penetrationValue,
+    });
+    const applied = await applySynergy({
+      action,
+      actor: contextActor,
+      incoming: incomingAttack,
+      message,
+      transferred: moved,
+    });
+    if (applied) {
+      onClose();
+    }
+  };
+
   return (
     <Stack pad={4} gap={4}>
+      {isSynergy ? (
+        <Text variant="label" color="muted">
+          {game.i18n.localize("ROBOTECH.Roll.SynergyHint")}
+        </Text>
+      ) : null}
       <ActionSelect
         value={lockedAction ?? action}
         disabled={Boolean(lockedAction)}
-        conflictOnly={consumeSlot}
+        conflictOnly={consumeSlot || isSynergy}
+        exclude={isSynergy ? synergyFlags?.action : undefined}
         onChange={setAction}
       />
-      {incoming && <IncomingSummary incoming={incoming} />}
-      <Stack direction="row" gap={2}>
-        <SkillSelect
-          labelKey="ROBOTECH.Roll.SelectSkill1"
-          value={skill1Id}
-          skills={skillItems}
-          allowNone
-          onChange={setSkill1Id}
-        />
-        <SkillSelect
-          labelKey="ROBOTECH.Roll.SelectSkill2"
-          value={skill2Id}
-          skills={skillItems.filter((skill) => skill.key !== skill1Id)}
-          allowNone
-          onChange={setSkill2Id}
-        />
-      </Stack>
-      <SuiteSelect value={suiteId} suites={suiteItems} onChange={setSuiteId} />
-      {consumeSlot && simpleActionsEnabled() ? (
-        <Text variant="label" color="muted">
-          {game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill")}
-        </Text>
-      ) : null}
+      {incoming && !isSynergy && <IncomingSummary incoming={incoming} />}
+      {isSynergy ? null : (
+        <>
+          <Stack direction="row" gap={2}>
+            <SkillSelect
+              labelKey="ROBOTECH.Roll.SelectSkill1"
+              value={skill1Id}
+              skills={skillItems}
+              allowNone
+              onChange={setSkill1Id}
+            />
+            <SkillSelect
+              labelKey="ROBOTECH.Roll.SelectSkill2"
+              value={skill2Id}
+              skills={skillItems.filter((skill) => skill.key !== skill1Id)}
+              allowNone
+              onChange={setSkill2Id}
+            />
+          </Stack>
+          <SuiteSelect value={suiteId} suites={suiteItems} onChange={setSuiteId} />
+          {consumeSlot && simpleActionsEnabled() ? (
+            <Text variant="label" color="muted">
+              {game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill")}
+            </Text>
+          ) : null}
+        </>
+      )}
       {action === "attack" && <WeaponSelect value={weaponId} weapons={weaponItems} onChange={handleWeaponChange} />}
       {action === "attack" && (
         <AttackOptions
@@ -232,28 +280,42 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
         />
       )}
 
-      <Divider orientation="horizontal" />
+      {isSynergy ? (
+        <SynergyFooter
+          sourceSuccesses={sourceSuccesses}
+          transferred={moved}
+          remaining={remaining}
+          pushed={pushedSynergy}
+          canConfirm={canConfirm}
+          onTransferredChange={setTransferred}
+          onConfirm={() => void handleSynergy()}
+        />
+      ) : (
+        <>
+          <Divider orientation="horizontal" />
 
-      <ModifierRow modifier={modifier} onChange={setModifier} />
-      {livingVessels > 0 && <SwarmDiceRow value={swarmDice} max={livingVessels} onChange={setSwarmDice} />}
-      <BonusRow
-        dice={manualDice}
-        successes={manualSuccesses}
-        onDiceChange={setManualDice}
-        onSuccessesChange={setManualSuccesses}
-      />
+          <ModifierRow modifier={modifier} onChange={setModifier} />
+          {livingVessels > 0 && <SwarmDiceRow value={swarmDice} max={livingVessels} onChange={setSwarmDice} />}
+          <BonusRow
+            dice={manualDice}
+            successes={manualSuccesses}
+            onDiceChange={setManualDice}
+            onSuccessesChange={setManualSuccesses}
+          />
 
-      <Card direction="row" align="between" tone="primary">
-        <Text variant="label" color="secondary">
-          {game.i18n.localize("ROBOTECH.Roll.TotalDice")}:
-        </Text>
-        <Text variant="title" color="primary">
-          {Math.max(0, diceCount)}d6
-        </Text>
-        <Button size="large" variant="primary" onClick={() => void handleRoll()} disabled={!canRoll}>
-          {game.i18n.localize("ROBOTECH.Roll.Roll")}
-        </Button>
-      </Card>
+          <Card direction="row" align="between" tone="primary">
+            <Text variant="label" color="secondary">
+              {game.i18n.localize("ROBOTECH.Roll.TotalDice")}:
+            </Text>
+            <Text variant="title" color="primary">
+              {Math.max(0, diceCount)}d6
+            </Text>
+            <Button size="large" variant="primary" onClick={() => void handleRoll()} disabled={!canRoll}>
+              {game.i18n.localize("ROBOTECH.Roll.Roll")}
+            </Button>
+          </Card>
+        </>
+      )}
     </Stack>
   );
 }
@@ -262,14 +324,18 @@ function ActionSelect({
   value,
   disabled,
   conflictOnly,
+  exclude,
   onChange,
 }: {
   value: ActionValue;
   disabled: boolean;
   conflictOnly: boolean;
+  exclude?: ActionValue;
   onChange: (value: ActionValue) => void;
 }): JSX.Element {
-  const options = conflictOnly ? CONFLICT_ACTION_OPTIONS : ACTION_OPTIONS;
+  const options = (conflictOnly ? CONFLICT_ACTION_OPTIONS : ACTION_OPTIONS).filter(
+    (option) => option.value !== exclude
+  );
   const phases = conflictOnly ? ACTION_PHASE_OPTIONS.filter((phase) => phase.value !== "any") : ACTION_PHASE_OPTIONS;
   const selected = ACTION_OPTIONS.find((option) => option.value === value) ?? ACTION_OPTIONS[0];
   return (
@@ -626,6 +692,57 @@ function Stepper({
   );
 }
 
+function SynergyFooter({
+  sourceSuccesses,
+  transferred,
+  remaining,
+  pushed,
+  canConfirm,
+  onTransferredChange,
+  onConfirm,
+}: {
+  sourceSuccesses: number;
+  transferred: number;
+  remaining: number;
+  pushed: boolean;
+  canConfirm: boolean;
+  onTransferredChange: (value: number) => void;
+  onConfirm: () => void;
+}): JSX.Element {
+  return (
+    <Stack gap={3}>
+      <Field label={game.i18n.localize("ROBOTECH.Roll.SynergyMove")} orientation="horizontal">
+        <NumberInput
+          min={1}
+          max={sourceSuccesses}
+          controls
+          value={transferred}
+          onValueChange={(value) => {
+            onTransferredChange(value ?? 1);
+          }}
+        />
+      </Field>
+      <Stack direction="row" gap={2} wrap>
+        <Text variant="label" color="muted">
+          {game.i18n.localize("ROBOTECH.Roll.SynergyRemaining", { count: remaining })}
+        </Text>
+        <Text variant="label" color="primary">
+          {game.i18n.localize("ROBOTECH.Roll.SynergyTransferred", { count: transferred })}
+        </Text>
+      </Stack>
+      {pushed ? (
+        <Text variant="label" color="danger">
+          {game.i18n.localize("ROBOTECH.Roll.PushedSynergyFatigue")}
+        </Text>
+      ) : null}
+      <Stack direction="row" gap={2} justify="end" shrink>
+        <Button size="large" variant="primary" disabled={!canConfirm} onClick={onConfirm}>
+          {game.i18n.localize("ROBOTECH.Roll.SynergyConfirm")}
+        </Button>
+      </Stack>
+    </Stack>
+  );
+}
 function dieTextColor(successes: number): "green" | "amber" | "danger" {
   if (successes >= 2) {
     return "green";
@@ -634,64 +751,6 @@ function dieTextColor(successes: number): "green" | "amber" | "danger" {
     return "amber";
   }
   return "danger";
-}
-
-function actionCardTitle(actor: Actor, action: ActionValue, heightened: boolean): string {
-  const fallbackKey = ACTION_OPTIONS[0]?.labelKey ?? "";
-  const actionLabel = game.i18n.localize(
-    ACTION_OPTIONS.find((option) => option.value === action)?.labelKey ?? fallbackKey
-  );
-  const key = heightened ? "ROBOTECH.Roll.HeightenedTitle" : "ROBOTECH.Roll.RollTitle";
-  return game.i18n.localize(key, { action: actionLabel, name: actor.name });
-}
-
-function incomingAttackOf(
-  action: ActionValue,
-  successes: number,
-  incoming: IncomingAttack | undefined,
-  weapon: ItemOf<"weapon"> | undefined,
-  contextActor: Actor,
-  calledShot: boolean,
-  penetration: WeaponAmount
-): IncomingAttack | undefined {
-  if (action === "defend") {
-    return incoming;
-  }
-  if (action !== "attack") {
-    return undefined;
-  }
-  if (weapon) {
-    return { ...weaponAttackStats(weapon, penetration), attackSuccesses: successes, calledShot };
-  }
-  if (isActorOf(contextActor, "swarm")) {
-    const damageType = contextActor.system.armorClass;
-    const tags: WeaponTag[] = [
-      {
-        color: "red",
-        id: "damage",
-        label: damageTagLabel(1, damageType),
-        title: game.i18n.localize("ROBOTECH.Item.Property.Damage.name"),
-      },
-    ];
-    if (penetration.active) {
-      tags.push({
-        color: "amber",
-        id: "penetration",
-        label: game.i18n.localize("ROBOTECH.Item.Property.Penetration.tag", { val: penetration.value }),
-        title: game.i18n.localize("ROBOTECH.Item.Property.Penetration.name"),
-      });
-    }
-    return {
-      armorPenetration: penetration.active ? penetration.value : 0,
-      attackSuccesses: successes,
-      calledShot,
-      damageType,
-      multiplier: 1,
-      tags,
-      weaponName: contextActor.name,
-    };
-  }
-  return undefined;
 }
 
 function weaponPenetrationOf(weapon: ItemOf<"weapon"> | undefined): WeaponAmount {
@@ -710,6 +769,16 @@ function combatantFromPrefill(prefill: ActionCenterPrefill | undefined): Combata
   return game.combat?.combatants.get(id);
 }
 
+function lockedActionOf(prefill: ActionCenterPrefill | undefined, synergy: boolean): ActionValue | null {
+  if (synergy) {
+    return null;
+  }
+  if (prefill?.incoming) {
+    return "defend";
+  }
+  return prefill?.action ?? null;
+}
+
 function defaultCombatAction(consumeSlot: boolean): ActionValue {
   if (!consumeSlot || !game.combat) {
     return "assist";
@@ -718,15 +787,12 @@ function defaultCombatAction(consumeSlot: boolean): ActionValue {
   return CONFLICT_ACTION_OPTIONS.find((option) => option.phase === phase)?.value ?? "attack";
 }
 
-function actionIsHeightened(action: ActionValue): boolean {
-  if (!game.combat || !isConflictAction(action)) {
-    return false;
+function defaultSynergyAction(source: ActionValue): ActionValue {
+  const phaseDefault = defaultCombatAction(true);
+  if (phaseDefault !== source && isConflictAction(phaseDefault)) {
+    return phaseDefault;
   }
-  const phase = combatPhaseOf(game.combat);
-  if (phase === "communication") {
-    return false;
-  }
-  return isHeightened(action, phase);
+  return CONFLICT_ACTION_OPTIONS.find((option) => option.value !== source)?.value ?? "attack";
 }
 
 function sourcedOptionsOf<T extends ItemType>(actors: Actor[], type: T): SourcedOption<T>[] {
@@ -817,7 +883,13 @@ export class ActionCenterApp extends ReactDialog {
     private readonly prefill?: ActionCenterPrefill,
     options: AppOptions = {}
   ) {
-    super(options);
+    super({
+      ...options,
+      window: {
+        ...options.window,
+        title: prefill?.synergyMessage ? "ROBOTECH.Roll.SynergyTitle" : "ROBOTECH.Roll.Title",
+      },
+    });
   }
 
   static override DEFAULT_OPTIONS = {

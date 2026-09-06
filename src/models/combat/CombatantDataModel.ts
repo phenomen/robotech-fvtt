@@ -24,7 +24,7 @@ export interface RoundUsage {
 export interface ActionLogEntry {
   action: string;
   phase: SlotPhaseValue | "";
-  heightened: boolean;
+  pushed: boolean;
 }
 
 export class CombatantDataModel extends foundry.abstract.TypeDataModel {
@@ -52,7 +52,7 @@ function actionLogField() {
   const fields = foundry.data.fields;
   return new fields.SchemaField({
     action: new fields.StringField({ blank: true, initial: "" }),
-    heightened: new fields.BooleanField({ initial: false }),
     phase: new fields.StringField({ blank: true, choices: ["", ...SLOT_PHASE_VALUES], initial: "" }),
+    pushed: new fields.BooleanField({ initial: false }),
   });
 }

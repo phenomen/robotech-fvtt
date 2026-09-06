@@ -1,9 +1,10 @@
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { openDamageDialog } from "@/components/apps/DamageDialog";
-import { actionFlagsOf, postDamageCard } from "@/utils/actionChat";
-import type { IncomingAttack } from "@/utils/actionChat";
+import { actionFlagsOf, canSynergize, postDamageCard } from "@/utils/actionChat";
+import type { ActionChatFlags, IncomingAttack } from "@/utils/actionChat";
 import { damagePreviewOf } from "@/utils/applyDamage";
-import { ownedControlledActor } from "@/utils/documents";
+import { actorFromUuid, ownedControlledActor, SCENE_ACTOR_TYPES } from "@/utils/documents";
+import { canSplitSynergy } from "@/utils/synergy";
 
 export function bindChatButtons(message: foundry.documents.ChatMessage, html: HTMLElement): void {
   for (const button of html.querySelectorAll("[data-rt-action]")) {
@@ -30,6 +31,11 @@ async function handleChatClick(action: string, message: foundry.documents.ChatMe
     return;
   }
 
+  if (action === "synergy") {
+    await openSynergyChat(message, flags);
+    return;
+  }
+
   if (action === "apply-damage" && flags.incoming) {
     const defendSuccesses = flags.kind === "defend" ? flags.successes : 0;
     const preview = damagePreviewOf(flags.incoming, defendSuccesses);
@@ -42,6 +48,25 @@ async function handleChatClick(action: string, message: foundry.documents.ChatMe
     }
     openDamageDialog(preview);
   }
+}
+
+async function openSynergyChat(message: foundry.documents.ChatMessage, flags: ActionChatFlags): Promise<void> {
+  if (!canSynergize(flags)) {
+    ui.notifications.warn(game.i18n.localize("ROBOTECH.Roll.SynergyAlreadySplit"));
+    return;
+  }
+
+  const context = await actorFromUuid(flags.contextUuid, SCENE_ACTOR_TYPES);
+  if (!context) {
+    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SynergyMissingActor"));
+    return;
+  }
+  if (!canSplitSynergy(message, context)) {
+    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SynergyNoPermission"));
+    return;
+  }
+
+  await openActionCenter(context, { synergyMessage: message });
 }
 
 async function openDefendChat(attackSuccesses: number, incoming: IncomingAttack | undefined): Promise<void> {
