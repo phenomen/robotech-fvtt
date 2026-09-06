@@ -14,7 +14,7 @@ export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "sheet", "effect"],
-    position: { height: "auto", width: 620 },
+    position: { height: "auto", width: 650 },
     window: { ...super.DEFAULT_OPTIONS.window, resizable: true },
   };
 
