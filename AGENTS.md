@@ -22,16 +22,16 @@ The project is in an early phase: **breaking changes to schema, data, and identi
 
 ## 2. Tech Stack
 
-| Layer | Choice |
-| --- | --- |
-| Host | Foundry VTT **14** (Data Models, ApplicationV2). Do not use AppV1 (`ActorSheet`, `ItemSheet`, `FormApplication`). |
-| Language | **TypeScript 7**, `strict`, `verbatimModuleSyntax`, `noUncheckedIndexedAccess` |
-| UI | **React 19** (function components, `react-jsx`) |
-| Styles | **Tailwind CSS 4** (`@theme` in `src/styles/robotech.css`, type tokens in `typography.css`) |
-| Bundler | **Bun** (`build.ts` → `dist/`). `bun-plugin-tailwind` for CSS. |
-| Lint / format | **oxlint** (type-aware) and **oxfmt** (double quotes, CRLF, sorted imports and Tailwind classes) |
-| Merged classes | `cn()` from `cnfast` (`src/utils/cn.ts`) when class merge is needed |
-| Types | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
+| Layer          | Choice                                                                                                                     |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Host           | Foundry VTT **14** (Data Models, ApplicationV2). Do not use AppV1 (`ActorSheet`, `ItemSheet`, `FormApplication`).          |
+| Language       | **TypeScript 7**, `strict`, `verbatimModuleSyntax`, `noUncheckedIndexedAccess`                                             |
+| UI             | **React 19** (function components, `react-jsx`)                                                                            |
+| Styles         | **Tailwind CSS 4** (`@theme` in `src/styles/robotech.css`, type tokens in `typography.css`)                                |
+| Bundler        | **Bun** (`build.ts` → `dist/`). `bun-plugin-tailwind` for CSS.                                                             |
+| Lint / format  | **oxlint** (type-aware) and **oxfmt** (double quotes, CRLF, sorted imports and Tailwind classes)                           |
+| Merged classes | `cn()` from `cnfast` (`src/utils/cn.ts`) when class merge is needed                                                        |
+| Types          | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
 
 Scripts: `bun run build`, `bun run lint`, `bun run fmt`. Can be run together with: `bun run fmt; bun run lint; bun run build` command.
 
@@ -248,12 +248,6 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 - Use the `key` prop for elements in iterables (prefer unique IDs over array indices)
 - Nest children between opening and closing tags instead of passing as props
 - Don't define components inside other components
-- Use semantic HTML and ARIA attributes for accessibility:
-  - Provide meaningful alt text for images
-  - Use proper heading hierarchy
-  - Add labels for form inputs
-  - Include keyboard event handlers alongside mouse events
-  - Use semantic elements (`<button>`, `<nav>`, etc.) instead of divs with roles
 
 ### Error Handling & Debugging
 
@@ -272,7 +266,6 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 
 ### Security
 
-- Add `rel="noopener"` when using `target="_blank"` on links
 - Avoid `dangerouslySetInnerHTML` unless absolutely necessary
 - Don't use `eval()` or assign directly to `document.cookie`
 
@@ -282,9 +275,7 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 - Use top-level regex literals instead of creating them in loops
 - Prefer specific imports over namespace imports
 
-### Framework-Specific Guidance
-
-**React 19+:**
+### React 19+
 
 - Use ref as a prop instead of `React.forwardRef`
 
