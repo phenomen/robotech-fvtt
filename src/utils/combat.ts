@@ -321,5 +321,5 @@ export function announceRoundPhase(round: number, phase: string): void {
 }
 
 export function announceCombatEnd(): void {
-  ui.notifications.info(game.i18n.localize("ROBOTECH.Combat.ConflictResolved"));
+  ui.notifications.info(game.i18n.localize("ROBOTECH.Combat.EncounterResolved"));
 }

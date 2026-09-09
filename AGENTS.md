@@ -22,16 +22,16 @@ The project is in an early phase: **breaking changes to schema, data, and identi
 
 ## 2. Tech Stack
 
-| Layer          | Choice                                                                                                                     |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Host           | Foundry VTT **14** (Data Models, ApplicationV2). Do not use AppV1 (`ActorSheet`, `ItemSheet`, `FormApplication`).          |
-| Language       | **TypeScript 7**, `strict`, `verbatimModuleSyntax`, `noUncheckedIndexedAccess`                                             |
-| UI             | **React 19** (function components, `react-jsx`)                                                                            |
-| Styles         | **Tailwind CSS 4** (`@theme` in `src/styles/robotech.css`, type tokens in `typography.css`)                                |
-| Bundler        | **Bun** (`build.ts` → `dist/`). `bun-plugin-tailwind` for CSS.                                                             |
-| Lint / format  | **oxlint** (type-aware) and **oxfmt** (double quotes, CRLF, sorted imports and Tailwind classes)                           |
-| Merged classes | `cn()` from `cnfast` (`src/utils/cn.ts`) when class merge is needed                                                        |
-| Types          | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
+| Layer | Choice |
+| --- | --- |
+| Host | Foundry VTT **14** (Data Models, ApplicationV2). Do not use AppV1 (`ActorSheet`, `ItemSheet`, `FormApplication`). |
+| Language | **TypeScript 7**, `strict`, `verbatimModuleSyntax`, `noUncheckedIndexedAccess` |
+| UI | **React 19** (function components, `react-jsx`) |
+| Styles | **Tailwind CSS 4** (`@theme` in `src/styles/robotech.css`, type tokens in `typography.css`) |
+| Bundler | **Bun** (`build.ts` → `dist/`). `bun-plugin-tailwind` for CSS. |
+| Lint / format | **oxlint** (type-aware) and **oxfmt** (double quotes, CRLF, sorted imports and Tailwind classes) |
+| Merged classes | `cn()` from `cnfast` (`src/utils/cn.ts`) when class merge is needed |
+| Types | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
 
 Scripts: `bun run build`, `bun run lint`, `bun run fmt`. Can be run together with: `bun run fmt; bun run lint; bun run build` command.
 

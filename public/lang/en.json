@@ -8,7 +8,7 @@
       "plot_event": "Plot Event"
     },
     "Combat": {
-      "robotech": "Conflict"
+      "robotech": "Encounter"
     },
     "Combatant": {
       "robotech": "Combatant"
@@ -463,7 +463,7 @@
         },
         "Initiative": {
           "name": "Initiative",
-          "hint": "Determine a turn order before a conflict."
+          "hint": "Determine a turn order before an encounter."
         }
       },
       "Phases": {
@@ -651,14 +651,14 @@
       "MentalBreak": "Mental Break"
     },
     "Combat": {
-      "Create": "Create Conflict",
+      "Create": "Create encounter",
       "Settings": "Tracker settings",
-      "Menu": "Conflict options",
-      "NoEncounter": "No Conflict",
+      "Menu": "Encounter options",
+      "NoEncounter": "No encounter",
       "NotStarted": "Not started",
       "Round": "Round {n}",
-      "EmptyTurns": "Add tokens to this Conflict.",
-      "Start": "Start Conflict",
+      "EmptyTurns": "Add tokens to this encounter.",
+      "Start": "Start Encounter",
       "PreviousTurn": "Previous Turn",
       "NextTurn": "Next Turn",
       "PreviousRound": "Previous Round",
@@ -666,7 +666,7 @@
       "Initiative": "Initiative",
       "Unrolled": "—",
       "RoundPhase": "Round {n}: {phase} Phase.",
-      "ConflictResolved": "Conflict resolved!",
+      "ConflictResolved": "Encounter resolved!",
       "RollInitiative": "Roll Initiative",
       "RoundBudget": "Skills: {skills} | Equipment Suite: {suite}",
       "SuiteAvailable": "Available",
@@ -679,7 +679,7 @@
       "TakenPushed": "{phase}: {pushed} {action}",
       "TakeAction": "Take Action",
       "Hidden": "Hidden",
-      "NotInCombat": "That actor is not in the current Conflict.",
+      "NotInCombat": "That actor is not in the current encounter.",
       "WaitForPhase": "Wait for the GM to advance the phase.",
       "Phases": {
         "Communication": "Comms",
