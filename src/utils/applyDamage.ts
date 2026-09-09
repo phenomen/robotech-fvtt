@@ -15,7 +15,7 @@ import {
   isHardwareItem,
   markDestroyedSlots,
 } from "@/utils/hardwareUtils";
-import { applySwarmDamage } from "@/utils/swarmUtils";
+import { applySwarmDamage, swarmArmorClassOf } from "@/utils/swarmUtils";
 import { countCheckedBoxes } from "@/utils/trackers";
 import { appliedPenetrationOf, calcDamageCascade, effectiveArmorOf } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
@@ -305,7 +305,7 @@ function damageTargetOf(actor: Actor): DamageTarget | null {
   }
   if (isActorOf(actor, "swarm")) {
     return {
-      armorClass: actor.system.armorClass,
+      armorClass: swarmArmorClassOf(actor.system.armorClass, actor.system.hardened),
       resistance: 0,
       targetArmor: 0,
     };
@@ -359,7 +359,7 @@ async function applySwarmHits(actor: ActorOf<"swarm">, preview: DamagePreview, h
   if (hits <= 0) {
     return;
   }
-  const outcome = applySwarmDamage(actor.system.members, hits, appliedPenetration(preview));
+  const outcome = applySwarmDamage(actor.system.members, hits, appliedPenetration(preview), actor.system.hardened);
   await actor.update({ "system.members": outcome.members });
 }
 
@@ -443,6 +443,7 @@ function damageBreakdownOf(
       target.armorClass,
       target.resistance
     ),
+    hardened: isActorOf(actor, "swarm") && actor.system.hardened,
     hitsOverArmor: cascade.hitsOverArmor,
     isOverkill: cascade.isOverkill,
     multipliedHits: cascade.netHits * multiplier,

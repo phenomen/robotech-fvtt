@@ -113,9 +113,9 @@ export function remainingSuites(usage: RoundUsage): number {
 }
 
 /** Returns the i18n key of the first round-budget rule this usage would break, or null when allowed. */
-export function actionBudgetError(used: RoundUsage, next: ActionUsage): string | null {
+export function actionBudgetError(used: RoundUsage, next: ActionUsage, swarm = false): string | null {
   if (next.skills > remainingSkills(used)) {
-    return "ROBOTECH.Combat.SkillBudget";
+    return swarm ? "ROBOTECH.Swarm.ActionBudget" : "ROBOTECH.Combat.SkillBudget";
   }
   if (next.suite && remainingSuites(used) < 1) {
     return "ROBOTECH.Combat.SuiteBudget";
@@ -236,13 +236,15 @@ export async function spendRoundUses(
   }
 
   const used: RoundUsage = combatant.system;
-  const errorKey = actionBudgetError(used, usage);
+  const actor = combatant.actor;
+  const errorKey = actionBudgetError(used, usage, !!actor && isActorOf(actor, "swarm"));
   if (errorKey) {
     ui.notifications.warn(game.i18n.localize(errorKey));
     return false;
   }
 
   await combatant.update({
+    "system.diceUsed": used.diceUsed + (usage.dice ?? 0),
     "system.log": [...used.log, { action, phase: currentPhase, pushed: isPushed(action, currentPhase) }],
     "system.skillsUsed": used.skillsUsed + usage.skills,
     "system.suiteUsed": used.suiteUsed || usage.suite,
@@ -259,6 +261,7 @@ export async function changePhase(combat: Combat, phase: CombatPhaseValue): Prom
 export async function clearRoundUses(combat: Combat): Promise<void> {
   const updates = combat.combatants.map((combatant) => ({
     _id: combatant.id,
+    "system.diceUsed": 0,
     "system.log": [],
     "system.skillsUsed": 0,
     "system.sort": null,

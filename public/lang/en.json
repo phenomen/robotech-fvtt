@@ -265,7 +265,8 @@
         "ClassReduce": "{attack} vs {target}: every 10 hits become 1 damage",
         "ClassOverkill": "{attack} vs {target}: each hit is 10 damage",
         "ClassOverkillHeavy": "{attack} vs {target}: each hit is 100 damage",
-        "ClassImmune": "{attack} vs {target}: no damage"
+        "ClassImmune": "{attack} vs {target}: no damage",
+        "HardenedSwarm": "Hardened Swarm: each vessel has 1 Mecha-Class Structure and 0 Armor"
       }
     },
     "Item": {
@@ -529,7 +530,7 @@
       "NoVesselCrew": "Assign a crew member to this vessel before using the Action Center.",
       "NoSwarmVessels": "Add vessels to this swarm before using the Action Center.",
       "SwarmVessels": "Swarm Dice Pool",
-      "SwarmVesselsHint": "Each vessel adds 1 die. Reduce this count to split the swarm into separate action pools.",
+      "SwarmVesselsHint": "Combined Force: 1 die per living member, split across the swarm's 2 Actions this round.",
       "OptionWithSource": "{name} [{value}] ({source})",
       "OptionNameWithSource": "{name} ({source})",
       "SelectOneToken": "Select exactly one token you control.",
@@ -573,6 +574,9 @@
     },
     "Swarm": {
       "Title": "Swarm",
+      "Hardened": "Hardened",
+      "HardenedHint": "Members count as 1 Mecha-Class Structure and 0 Mecha-Class Armor. Structure-Class becomes Mecha. Swarms are Basic.",
+      "ActionBudget": "A Swarm can take 2 Actions per round.",
       "Tabs": {
         "Members": "Members"
       },
@@ -589,7 +593,7 @@
         "Resistance": "Resistance",
         "Structure": "Structure",
         "Speed": "Speed",
-        "ReducedStructureHint": "Every part of 3 structure grants 1 structure: 3 becomes 1, 4 becomes 2."
+        "ReducedStructureHint": "For every 3 Structure a vessel has, it instead has 1 while in a Swarm. Structure-Class does not change unless Hardened. Example: 3 becomes 1, and 4 becomes 2."
       }
     },
     "Conflict": {

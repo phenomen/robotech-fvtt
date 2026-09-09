@@ -11,12 +11,14 @@ export const SUITE_USES_PER_ROUND = 1;
 export interface ActionUsage {
   skills: number;
   suite: boolean;
+  dice?: number;
 }
 
 /** Round state already recorded for a combatant. */
 export interface RoundUsage {
   skillsUsed: number;
   suiteUsed: boolean;
+  diceUsed: number;
   log: ActionLogEntry[];
 }
 
@@ -32,6 +34,7 @@ export class CombatantDataModel extends foundry.abstract.TypeDataModel {
 
   declare skillsUsed: number;
   declare suiteUsed: boolean;
+  declare diceUsed: number;
   declare log: ActionLogEntry[];
   declare pool: number;
   declare sort: number | null;
@@ -39,6 +42,7 @@ export class CombatantDataModel extends foundry.abstract.TypeDataModel {
   static override defineSchema() {
     const fields = foundry.data.fields;
     return {
+      diceUsed: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       log: new fields.ArrayField(actionLogField(), { initial: () => [] }),
       pool: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       skillsUsed: new fields.NumberField({ initial: 0, integer: true, max: SKILL_USES_PER_ROUND, min: 0 }),

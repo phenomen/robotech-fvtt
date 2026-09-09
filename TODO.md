@@ -9,8 +9,8 @@
 - [x] **Active Effects** — dynamic active effects to apply various modifiers to actors, e.g. an armor vest that adds to the Armor stat.
 - [x] **Conditions** — I think there is only two real conditions: "Slowed" and "Mental Break".
 - [x] **Damage Distribution** — per rules you can distribute damage among structure, armor raiting and hardware. Need to build a dialog where user can assign an incoming damage.
-- [ ] **Reloaded Update** — update rules to match the Reloaded edition. Some rules are already implemented, some need a revision.
-- [ ] **Hardened Swarm** — a special type of swarm that recieves only one damage to its structure no matter how much damage it got.
+- [x] **Reloaded Update** — update rules to match the Reloaded edition. Some rules are already implemented, some need a revision.
+- [x] **Hardened Swarms** — optional GM designation: members count as 1 Mecha-Class Structure, 0 Mecha-Class Armor, and Basic.
 
 ## Nice to have
 

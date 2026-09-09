@@ -44,6 +44,7 @@ import {
 } from "@/utils/combat";
 import { filterItemsOf, isActorOf, resolveLinkedCharacters, memberVesselsOf } from "@/utils/documents";
 import { isFullyDestroyed } from "@/utils/hardwareUtils";
+import { remainingSwarmDice } from "@/utils/swarmUtils";
 import { applySynergy } from "@/utils/synergy";
 import { incomingAttackOf } from "@/utils/weaponUtils";
 
@@ -101,7 +102,9 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
   const [manualDice, setManualDice] = useState<number>(0);
   const [manualSuccesses, setManualSuccesses] = useState<number>(0);
   const livingVessels = livingSwarmCount(contextActor);
-  const [swarmDice, setSwarmDice] = useState<number>(livingVessels);
+  const isSwarm = isActorOf(contextActor, "swarm");
+  const swarmDiceMax = remainingSwarmDice(livingVessels, combatant?.system.diceUsed ?? 0);
+  const [swarmDice, setSwarmDice] = useState<number>(swarmDiceMax);
   const [transferred, setTransferred] = useState(() =>
     synergyFlags ? Math.max(1, Math.floor(synergyFlags.successes / 2)) : 1
   );
@@ -118,16 +121,22 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     setPenetrationValue(next.value);
   };
 
+  const combinedDice = Math.min(swarmDice, swarmDiceMax);
   const diceCount =
-    swarmDice +
+    combinedDice +
     (skill1?.item.system.value ?? 0) +
     (skill2?.item.system.value ?? 0) +
     (suite?.item.system.skill ?? 0) +
     manualDice;
 
-  const needsWeapon = action === "attack" && !isActorOf(contextActor, "swarm");
+  const needsWeapon = action === "attack" && !isSwarm;
   const canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon));
-  const usage: ActionUsage = { skills: (skill1 ? 1 : 0) + (skill2 ? 1 : 0), suite: Boolean(suite) };
+  const skillPicks = (skill1 ? 1 : 0) + (skill2 ? 1 : 0);
+  const usage: ActionUsage = {
+    dice: isSwarm ? combinedDice : 0,
+    skills: isSwarm && consumeSlot ? 1 : skillPicks,
+    suite: Boolean(suite),
+  };
   const sourceSuccesses = synergyFlags?.successes ?? 0;
   const moved = transferred;
   const remaining = Math.max(0, sourceSuccesses - moved);
@@ -158,7 +167,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
         ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill"));
         return;
       }
-      const errorKey = actionBudgetError(combatant.system, usage);
+      const errorKey = actionBudgetError(combatant.system, usage, isSwarm);
       if (errorKey) {
         ui.notifications.warn(game.i18n.localize(errorKey));
         return;
@@ -193,7 +202,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
       pushed,
       roll: result.roll,
       rolledSuccesses,
-      skillNames: sourcedMethodNames(skill1, skill2, suite, swarmDice, contextActor),
+      skillNames: sourcedMethodNames(skill1, skill2, suite, combinedDice, contextActor),
       speed: action === "initiative" ? actorSpeed(contextActor) : undefined,
       successes,
       title: actionCardTitle(contextActor, action, pushed),
@@ -295,7 +304,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
           <Divider orientation="horizontal" />
 
           <ModifierRow modifier={modifier} onChange={setModifier} />
-          {livingVessels > 0 && <SwarmDiceRow value={swarmDice} max={livingVessels} onChange={setSwarmDice} />}
+          {swarmDiceMax > 0 && <SwarmDiceRow value={combinedDice} max={swarmDiceMax} onChange={setSwarmDice} />}
           <BonusRow
             dice={manualDice}
             successes={manualSuccesses}

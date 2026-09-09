@@ -2,7 +2,7 @@ import { ARMOR_CLASS_VALUES } from "@/config/options";
 import type { ArmorClassValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import type { Gauge } from "@/models/actors/gauges";
-import { isMemberAlive } from "@/utils/swarmUtils";
+import { isMemberAlive, leadStructureOf, memberStructureOf } from "@/utils/swarmUtils";
 
 export interface SwarmMember {
   id: string;
@@ -28,6 +28,7 @@ interface SwarmSpeeds {
 export class SwarmDataModel extends ActorDataModel {
   declare members: SwarmMember[];
   declare armorClass: ArmorClassValue;
+  declare hardened: boolean;
 
   declare vessels: Gauge;
   declare structure: Gauge;
@@ -62,6 +63,7 @@ export class SwarmDataModel extends ActorDataModel {
         // "mecha"
         initial: ARMOR_CLASS_VALUES[1],
       }),
+      hardened: new fields.BooleanField({ initial: false }),
       members: new fields.ArrayField(swarmMemberSchema(), { initial: [] }),
     };
   }
@@ -94,9 +96,10 @@ export class SwarmDataModel extends ActorDataModel {
     let value = 0;
     let max = 0;
     for (const member of this.members) {
-      max += member.reducedStructure * member.maxCount;
+      const structure = memberStructureOf(member, this.hardened);
+      max += structure * member.maxCount;
       if (isMemberAlive(member)) {
-        value += member.currentStructure + member.reducedStructure * (member.count - 1);
+        value += leadStructureOf(member, this.hardened) + structure * (member.count - 1);
       }
     }
     return { max, value };

@@ -12,7 +12,7 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf, SwarmMember } from "@/models";
-import { useLinkedActors, openActorSheet } from "@/utils";
+import { leadStructureOf, memberArmorOf, memberStructureOf, openActorSheet, useLinkedActors } from "@/utils";
 
 interface SwarmMemberListBlockProps {
   actor: ActorOf<"swarm">;
@@ -34,6 +34,7 @@ function withMemberPatch(member: SwarmMember, updates: Partial<SwarmMember>): Sw
 
 export function SwarmMemberListBlock({ actor }: SwarmMemberListBlockProps): JSX.Element {
   const members = actor.system.members;
+  const hardened = actor.system.hardened;
 
   const handleUpdateMember = (id: string, updates: Partial<SwarmMember>) => {
     const updated = members.map((member) => (member.id === id ? withMemberPatch(member, updates) : member));
@@ -62,10 +63,12 @@ export function SwarmMemberListBlock({ actor }: SwarmMemberListBlockProps): JSX.
         <Callout icon="info">{game.i18n.localize("ROBOTECH.Swarm.Members.DragDropHint")}</Callout>
       ) : (
         <Stack gap={3}>
+          {hardened ? <Callout icon="info">{game.i18n.localize("ROBOTECH.Swarm.HardenedHint")}</Callout> : null}
           {members.map((member) => (
             <SwarmMemberRow
               key={member.id}
               member={member}
+              hardened={hardened}
               onUpdate={handleUpdateMember}
               onCountChange={handleCountChange}
               onDelete={handleDeleteMember}
@@ -79,15 +82,20 @@ export function SwarmMemberListBlock({ actor }: SwarmMemberListBlockProps): JSX.
 
 function SwarmMemberRow({
   member,
+  hardened,
   onUpdate,
   onCountChange,
   onDelete,
 }: {
   member: SwarmMember;
+  hardened: boolean;
   onUpdate: (id: string, updates: Partial<SwarmMember>) => void;
   onCountChange: (member: SwarmMember, count: number) => void;
   onDelete: (id: string) => void;
 }): JSX.Element {
+  const structure = memberStructureOf(member, hardened);
+  const currentStructure = leadStructureOf(member, hardened);
+
   return (
     <Stack gap={2}>
       <Stack direction="row" gap={3} align="end">
@@ -108,8 +116,9 @@ function SwarmMemberRow({
 
         <Field label={game.i18n.localize("ROBOTECH.Swarm.Members.Armor")}>
           <NumberInput
-            value={member.armor}
+            value={memberArmorOf(member, hardened)}
             min={0}
+            disabled={hardened}
             onValueChange={(val) => {
               onUpdate(member.id, { armor: val ?? 0 });
             }}
@@ -127,18 +136,20 @@ function SwarmMemberRow({
         </Field>
 
         <Field
-          title={game.i18n.localize("ROBOTECH.Swarm.Members.ReducedStructureHint")}
+          title={game.i18n.localize(
+            hardened ? "ROBOTECH.Swarm.HardenedHint" : "ROBOTECH.Swarm.Members.ReducedStructureHint"
+          )}
           label={
             <>
-              {game.i18n.localize("ROBOTECH.Swarm.Members.Structure")} [ {member.originalStructure} →{" "}
-              {member.reducedStructure} ]
+              {game.i18n.localize("ROBOTECH.Swarm.Members.Structure")} [ {member.originalStructure} → {structure} ]
             </>
           }
         >
           <NumberInput
-            value={member.currentStructure}
+            value={currentStructure}
             min={member.count > 0 ? 1 : 0}
-            max={member.reducedStructure}
+            max={structure}
+            disabled={hardened}
             onValueChange={(val) => {
               onUpdate(member.id, { currentStructure: val ?? 0 });
             }}

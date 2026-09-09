@@ -2,6 +2,7 @@ import type { ChangeEvent, JSX } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Portrait } from "@/components/ui/Portrait";
@@ -70,6 +71,20 @@ export function SwarmHeaderBlock({ actor }: SwarmHeaderBlockProps): JSX.Element 
                 </option>
               ))}
             </Select>
+          </Stack>
+          <Stack align="center" justify="center" grow>
+            <Label htmlFor={`${actor.id}-hardened`} title={game.i18n.localize("ROBOTECH.Swarm.HardenedHint")}>
+              {game.i18n.localize("ROBOTECH.Swarm.Hardened")}
+            </Label>
+            <Checkbox
+              id={`${actor.id}-hardened`}
+              checked={system.hardened}
+              onCheckedChange={(val) => {
+                void actor.update({ "system.hardened": val });
+              }}
+              title={game.i18n.localize("ROBOTECH.Swarm.HardenedHint")}
+              size="large"
+            />
           </Stack>
           <Stack align="center" justify="center" grow>
             <Label>{game.i18n.localize("ROBOTECH.Swarm.Stats.TotalVessels")}</Label>

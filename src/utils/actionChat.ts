@@ -249,6 +249,7 @@ export interface DamageBreakdown {
   summaryKey: string;
   calledShot: boolean;
   swarmArmor: boolean;
+  hardened: boolean;
   isOverkill: boolean;
   distribution?: DamageDistribution;
 }
@@ -454,6 +455,9 @@ function multiplierRow(breakdown: DamageBreakdown): string {
 }
 
 function armorRow(breakdown: DamageBreakdown): string {
+  if (breakdown.hardened) {
+    return damageRow("ROBOTECH.Damage.Breakdown.HardenedSwarm", {});
+  }
   const penetrationApplies = breakdown.attackType === breakdown.damageType;
   if (breakdown.swarmArmor) {
     if (breakdown.armorPenetration > 0 && !penetrationApplies) {

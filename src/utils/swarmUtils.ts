@@ -3,6 +3,11 @@ import type { SwarmMember } from "@/models";
 import { appliedPenetrationOf, calcDamageCascade } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
 
+/** Hardened Swarm members count as 1 Mecha-Class Structure and 0 Mecha-Class Armor. */
+export const HARDENED_ARMOR = 0;
+export const HARDENED_STRUCTURE = 1;
+export const HARDENED_ARMOR_CLASS = "mecha" as const satisfies ArmorClassValue;
+
 /** Every part of 3 structure grants a swarm member 1 structure: 3 becomes 1, 4 becomes 2. */
 export function calcReducedStructure(originalStructure: number): number {
   return Math.max(1, Math.ceil(originalStructure / 3));
@@ -10,6 +15,29 @@ export function calcReducedStructure(originalStructure: number): number {
 
 export function isMemberAlive(member: SwarmMember): boolean {
   return member.count > 0 && member.currentStructure > 0;
+}
+
+export function swarmArmorClassOf(armorClass: ArmorClassValue, hardened: boolean): ArmorClassValue {
+  return hardened ? HARDENED_ARMOR_CLASS : armorClass;
+}
+
+export function memberArmorOf(member: SwarmMember, hardened: boolean): number {
+  return hardened ? HARDENED_ARMOR : member.armor;
+}
+
+export function memberStructureOf(member: SwarmMember, hardened: boolean): number {
+  return hardened ? HARDENED_STRUCTURE : member.reducedStructure;
+}
+
+export function leadStructureOf(member: SwarmMember, hardened: boolean): number {
+  if (!isMemberAlive(member)) {
+    return 0;
+  }
+  return Math.min(member.currentStructure, memberStructureOf(member, hardened));
+}
+
+export function remainingSwarmDice(living: number, spent: number): number {
+  return Math.max(0, living - spent);
 }
 
 export function hasLivingMember(members: SwarmMember[]): boolean {
@@ -29,6 +57,7 @@ export interface SwarmAttack {
   armorClass: ArmorClassValue;
   armorPenetration: number;
   multiplier?: number;
+  hardened?: boolean;
 }
 
 export interface SwarmAttackResult extends SwarmDamageResult {
@@ -41,8 +70,10 @@ export interface SwarmAttackResult extends SwarmDamageResult {
  * the surviving successes carry down the stack.
  */
 export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack): SwarmAttackResult {
+  const hardened = attack.hardened ?? false;
+  const armorClass = swarmArmorClassOf(attack.armorClass, hardened);
   const cascade = calcDamageCascade({
-    armorClass: attack.armorClass,
+    armorClass,
     attackHits: attack.attackSuccesses,
     attackType: attack.attackType,
     defendHits: attack.defendSuccesses,
@@ -53,7 +84,8 @@ export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack):
   const damage = applySwarmDamage(
     members,
     cascade.damageInflicted,
-    appliedPenetrationOf(attack.armorPenetration, attack.attackType, attack.armorClass, 0)
+    appliedPenetrationOf(attack.armorPenetration, attack.attackType, armorClass, 0),
+    hardened
   );
   return { ...damage, cascade };
 }
@@ -64,7 +96,12 @@ interface VesselHit {
   stopped: boolean;
 }
 
-export function applySwarmDamage(members: SwarmMember[], successes: number, penetration: number): SwarmDamageResult {
+export function applySwarmDamage(
+  members: SwarmMember[],
+  successes: number,
+  penetration: number,
+  hardened = false
+): SwarmDamageResult {
   let remaining = successes;
   let destroyed = 0;
   const next = members.map((member) => ({ ...member }));
@@ -75,7 +112,7 @@ export function applySwarmDamage(members: SwarmMember[], successes: number, pene
       break;
     }
     while (remaining > 0 && isMemberAlive(member)) {
-      const hit = resolveVesselHit(member, remaining, penetration);
+      const hit = resolveVesselHit(member, remaining, penetration, hardened);
       remaining = hit.remaining;
       destroyed += hit.destroyed;
       if (hit.stopped) {
@@ -99,15 +136,16 @@ function didMembersChange(before: SwarmMember[], after: SwarmMember[]): boolean 
   });
 }
 
-function resolveVesselHit(member: SwarmMember, remaining: number, penetration: number): VesselHit {
-  const armor = Math.max(0, member.armor - Math.max(0, penetration - member.resistance));
+function resolveVesselHit(member: SwarmMember, remaining: number, penetration: number, hardened: boolean): VesselHit {
+  const armor = hardened ? HARDENED_ARMOR : Math.max(0, member.armor - Math.max(0, penetration - member.resistance));
   if (remaining <= armor) {
     return { destroyed: 0, remaining: 0, stopped: true };
   }
 
+  const currentStructure = leadStructureOf(member, hardened);
   const structureHits = remaining - armor;
-  if (structureHits >= member.currentStructure) {
-    const leftover = structureHits - member.currentStructure;
+  if (structureHits >= currentStructure) {
+    const leftover = structureHits - currentStructure;
     member.count -= 1;
     member.currentStructure = member.count > 0 ? member.reducedStructure : 0;
     return { destroyed: 1, remaining: leftover, stopped: false };
