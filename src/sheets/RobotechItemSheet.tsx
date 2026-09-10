@@ -13,12 +13,11 @@ export class RobotechItemSheet extends foundry.applications.sheets.ItemSheetV2 {
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
     actions: {
-      sendToChat: RobotechItemSheet.#onSendChat,
+      sendToChat: onSendChat,
     },
     classes: ["robotech", "sheet", "item"],
     position: { height: "auto", width: 550 },
     window: {
-      ...super.DEFAULT_OPTIONS.window,
       controls: [
         {
           action: "sendToChat",
@@ -29,10 +28,6 @@ export class RobotechItemSheet extends foundry.applications.sheets.ItemSheetV2 {
       resizable: true,
     },
   };
-
-  static #onSendChat(this: RobotechItemSheet): void {
-    void sendToChat(itemCardOf(this.item));
-  }
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
     this.container ??= createSheetContainer("robotech-item-container");
@@ -60,4 +55,8 @@ export class RobotechItemSheet extends foundry.applications.sheets.ItemSheetV2 {
     this.container = null;
     super._onClose(options);
   }
+}
+
+function onSendChat(this: RobotechItemSheet): void {
+  void sendToChat(itemCardOf(this.item));
 }

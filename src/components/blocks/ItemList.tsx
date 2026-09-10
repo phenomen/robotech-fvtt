@@ -222,6 +222,10 @@ function openItemSheet(item: Item): void {
   void item.sheet?.render(true);
 }
 
+function postItemToChat(item: Item): void {
+  void sendToChat(itemCardOf(item));
+}
+
 async function spendItemUse(item: UsableItem): Promise<void> {
   await sendToChat(itemCardOf(item));
   await spendUse(item);
@@ -252,7 +256,7 @@ function NameHeader({ itemType }: { itemType: ListedItemType }): JSX.Element {
 }
 
 function ControlsHeader(): JSX.Element {
-  return <TableCell width="16" />;
+  return <TableCell width="auto" />;
 }
 
 function ColumnHeaders({ itemType }: { itemType: ListedItemType }): JSX.Element {
@@ -388,8 +392,18 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
         />
       )}
 
-      <TableCell width="16" align="end">
+      <TableCell width="auto" align="end">
         <Stack direction="row" gap={1} align="center" justify="end">
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => {
+              postItemToChat(item);
+            }}
+            title={game.i18n.localize("ROBOTECH.Buttons.SendToChat")}
+          >
+            <Icon name="message" />
+          </Button>
           <Button
             size="icon"
             variant="outline"

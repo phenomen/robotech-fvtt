@@ -137,12 +137,12 @@ function weaponValueOf(def: WeaponPropertyDef, properties: WeaponProperties): st
     const ammo = properties.ammunition;
     return `${ammo.current} / ${ammo.value}`;
   }
-  if (!def.formatTag) {
-    const property = properties[def.key];
-    return typeof property === "boolean" ? "" : String(property.value);
+  if (def.formatTag) {
+    const formatted = def.formatTag(properties);
+    return Array.isArray(formatted) ? String(formatted.length) : formatted;
   }
-  const formatted = def.formatTag(properties);
-  return Array.isArray(formatted) ? String(formatted.length) : formatted;
+  const property = properties[def.key];
+  return typeof property === "object" && "value" in property ? String(property.value) : "";
 }
 
 function suiteUsesOf(item: ItemOf<"equipment_suite">): string {

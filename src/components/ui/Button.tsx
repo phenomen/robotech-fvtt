@@ -19,7 +19,7 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
 }
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-  icon: "size-7! min-h-0! p-0! shrink-0 aspect-square",
+  icon: "size-6! min-h-0! p-0! shrink-0 aspect-square",
   large: "h-8! min-h-0! px-4! py-1.5!",
   medium: "h-auto! min-h-0! px-3! py-1!",
   small: "h-auto! min-h-0! px-2! py-0.5!",
