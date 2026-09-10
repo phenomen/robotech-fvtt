@@ -48,6 +48,9 @@ export function chatFieldsOf(item: Item): ChatCardField[] {
   if (isItemOf(item, "weapon")) {
     return weaponFields(item);
   }
+  if (isItemOf(item, "upgrade")) {
+    return upgradeFields(item);
+  }
   return [];
 }
 
@@ -111,6 +114,10 @@ function elementFields(item: ItemOf<"element">): ChatCardField[] {
     chatField(game.i18n.localize("ROBOTECH.Item.StartingRank"), item.system.rank),
     chatField(game.i18n.localize("ROBOTECH.Item.ElementTalent"), item.system.talent)
   );
+}
+
+function upgradeFields(item: ItemOf<"upgrade">): ChatCardField[] {
+  return collectFields(chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank));
 }
 
 function weaponFields(item: ItemOf<"weapon">): ChatCardField[] {

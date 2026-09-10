@@ -55,7 +55,8 @@
       "Data": "Data",
       "Effects": "Effects",
       "Description": "Description",
-      "Personal": "Personal"
+      "Personal": "Personal",
+      "Bio": "Bio"
     },
     "Effect": {
       "Title": "Active Effect",
@@ -116,14 +117,15 @@
       "Speed": "Speed",
       "Wealth": "Wealth",
       "Miscellaneous": "Misc",
-      "Conflict": "Conflict",
+      "Encounter": "Encounter",
       "Proficiencies": "Proficiencies",
       "ProficienciesPlaceholder": "Special weapons, vehicle proficiencies, specialized training...",
       "DragDropCareer": "Click to create or drop a Career here",
       "DragDropRace": "Click to create or drop a Race here",
       "AddCareer": "Add Career",
       "AddRace": "Add Race",
-      "AddGenericSkills": "Add Generic Skills"
+      "AddGenericSkills": "Add Generic Skills",
+      "Biography": "Biography, Appearance, Relationships"
     },
     "Race": {
       "Form": "Form",
@@ -306,6 +308,7 @@
       "ElementTalent": "Element Talent",
       "ElementTalentPlaceholder": "Element talent...",
       "StartingRank": "Starting Rank",
+      "RequiredRank": "Required Rank",
       "RankTitle": "Rank Title",
       "FameTitle": "Fame Title",
       "RankTitlePlaceholder": "Rank title...",

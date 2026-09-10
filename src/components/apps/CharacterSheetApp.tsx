@@ -27,7 +27,7 @@ import { GENERIC_SKILL_LABEL_KEYS } from "@/config/options";
 import type { ActorOf, FieldValue, ItemOf } from "@/models";
 import { filterItemsOf } from "@/utils";
 
-export type ActorTabType = "stats" | "skills" | "talents" | "career" | "equipment" | "personal" | "effects";
+export type ActorTabType = "stats" | "skills" | "talents" | "career" | "equipment" | "personal" | "bio" | "effects";
 
 const ACTOR_TABS: TabItem<ActorTabType>[] = [
   { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
@@ -36,6 +36,7 @@ const ACTOR_TABS: TabItem<ActorTabType>[] = [
   { key: "skills", labelKey: "ROBOTECH.Tabs.Skills" },
   { key: "talents", labelKey: "ROBOTECH.Tabs.Talents" },
   { key: "equipment", labelKey: "ROBOTECH.Tabs.Equipment" },
+  { key: "bio", labelKey: "ROBOTECH.Tabs.Bio" },
   { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" },
 ];
 
@@ -182,7 +183,7 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
 
         {activeTab === "personal" && (
           <GridSystem guideWidth={1}>
-            <Grid columns={10} rows={4}>
+            <Grid columns={10} rows={3}>
               <GridCell column="1/6" row={1} solid pad={3}>
                 <UniqueItemSlot actor={actor} itemType="race" />
               </GridCell>
@@ -195,10 +196,17 @@ export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
               <GridCell column="1/11" row={3} solid pad={3}>
                 <DramaTracker actor={actor} />
               </GridCell>
-              <GridCell column="1/11" row={4} solid pad={3}>
+            </Grid>
+          </GridSystem>
+        )}
+
+        {activeTab === "bio" && (
+          <GridSystem guideWidth={1}>
+            <Grid columns={1} rows={1}>
+              <GridCell solid pad={3}>
                 <Stack gap={3}>
                   <CardHeader>
-                    <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Description")}</CardTitle>
+                    <CardTitle>{game.i18n.localize("ROBOTECH.Character.Biography")}</CardTitle>
                   </CardHeader>
                   <ProseMirrorField
                     name="system.description"

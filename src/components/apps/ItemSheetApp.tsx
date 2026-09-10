@@ -13,9 +13,8 @@ import { Stack } from "@/components/ui/Stack";
 import { TabNav } from "@/components/ui/TabNav";
 import type { TabItem } from "@/components/ui/TabNav";
 import { Text } from "@/components/ui/Text";
-import { getLayoutMode, itemHasEffects, itemHasStats } from "@/config/documentMeta";
+import { getLayoutMode, itemHasEffects } from "@/config/documentMeta";
 import type { FieldValue } from "@/models";
-import { isItemOf } from "@/utils/documents";
 
 export type ItemTabType = "stats" | "description" | "effects";
 
@@ -28,10 +27,10 @@ interface ItemSheetAppProps {
 }
 
 export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<ItemTabType>(isItemOf(item, "upgrade") ? "description" : "stats");
-  const layoutMode = getLayoutMode(item.type);
+  const [activeTab, setActiveTab] = useState<ItemTabType>("stats");
+  const stacked = getLayoutMode(item.type) === "stacked";
   const hasEffects = itemHasEffects(item.type);
-  const hasStats = itemHasStats(item.type);
+  const showTabNav = !stacked || hasEffects;
   const system = item.system;
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,11 +41,9 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
     void item.update({ [path]: val });
   };
 
-  const renderedFields = hasStats ? <ItemStatsFields item={item} onFieldChange={handleFieldChange} /> : null;
-  const stackedRows = renderedFields ? 2 : 1;
   const itemTabs: TabItem<ItemTabType>[] = [
-    ...(hasStats ? [ITEM_STATS_TAB] : []),
-    ITEM_DESCRIPTION_TAB,
+    ITEM_STATS_TAB,
+    ...(stacked ? [] : [ITEM_DESCRIPTION_TAB]),
     ...(hasEffects ? [ITEM_EFFECTS_TAB] : []),
   ];
 
@@ -90,57 +87,43 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
         </GridSystem>
       </SheetHeader>
 
-      {layoutMode === "tabs" ? (
-        <>
-          <TabNav tabs={itemTabs} activeTab={activeTab} onTabChange={setActiveTab} />
-          <SheetBody>
-            {activeTab === "stats" && renderedFields && (
-              <GridSystem guideWidth={1}>
-                <Grid columns={1} rows={1}>
-                  <GridCell solid pad={3}>
-                    {renderedFields}
-                  </GridCell>
-                </Grid>
-              </GridSystem>
-            )}
-
-            {activeTab === "description" && (
-              <GridSystem guideWidth={1}>
-                <Grid columns={1} rows={1}>
-                  <GridCell solid pad={3}>
-                    {descriptionBlock}
-                  </GridCell>
-                </Grid>
-              </GridSystem>
-            )}
-
-            {activeTab === "effects" && hasEffects && (
-              <GridSystem guideWidth={1}>
-                <Grid columns={1} rows={1}>
-                  <GridCell solid pad={3}>
-                    <ItemEffectsList item={item} />
-                  </GridCell>
-                </Grid>
-              </GridSystem>
-            )}
-          </SheetBody>
-        </>
-      ) : (
-        <SheetBody>
+      {showTabNav && <TabNav tabs={itemTabs} activeTab={activeTab} onTabChange={setActiveTab} />}
+      <SheetBody>
+        {activeTab === "stats" && (
           <GridSystem guideWidth={1}>
-            <Grid columns={1} rows={stackedRows}>
-              {renderedFields && (
+            <Grid columns={1} rows={stacked ? 2 : 1}>
+              <GridCell solid pad={3}>
+                <ItemStatsFields item={item} onFieldChange={handleFieldChange} />
+              </GridCell>
+              {stacked && (
                 <GridCell solid pad={3}>
-                  {renderedFields}
+                  {descriptionBlock}
                 </GridCell>
               )}
+            </Grid>
+          </GridSystem>
+        )}
+
+        {activeTab === "description" && !stacked && (
+          <GridSystem guideWidth={1}>
+            <Grid columns={1} rows={1}>
               <GridCell solid pad={3}>
                 {descriptionBlock}
               </GridCell>
             </Grid>
           </GridSystem>
-        </SheetBody>
-      )}
+        )}
+
+        {activeTab === "effects" && hasEffects && (
+          <GridSystem guideWidth={1}>
+            <Grid columns={1} rows={1}>
+              <GridCell solid pad={3}>
+                <ItemEffectsList item={item} />
+              </GridCell>
+            </Grid>
+          </GridSystem>
+        )}
+      </SheetBody>
     </Sheet>
   );
 }

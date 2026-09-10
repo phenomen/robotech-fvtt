@@ -48,26 +48,24 @@ export const ACTOR_META = {
   },
 } as const satisfies Record<ActorType, ActorMeta>;
 
-export type ItemSheetLayoutMode = "tabs" | "stacked";
+export type ItemSheetLayoutMode = "unstacked" | "stacked";
 
 export interface ItemMeta {
   hasEffects: boolean;
-  /** Whether the item sheet exposes a Stats tab with subtype fields. */
-  hasStats: boolean;
   layout: ItemSheetLayoutMode;
 }
 
 export const ITEM_META = {
-  career: { hasEffects: false, hasStats: true, layout: "stacked" },
-  element: { hasEffects: false, hasStats: true, layout: "stacked" },
-  equipment_suite: { hasEffects: true, hasStats: true, layout: "tabs" },
-  feature: { hasEffects: true, hasStats: true, layout: "tabs" },
-  gear: { hasEffects: true, hasStats: true, layout: "tabs" },
-  race: { hasEffects: true, hasStats: true, layout: "tabs" },
-  skill: { hasEffects: false, hasStats: true, layout: "stacked" },
-  talent: { hasEffects: true, hasStats: true, layout: "tabs" },
-  upgrade: { hasEffects: true, hasStats: false, layout: "tabs" },
-  weapon: { hasEffects: true, hasStats: true, layout: "tabs" },
+  career: { hasEffects: false, layout: "stacked" },
+  element: { hasEffects: false, layout: "stacked" },
+  equipment_suite: { hasEffects: true, layout: "stacked" },
+  feature: { hasEffects: true, layout: "stacked" },
+  gear: { hasEffects: true, layout: "stacked" },
+  race: { hasEffects: true, layout: "stacked" },
+  skill: { hasEffects: false, layout: "stacked" },
+  talent: { hasEffects: true, layout: "stacked" },
+  upgrade: { hasEffects: true, layout: "stacked" },
+  weapon: { hasEffects: true, layout: "unstacked" },
 } as const satisfies Record<ItemType, ItemMeta>;
 
 /** At most one of each of these types may exist on an actor; a new drop replaces the old. */
@@ -83,10 +81,6 @@ export function actorHasEffects(actorType: ActorType): boolean {
 
 export function itemHasEffects(itemType: ItemType): boolean {
   return ITEM_META[itemType].hasEffects;
-}
-
-export function itemHasStats(itemType: ItemType): boolean {
-  return ITEM_META[itemType].hasStats;
 }
 
 export function getLayoutMode(itemType: ItemType): ItemSheetLayoutMode {

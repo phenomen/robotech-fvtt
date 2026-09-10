@@ -7,4 +7,5 @@ export * from "./GearSheetFields";
 export * from "./RaceSheetFields";
 export * from "./SkillSheetFields";
 export * from "./TalentSheetFields";
+export * from "./UpgradeSheetFields";
 export * from "./WeaponSheetFields";

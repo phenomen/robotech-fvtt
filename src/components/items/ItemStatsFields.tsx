@@ -9,6 +9,7 @@ import { GearSheetFields } from "@/components/items/GearSheetFields";
 import { RaceSheetFields } from "@/components/items/RaceSheetFields";
 import { SkillSheetFields } from "@/components/items/SkillSheetFields";
 import { TalentSheetFields } from "@/components/items/TalentSheetFields";
+import { UpgradeSheetFields } from "@/components/items/UpgradeSheetFields";
 import { WeaponSheetFields } from "@/components/items/WeaponSheetFields";
 import type { FieldValue, ItemType } from "@/models";
 import { isItemOf } from "@/utils/documents";
@@ -16,7 +17,7 @@ import { isItemOf } from "@/utils/documents";
 type ItemFieldChange = (path: string, val: FieldValue) => void;
 type ItemStatsRenderer = (item: Item, onChange: ItemFieldChange) => JSX.Element | null;
 
-/** One renderer per Item subtype that exposes sheet fields; add a subtype here and in ITEM_META. */
+/** One renderer per Item subtype. */
 const ITEM_STATS_RENDERERS: Record<ItemType, ItemStatsRenderer> = {
   career: (item, onChange) =>
     isItemOf(item, "career") ? <CareerSheetFields item={item} handleFieldChange={onChange} /> : null,
@@ -34,7 +35,8 @@ const ITEM_STATS_RENDERERS: Record<ItemType, ItemStatsRenderer> = {
     isItemOf(item, "skill") ? <SkillSheetFields item={item} handleFieldChange={onChange} /> : null,
   talent: (item, onChange) =>
     isItemOf(item, "talent") ? <TalentSheetFields item={item} handleFieldChange={onChange} /> : null,
-  upgrade: () => null,
+  upgrade: (item, onChange) =>
+    isItemOf(item, "upgrade") ? <UpgradeSheetFields item={item} handleFieldChange={onChange} /> : null,
   weapon: (item, onChange) =>
     isItemOf(item, "weapon") ? <WeaponSheetFields item={item} handleFieldChange={onChange} /> : null,
 };
