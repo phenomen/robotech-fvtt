@@ -65,6 +65,7 @@ declare module "@client/documents/item.mjs" {
     system: ItemSystem;
     effects: EmbeddedCollection<ActiveEffect>;
     sheet: foundry.applications.api.ApplicationV2 | null;
+    readonly actor: Actor | null;
   }
 }
 

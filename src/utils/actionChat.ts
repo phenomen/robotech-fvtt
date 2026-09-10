@@ -206,17 +206,24 @@ export async function postDamageCard(breakdown: DamageBreakdown): Promise<void> 
   });
 }
 
+export interface ChatCardField {
+  label: string;
+  value: string;
+}
+
 export interface DescriptionCardInput {
   actor?: Actor;
-  title: string;
+  name: string;
   description: string;
+  fields?: ChatCardField[];
   relativeTo?: Actor | Item;
 }
 
+/** Posts a description card: name, optional label/value fields, and an enriched description. */
 export async function sendToChat(input: DescriptionCardInput): Promise<void> {
   const description = await enrichHtml(input.description, { relativeTo: input.relativeTo });
   await foundry.documents.ChatMessage.create({
-    content: descriptionCardHtml(input.title, description),
+    content: descriptionCardHtml(input.name, description, input.fields ?? []),
     speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
     style: CONST.CHAT_MESSAGE_STYLES.OTHER,
     user: game.user?.id,
@@ -254,13 +261,26 @@ export interface DamageBreakdown {
   distribution?: DamageDistribution;
 }
 
-function descriptionCardHtml(title: string, description: string): string {
+function descriptionCardHtml(name: string, description: string, fields: ChatCardField[]): string {
   return `
     <div class="rt-chat-card">
-      <div class="rt-chat-header">${escapeHtml(title)}</div>
+      <div class="rt-chat-header">${escapeHtml(name)}</div>
+      ${fieldsHtml(fields)}
       ${description ? `<div class="rt-chat-description">${description}</div>` : ""}
     </div>
   `;
+}
+
+function fieldsHtml(fields: ChatCardField[]): string {
+  const rows = fields.filter((field) => field.value.trim() !== "");
+  if (rows.length === 0) {
+    return "";
+  }
+  return `<div class="rt-chat-fields">${rows.map(fieldRowHtml).join("")}</div>`;
+}
+
+function fieldRowHtml(field: ChatCardField): string {
+  return `<div class="rt-chat-field"><span class="rt-chat-field-label">${escapeHtml(field.label)}</span><strong class="rt-chat-field-value">${escapeHtml(field.value)}</strong></div>`;
 }
 
 function cardKindOf(action: ActionValue, incoming?: IncomingAttack): ActionChatKind {

@@ -8,6 +8,7 @@ export * from "./documents";
 export * from "./effects";
 export * from "./hardwareUtils";
 export * from "./html";
+export * from "./itemChat";
 export * from "./linkedActors";
 export * from "./sheetContainer";
 export * from "./swarmUtils";
