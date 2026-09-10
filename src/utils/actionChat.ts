@@ -40,6 +40,7 @@ export interface ActionChatFlags {
   snapshot?: ActionChatSnapshot;
   synergy?: ActionSynergyFlags;
   fatigueNotice?: boolean;
+  fromCombat?: boolean;
 }
 
 export interface ActionCardInput {
@@ -59,6 +60,7 @@ export interface ActionCardInput {
   speed?: number;
   synergy?: ActionSynergyFlags;
   fatigueNotice?: boolean;
+  fromCombat?: boolean;
 }
 
 export function actionFlagsOf(message: foundry.documents.ChatMessage): ActionChatFlags | null {
@@ -71,6 +73,9 @@ export function actionFlagsOf(message: foundry.documents.ChatMessage): ActionCha
 
 /** Whether this card can still open the Synergy split. */
 export function canSynergize(flags: ActionChatFlags): boolean {
+  if (!flags.fromCombat) {
+    return false;
+  }
   if (!flags.snapshot) {
     return false;
   }
@@ -127,6 +132,7 @@ function flagsFromInput(input: ActionCardInput): ActionChatFlags {
     action: input.action,
     contextUuid: input.actor.uuid ?? "",
     fatigueNotice: input.fatigueNotice,
+    fromCombat: input.fromCombat,
     incoming: input.incoming,
     kind: cardKindOf(input.action, input.incoming),
     pushed: input.pushed,

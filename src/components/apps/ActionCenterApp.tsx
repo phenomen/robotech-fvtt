@@ -197,6 +197,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
       bonusSuccesses: manualSuccesses,
       dice: result.dice,
       diceCount,
+      fromCombat: consumeSlot,
       incoming: incomingAttack,
       modifier,
       pushed,
