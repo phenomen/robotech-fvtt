@@ -2,7 +2,7 @@ import type { JSX, ReactNode } from "react";
 
 import { SPACE_GAP, SPACE_PAD } from "@/components/ui/space";
 import type { Space } from "@/components/ui/space";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type StackDirection = "row" | "column";
 export type StackAlign = "start" | "center" | "end" | "stretch";

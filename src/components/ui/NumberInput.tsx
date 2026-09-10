@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import type { InputSize, InputWidth } from "@/components/ui/Input";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export interface NumberInputProps {
   value?: number | null;

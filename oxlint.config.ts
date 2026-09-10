@@ -17,6 +17,22 @@ export default defineConfig({
   },
   overrides: [
     {
+      files: ["src/components/ui/**"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            paths: [
+              {
+                message: "Import the specific module (e.g. `@/utils/cn`) instead of the utils barrel.",
+                name: "@/utils",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
       files: ["src/types/**", "**/*.d.ts"],
       rules: {
         "max-classes-per-file": "off",

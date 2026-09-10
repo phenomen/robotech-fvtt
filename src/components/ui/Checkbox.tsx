@@ -3,7 +3,7 @@ import type { ChangeEvent, KeyboardEvent } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type CheckboxSize = TextSize;
 

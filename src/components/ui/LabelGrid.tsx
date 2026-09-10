@@ -4,7 +4,7 @@ import { Divider } from "@/components/ui/Divider";
 import { SPACE_GAP } from "@/components/ui/space";
 import type { Space } from "@/components/ui/space";
 import { Text } from "@/components/ui/Text";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export interface LabelGridProps {
   children?: ReactNode;

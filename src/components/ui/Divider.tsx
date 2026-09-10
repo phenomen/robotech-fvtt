@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export interface DividerProps {
   orientation?: "horizontal" | "vertical";

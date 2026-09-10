@@ -18,7 +18,7 @@ Document subtypes are declared in `public/system.json` (`documentTypes`) and bou
 
 Game logic (damage cascade, wound/stress prep, hardware slots, swarm members) belongs in data models and `src/utils`, not in React. React reads live Foundry documents and writes through `document.update()`.
 
-The project is in an early phase: **breaking changes to schema, data, and identifiers are allowed.** Do not add `migrateData`, compatibility shims, or fallbacks for renamed fields.
+The project is in an early phase: **breaking changes to schema, data, and identifiers are allowed.** Do not add `migrateData`, compatibility shims, or fallbacks for renamed fields unless explicitly asked.
 
 ## 2. Tech Stack
 
@@ -33,7 +33,7 @@ The project is in an early phase: **breaking changes to schema, data, and identi
 | Merged classes | `cn()` from `cnfast` (`src/utils/cn.ts`) when class merge is needed |
 | Types | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
 
-Scripts: `bun run build`, `bun run lint`, `bun run fmt`. Can be run together with: `bun run fmt; bun run lint; bun run build` command.
+Scripts: `bun run build`, `bun run check`, `bun run fix`. `check` runs type-aware Oxlint + Oxfmt (fails on violations); `fix` applies both. `build` also asserts the manifest's `documentTypes` against the subtype registry. Run `bun run check; bun run build` after changes.
 
 Path alias `@/` maps to `src/`. Always import through `@/…`, never deep relative paths.
 
@@ -49,15 +49,16 @@ src/
     blocks/                   Sheet sections composed into apps (header, trackers, item lists)
     items/                    Per-Item-type field groups for the item sheet
     ui/                       Shared primitives (Button, Input, Card, …)
-  config/                     Closed choice lists, layout, theme, wounds, weapon property defs
+  config/                     Closed choice lists, per-subtype metadata, theme, wounds, weapon property defs
   models/
     actors/                   TypeDataModels for Actor subtypes
     combat/                   TypeDataModels for Combat and Combatant
     items/                    TypeDataModels for Item subtypes
     documents.ts              ActorOf / ItemOf maps and document unions
-  sheets/                     ActorSheetV2 / ItemSheetV2 adapters (React root lifecycle)
+  registry/                   Subtype → data model binding, settings/optional-rule wiring
+  sheets/                     ActorSheetV2 / ItemSheetV2 adapters and the shared React mount
   styles/                     Tailwind entry (`robotech.css`), type tokens (`typography.css`), chat, ProseMirror extras
-  types/                      Foundry module augmentations (`foundry.d.ts`, `vendor.d.ts`)
+  types/                      Foundry module augmentations (`foundry.d.ts`, `vendor.d.ts`) and shared UI unions (`ui.ts`)
   utils/                      Game rules, document helpers, chat, rolls — no React
 public/
   system.json                 Manifest (id, compatibility, documentTypes, htmlFields, i18n)
@@ -71,11 +72,12 @@ Folder roles:
 
 - **`foundry/`** — authoritative Foundry API. Read types and JSDoc here before writing Foundry-specific code.
 - **`models/`** — schema, derived data, `_preUpdate` clamps. Source of truth for `actor.system` / `item.system`.
-- **`config/`** — `as const` option lists with `labelKey` pointing at `en.json`. No hardcoded labels.
-- **`utils/`** — pure or Foundry-document operations (rolls, damage, crew, HTML enrich). Keep UI out.
-- **`sheets/` + `components/apps/ReactDialog.tsx` + `combat/RobotechCombatTracker.ts`** — the only places that create a React root.
+- **`config/`** — pure, runtime-free `as const` data: option lists (`labelKey` pointing at `en.json`), per-subtype metadata (`documentMeta.ts`), layout, theme. No hardcoded labels, no data-model classes.
+- **`registry/`** — binds subtype keys to data models (`documentTypes.ts`) and registers settings/optional rules (`settings.ts`). `build.ts` validates `public/system.json` against it; add a subtype here, in `config/documentMeta.ts`, and in the manifest.
+- **`utils/`** — pure or Foundry-document operations (rolls, damage, crew, HTML enrich). Keep UI out; only `@/types/ui` unions may describe presentation. Document I/O lives in `utils/documents.ts`.
+- **`types/`** — augment Foundry document classes so `system` is the Robotech union, not `unknown`; `ui.ts` holds unions shared with game logic (`IconTone`, `TagColor`).
+- **`sheets/` + `components/apps/ReactDialog.tsx` + `combat/RobotechCombatTracker.ts`** — the only places that create a React root. Use the shared `sheets/reactMount` helpers.
 - **`components/apps/`** — page-level composition. **`blocks/`** — reusable sheet sections. **`ui/`** — look-and-feel only (the only place Tailwind is allowed). Layout files compose primitives; see `DESIGN.md`.
-- **`types/`** — augment Foundry document classes so `system` is the Robotech union, not `unknown`.
 
 Barrel `index.ts` files re-export a folder’s public API. Import from the barrel when the folder is the module; import the file directly when that avoids a cycle.
 
@@ -90,12 +92,12 @@ The Foundry API lives in `foundry/` — copies of the client (`foundry/client`) 
 Use https://foundryvtt.com/api/ only as a fallback when the local sources do not explain a hook, concept, or overview.
 
 - Register data models and sheets only inside `Hooks.once("init", …)`.
-- Declare every Actor/Item subtype in `public/system.json` `documentTypes` **and** on `CONFIG.Actor.dataModels` / `CONFIG.Item.dataModels`. Keys must match.
+- Declare every Actor/Item subtype in `public/system.json` `documentTypes`, in `config/documentMeta.ts`, and in `registry/documentTypes.ts` (which assigns `CONFIG.Actor.dataModels` / `CONFIG.Item.dataModels`). Keys must match; `bun run build` fails otherwise.
 - List HTML fields under `htmlFields` in the manifest so the server sanitizes them. Back them with `HTMLField` in the schema. Enrich for chat with `enrichHtml()`; do not `escapeHtml` enriched HTML. Use `escapeHtml` only for user-controlled strings (document names) interpolated into HTML templates, not i18n labels or numbers.
 - Persist with `document.update()`, `createEmbeddedDocuments`, `deleteEmbeddedDocuments`. Never assign through `actor.system.foo =` from UI code.
 - Use dotted update paths: `{ "system.armor": 4 }`. For arrays/objects that must be replaced as a whole, pass the next value (do not mutate the live array in place and then update).
 - Derived combat/sheet numbers belong in `prepareDerivedData()` or getters on the data model. `prepareDerivedData` may write derived fields; UI must not invent a second source of truth.
-- Change schema and field names in place. Do not add `migrateData`, dual-read of old keys, or defaulting logic that exists only to support previous shapes.
+- Change schema and field names in place. Do not add `migrateData`, dual-read of old keys, or defaulting logic that exists only to support previous shapes unless explicitly asked.
 - User-visible failures go through `ui.notifications` and localized strings. Check `document.isOwner` / `game.user.isGM` before privileged writes.
 - Settings, chat, and sockets use the system id `"robotech"`. Localization keys use the `ROBOTECH.*` namespace (Foundry type names live under `TYPES`).
 
@@ -195,9 +197,9 @@ game.i18n.localize("ROBOTECH.Wounds.Max", { max });
 ### When changing behavior
 
 1. Check types and JSDoc in `foundry/` (website API docs only if that is not enough). Decide whether the change belongs on the data model, a util, or the sheet.
-2. Update `defineSchema` / `documentTypes` / `htmlFields` together when the persisted shape changes. Replace old fields; do not keep a compatibility path.
+2. Update `defineSchema` / `documentTypes` / `htmlFields` together when the persisted shape changes. Replace old fields; do not keep a compatibility path unless explicitly asked.
 3. Add or reuse `en.json` keys before wiring UI.
-4. Build with `bun run build` to check if the project compiles.
+4. Run `bun run check; bun run build` to type-check, lint, and assert the manifest.
 
 # Ultracite Code Standards
 

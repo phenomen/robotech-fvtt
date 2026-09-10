@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export interface ProseMirrorFieldProps {
   name?: string;

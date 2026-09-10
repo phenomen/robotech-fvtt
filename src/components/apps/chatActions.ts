@@ -1,9 +1,11 @@
+import type Actor from "@client/documents/actor.mjs";
+
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
 import { openDamageDialog } from "@/components/apps/DamageDialog";
 import { actionFlagsOf, canSynergize, postDamageCard } from "@/utils/actionChat";
 import type { ActionChatFlags, IncomingAttack } from "@/utils/actionChat";
-import { damagePreviewOf } from "@/utils/applyDamage";
-import { actorFromUuid, ownedControlledActor, SCENE_ACTOR_TYPES } from "@/utils/documents";
+import { damagePreviewFor } from "@/utils/applyDamage";
+import { actorFromUuid, controlledTokenActor, ownedControlledActor, SCENE_ACTOR_TYPES } from "@/utils/documents";
 import { canSplitSynergy } from "@/utils/synergy";
 
 export function bindChatButtons(message: foundry.documents.ChatMessage, html: HTMLElement): void {
@@ -37,17 +39,42 @@ async function handleChatClick(action: string, message: foundry.documents.ChatMe
   }
 
   if (action === "apply-damage" && flags.incoming) {
-    const defendSuccesses = flags.kind === "defend" ? flags.successes : 0;
-    const preview = damagePreviewOf(flags.incoming, defendSuccesses);
-    if (!preview) {
-      return;
-    }
-    if (preview.cascade.damageInflicted <= 0) {
-      await postDamageCard(preview.breakdown);
-      return;
-    }
-    openDamageDialog(preview);
+    await openDamageChat(flags);
   }
+}
+
+async function openDamageChat(flags: ActionChatFlags): Promise<void> {
+  if (!flags.incoming) {
+    return;
+  }
+  const actor = controlledDamageActor();
+  if (!actor) {
+    return;
+  }
+  const defendSuccesses = flags.kind === "defend" ? flags.successes : 0;
+  const preview = damagePreviewFor(actor, flags.incoming, defendSuccesses);
+  if (!preview) {
+    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SelectOneToken"));
+    return;
+  }
+  if (preview.cascade.damageInflicted <= 0) {
+    await postDamageCard(preview.breakdown);
+    return;
+  }
+  openDamageDialog(preview);
+}
+
+function controlledDamageActor(): Actor | null {
+  const actor = controlledTokenActor();
+  if (!actor) {
+    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SelectOneToken"));
+    return null;
+  }
+  if (!game.user?.isGM && !actor.isOwner) {
+    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.NoPermission"));
+    return null;
+  }
+  return actor;
 }
 
 async function openSynergyChat(message: foundry.documents.ChatMessage, flags: ActionChatFlags): Promise<void> {

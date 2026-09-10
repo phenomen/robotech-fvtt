@@ -1,7 +1,7 @@
-import type { TagColor } from "@/components/ui/Tag";
 import { WEAPON_DAMAGE_OPTIONS, WEAPON_RANGE_OPTIONS } from "@/config/options";
 import type { Option, DamageTypeValue } from "@/config/options";
 import type { WeaponProperties } from "@/models";
+import type { TagColor } from "@/types/ui";
 
 /** Property keys grouped by the editor control and the value shape they share. */
 type FlagKey = {

@@ -1,12 +1,12 @@
 import type Actor from "@client/documents/actor.mjs";
 
-import type { IconTone } from "@/components/ui/Icon";
 import type { ArmorClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
+import type { IconTone } from "@/types/ui";
 import { postDamageCard } from "@/utils/actionChat";
 import type { DamageBreakdown, DamageDistribution, IncomingAttack } from "@/utils/actionChat";
-import { controlledTokenActor, isActorOf } from "@/utils/documents";
+import { isActorOf } from "@/utils/documents";
 import {
   destroyedPathOf,
   hardwareItemsOf,
@@ -240,20 +240,14 @@ export function canApplyDamage(amounts: DamageAmounts, damage: number): boolean 
   return assignedDamageOf(amounts) <= damage;
 }
 
-export function damagePreviewOf(incoming: IncomingAttack, defendSuccesses: number): DamagePreview | null {
-  const actor = controlledTokenActor();
-  if (!actor) {
-    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SelectOneToken"));
-    return null;
-  }
-  if (!game.user?.isGM && !actor.isOwner) {
-    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.NoPermission"));
-    return null;
-  }
-
+/** Pure damage preview for an already-resolved target; callers own selection and permission checks. */
+export function damagePreviewFor(
+  actor: Actor,
+  incoming: IncomingAttack,
+  defendSuccesses: number
+): DamagePreview | null {
   const target = damageTargetOf(actor);
   if (!target) {
-    ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SelectOneToken"));
     return null;
   }
 

@@ -2,9 +2,10 @@ import React from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import type { TagColor } from "@/types/ui";
+import { cn } from "@/utils/cn";
 
-export type TagColor = "amber" | "blue" | "red" | "green" | "teal" | "purple" | "pink" | "primary" | "default";
+export type { TagColor } from "@/types/ui";
 
 export type TagSize = TextSize;
 export type TagVariant = "subtle" | "solid" | "outline";

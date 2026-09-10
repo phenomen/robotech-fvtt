@@ -1,10 +1,10 @@
 import React from "react";
 
 import { Icon } from "@/components/ui/Icon";
-import type { IconTone } from "@/components/ui/Icon";
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import type { IconTone } from "@/types/ui";
+import { cn } from "@/utils/cn";
 
 export type LabelSize = TextSize;
 

@@ -4,21 +4,10 @@ import type Item from "@client/documents/item.mjs";
 import { dieSuccessGradation, modifierLabelOf } from "@/config";
 import { ACTION_OPTIONS, isConflictAction } from "@/config/options";
 import type { ActionValue, DamageTypeValue, RollModifierValue } from "@/config/options";
+import { CHAT_TAG_CLASS } from "@/config/tagColors";
 import type { Ad6DieResult } from "@/utils/AD6Roll";
 import { enrichHtml, escapeHtml } from "@/utils/html";
 import type { IncomingAttack, WeaponTag } from "@/utils/weaponUtils";
-
-const TAG_COLOR_CLASS: Record<WeaponTag["color"], string> = {
-  amber: "rt-chat-tag--amber",
-  blue: "rt-chat-tag--blue",
-  default: "rt-chat-tag--default",
-  green: "rt-chat-tag--green",
-  pink: "rt-chat-tag--pink",
-  primary: "rt-chat-tag--primary",
-  purple: "rt-chat-tag--purple",
-  red: "rt-chat-tag--red",
-  teal: "rt-chat-tag--teal",
-};
 
 export type { IncomingAttack } from "@/utils/weaponUtils";
 
@@ -420,7 +409,7 @@ function weaponTagsHtml(tags: WeaponTag[] | undefined): string {
   }
   const chips = tags
     .map((tag) => {
-      const colorClass = TAG_COLOR_CLASS[tag.color] ?? TAG_COLOR_CLASS.default;
+      const colorClass = CHAT_TAG_CLASS[tag.color] ?? CHAT_TAG_CLASS.default;
       const title = tag.title ? ` title="${tag.title}"` : "";
       return `<span class="rt-chat-tag ${colorClass}"${title}>${tag.label}</span>`;
     })

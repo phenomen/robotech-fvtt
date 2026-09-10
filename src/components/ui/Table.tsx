@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import type { JSX, ReactNode } from "react";
 
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type TableWidth = "grow" | "auto" | "10" | "12" | "16" | "20" | "32";
 export type TableAlign = "start" | "center" | "end";

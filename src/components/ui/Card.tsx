@@ -3,7 +3,7 @@ import React from "react";
 import { SPACE_GAP, SPACE_PAD } from "@/components/ui/space";
 import type { Space } from "@/components/ui/space";
 import { typoClass } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type CardDirection = "column" | "row";
 export type CardTone = "default" | "primary" | "secondary" | "danger" | "positive";

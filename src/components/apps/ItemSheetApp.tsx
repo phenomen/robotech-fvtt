@@ -3,17 +3,7 @@ import { useState } from "react";
 import type { ChangeEvent, JSX } from "react";
 
 import { ItemEffectsList } from "@/components/blocks/ItemEffectsList";
-import {
-  CareerSheetFields,
-  ElementSheetFields,
-  EquipmentSuiteSheetFields,
-  FeatureSheetFields,
-  GearSheetFields,
-  RaceSheetFields,
-  SkillSheetFields,
-  TalentSheetFields,
-  WeaponSheetFields,
-} from "@/components/items";
+import { ItemStatsFields } from "@/components/items/ItemStatsFields";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { Input } from "@/components/ui/Input";
@@ -23,10 +13,9 @@ import { Stack } from "@/components/ui/Stack";
 import { TabNav } from "@/components/ui/TabNav";
 import type { TabItem } from "@/components/ui/TabNav";
 import { Text } from "@/components/ui/Text";
-import { itemHasEffects } from "@/config/effects";
-import { getLayoutMode } from "@/config/itemLayout";
+import { getLayoutMode, itemHasEffects, itemHasStats } from "@/config/documentMeta";
 import type { FieldValue } from "@/models";
-import { isItemOf } from "@/utils";
+import { isItemOf } from "@/utils/documents";
 
 export type ItemTabType = "stats" | "description" | "effects";
 
@@ -42,6 +31,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
   const [activeTab, setActiveTab] = useState<ItemTabType>(isItemOf(item, "upgrade") ? "description" : "stats");
   const layoutMode = getLayoutMode(item.type);
   const hasEffects = itemHasEffects(item.type);
+  const hasStats = itemHasStats(item.type);
   const system = item.system;
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -52,39 +42,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
     void item.update({ [path]: val });
   };
 
-  const renderItemFields = () => {
-    if (isItemOf(item, "race")) {
-      return <RaceSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "career")) {
-      return <CareerSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "element")) {
-      return <ElementSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "weapon")) {
-      return <WeaponSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "skill")) {
-      return <SkillSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "talent")) {
-      return <TalentSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "equipment_suite")) {
-      return <EquipmentSuiteSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "gear")) {
-      return <GearSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    if (isItemOf(item, "feature")) {
-      return <FeatureSheetFields item={item} handleFieldChange={handleFieldChange} />;
-    }
-    return null;
-  };
-
-  const renderedFields = renderItemFields();
-  const hasStats = renderedFields !== null;
+  const renderedFields = hasStats ? <ItemStatsFields item={item} onFieldChange={handleFieldChange} /> : null;
   const stackedRows = renderedFields ? 2 : 1;
   const itemTabs: TabItem<ItemTabType>[] = [
     ...(hasStats ? [ITEM_STATS_TAB] : []),

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type InputSize = TextSize;
 export type InputWidth = "auto" | "full" | "small" | "medium" | "large";

@@ -13,6 +13,7 @@ import type { ActionValue, CombatPhaseValue, ConflictActionValue, SlotPhaseValue
 import { MENTAL_BREAK_STATUS_ID, SLOWED_STATUS_ID } from "@/config/statuses";
 import { SKILL_USES_PER_ROUND, SUITE_USES_PER_ROUND } from "@/models/combat";
 import type { ActionLogEntry, ActionUsage, RoundUsage } from "@/models/combat";
+import { optionalRuleEnabled } from "@/registry/settings";
 import { isActorOf } from "@/utils/documents";
 
 export const COMBAT_DOCUMENT_TYPE = "robotech";
@@ -105,7 +106,7 @@ export function remainingSkills(usage: RoundUsage): number {
 
 /** Optional rule: an equipment suite must be associated with a skill Action. */
 export function simpleActionsEnabled(): boolean {
-  return game.settings?.get("robotech", "simpleActions") === true;
+  return optionalRuleEnabled("simpleActions");
 }
 
 export function remainingSuites(usage: RoundUsage): number {

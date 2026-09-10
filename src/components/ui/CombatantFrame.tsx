@@ -2,7 +2,7 @@ import type { DragEvent, JSX, ReactNode } from "react";
 
 import { Card } from "@/components/ui/Card";
 import type { CardTone } from "@/components/ui/Card";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export interface CombatantFrameProps {
   combatantId: string;

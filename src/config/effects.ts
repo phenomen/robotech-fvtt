@@ -1,5 +1,4 @@
 import type { Option } from "@/config/options";
-import type { ActorType, ItemType } from "@/models/documents";
 
 /** Foundry change types offered by the modifiers table; the `custom` type is deliberately omitted. */
 export const EFFECT_CHANGE_TYPE_OPTIONS = [
@@ -60,25 +59,3 @@ export const EFFECT_ATTRIBUTE_GROUPS = [
     ],
   },
 ] as const satisfies readonly EffectAttributeGroup[];
-
-/** Actor subtypes whose sheets expose an Effects tab. */
-export const EFFECT_ACTOR_TYPES = ["character", "vessel"] as const satisfies readonly ActorType[];
-
-/** Item subtypes whose sheets expose an Effects tab; their effects transfer to the owning actor. */
-export const EFFECT_ITEM_TYPES = [
-  "race",
-  "talent",
-  "gear",
-  "equipment_suite",
-  "weapon",
-  "feature",
-  "upgrade",
-] as const satisfies readonly ItemType[];
-
-export function actorHasEffects(actorType: ActorType): boolean {
-  return EFFECT_ACTOR_TYPES.some((type) => type === actorType);
-}
-
-export function itemHasEffects(itemType: ItemType): boolean {
-  return EFFECT_ITEM_TYPES.some((type) => type === itemType);
-}

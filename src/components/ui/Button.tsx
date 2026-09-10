@@ -4,7 +4,7 @@ import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
 import { GRADATION } from "@/config";
 import type { GradationKey } from "@/config";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type ButtonType = "primary" | "secondary" | "outline" | "ghost" | "danger";
 export type ButtonSize = TextSize | "icon" | "tracker";

@@ -26,13 +26,49 @@ export function isSceneActor(actor: Actor): actor is ActorOf<"character" | "vess
 
 export const SCENE_ACTOR_TYPES = ["character", "vessel", "swarm"] as const;
 
+/** World documents resolved this session, so repeated Action Center opens do not re-run `fromUuid`. */
+const actorCache = new Map<string, Actor>();
+
+/** Drops cached actors; call when a document may have been deleted. */
+export function clearActorCache(): void {
+  actorCache.clear();
+}
+
 /** Resolves a UUID into one of the given Actor subtypes; null when missing or of another subtype. */
 export async function actorFromUuid<T extends ActorType>(
   uuid: string,
   types: readonly T[]
 ): Promise<ActorOf<T> | null> {
-  const document = await foundry.utils.fromUuid(uuid);
+  const document = actorCache.get(uuid) ?? (await foundry.utils.fromUuid(uuid));
+  // Cache only world actors: token actors differ by identity and compendium documents are transient.
+  if (document instanceof foundry.documents.Actor && document.id && game.actors?.get(document.id) === document) {
+    actorCache.set(uuid, document);
+  }
   return document instanceof foundry.documents.Actor && isActorOfType(document, types) ? document : null;
+}
+
+/** Resolves many UUIDs concurrently, dropping duplicates and misses. */
+async function resolveActors<T extends ActorType>(
+  uuids: readonly string[],
+  types: readonly T[]
+): Promise<ActorOf<T>[]> {
+  const seen = new Set<string>();
+  const targets: string[] = [];
+  for (const uuid of uuids) {
+    if (!uuid || seen.has(uuid)) {
+      continue;
+    }
+    seen.add(uuid);
+    targets.push(uuid);
+  }
+  const resolved = await Promise.all(targets.map(async (uuid) => await actorFromUuid(uuid, types)));
+  const actors: ActorOf<T>[] = [];
+  for (const actor of resolved) {
+    if (actor) {
+      actors.push(actor);
+    }
+  }
+  return actors;
 }
 
 /** Synchronous variant of {@link actorFromUuid}; world documents and loaded compendium entries only. */
@@ -75,19 +111,13 @@ export function findItemOf<T extends ItemType>(actor: Actor, type: T): ItemOf<T>
 
 /** Living vessel actors referenced by a swarm's member stacks. */
 export async function memberVesselsOf(swarm: ActorOf<"swarm">): Promise<ActorOf<"vessel">[]> {
-  const vessels: ActorOf<"vessel">[] = [];
-  const seen = new Set<string>();
+  const uuids: string[] = [];
   for (const member of swarm.system.members) {
-    if (!isMemberAlive(member) || !member.actorUuid || seen.has(member.actorUuid)) {
-      continue;
-    }
-    seen.add(member.actorUuid);
-    const vessel = await actorFromUuid(member.actorUuid, ["vessel"]);
-    if (vessel) {
-      vessels.push(vessel);
+    if (isMemberAlive(member)) {
+      uuids.push(member.actorUuid);
     }
   }
-  return vessels;
+  return await resolveActors(uuids, ["vessel"]);
 }
 
 /** Characters whose skills are used: the actor itself, a vessel's crew, or a swarm's inherited crew. */
@@ -106,19 +136,7 @@ export async function resolveLinkedCharacters(actor: Actor): Promise<ActorOf<"ch
 }
 
 async function resolveCrewActors(uuids: string[]): Promise<ActorOf<"character">[]> {
-  const crew: ActorOf<"character">[] = [];
-  const seen = new Set<string>();
-  for (const uuid of uuids) {
-    if (!uuid || seen.has(uuid)) {
-      continue;
-    }
-    seen.add(uuid);
-    const character = await actorFromUuid(uuid, ["character"]);
-    if (character) {
-      crew.push(character);
-    }
-  }
-  return crew;
+  return await resolveActors(uuids, ["character"]);
 }
 
 export async function addCrewMember(actor: ActorOf<"vessel">, uuid: string): Promise<void> {

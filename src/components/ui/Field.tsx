@@ -1,10 +1,10 @@
 import type { JSX, ReactElement, ReactNode } from "react";
 
 import { Checkbox } from "@/components/ui/Checkbox";
-import type { IconTone } from "@/components/ui/Icon";
 import { Label } from "@/components/ui/Label";
 import { NumberInput } from "@/components/ui/NumberInput";
-import { cn } from "@/utils";
+import type { IconTone } from "@/types/ui";
+import { cn } from "@/utils/cn";
 
 export type FieldOrientation = "vertical" | "horizontal";
 

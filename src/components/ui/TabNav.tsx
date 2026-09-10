@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import type { KeyboardEvent } from "react";
 
 import { typoClass } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export interface TabItem<T extends string = string> {
   key: T;

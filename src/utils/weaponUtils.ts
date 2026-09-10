@@ -1,9 +1,9 @@
 import type Actor from "@client/documents/actor.mjs";
 
-import type { TagColor } from "@/components/ui/Tag";
 import type { ActionValue, DamageTypeValue } from "@/config/options";
 import { damageTagLabel, WEAPON_PROPERTIES } from "@/config/weaponProperties";
 import type { ItemOf, WeaponAmount, WeaponProperties } from "@/models";
+import type { TagColor } from "@/types/ui";
 import { isActorOf } from "@/utils/documents";
 
 export interface WeaponTag {
@@ -93,8 +93,25 @@ function isPropertyActive(value: WeaponProperties[keyof WeaponProperties]): bool
   return typeof value === "boolean" ? value : value.active;
 }
 
+/**
+ * Tag lists are pure functions of the properties object. Foundry recreates `system.properties`
+ * whenever the item changes and keeps its identity otherwise, so caching by identity returns the
+ * same tags across parent re-renders without going stale.
+ */
+const tagCache = new WeakMap<WeaponProperties, WeaponTag[]>();
+
 /** Builds the tag list shown for a weapon, in the order the properties are configured. */
 export function weaponPropertyTags(properties: WeaponProperties): WeaponTag[] {
+  const cached = tagCache.get(properties);
+  if (cached) {
+    return cached;
+  }
+  const tags = buildWeaponPropertyTags(properties);
+  tagCache.set(properties, tags);
+  return tags;
+}
+
+function buildWeaponPropertyTags(properties: WeaponProperties): WeaponTag[] {
   const tags: WeaponTag[] = [];
 
   for (const def of WEAPON_PROPERTIES) {

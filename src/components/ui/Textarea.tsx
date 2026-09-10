@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type TextareaSize = TextSize;
 

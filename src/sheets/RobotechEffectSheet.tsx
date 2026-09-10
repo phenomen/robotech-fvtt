@@ -1,15 +1,12 @@
 import type React from "react";
-import { flushSync } from "react-dom";
-import { createRoot } from "react-dom/client";
-import type { Root } from "react-dom/client";
 
 import { EffectSheetApp } from "@/components/apps/EffectSheetApp";
+import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
+import type { ReactMount } from "@/sheets/reactMount";
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
-import { createSheetContainer } from "@/utils";
 
 export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV2 {
-  private reactRoot: Root | null = null;
-  private container: HTMLElement | null = null;
+  private readonly mount: ReactMount = createReactMount();
 
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
@@ -19,15 +16,7 @@ export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV
   };
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
-    this.container ??= createSheetContainer("robotech-effect-container");
-
-    this.reactRoot ??= createRoot(this.container);
-
-    flushSync(() => {
-      this.reactRoot?.render(this.renderSheetApp());
-    });
-
-    return this.container;
+    return renderReactMount(this.mount, "robotech-effect-container", this.renderSheetApp());
   }
 
   private renderSheetApp(): React.JSX.Element | null {
@@ -39,17 +28,11 @@ export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV
   }
 
   override _replaceHTML(result: HTMLElement, content: HTMLElement, _options: RenderOptions): void {
-    if (!content.contains(result)) {
-      content.replaceChildren(result);
-    }
+    replaceReactContent(result, content);
   }
 
   override _onClose(options: CloseOptions): void {
-    if (this.reactRoot) {
-      this.reactRoot.unmount();
-      this.reactRoot = null;
-    }
-    this.container = null;
+    unmountReactMount(this.mount);
     super._onClose(options);
   }
 }

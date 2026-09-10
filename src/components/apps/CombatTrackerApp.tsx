@@ -16,6 +16,7 @@ interface CombatTrackerAppProps {
 export function CombatTrackerApp({ combat }: CombatTrackerAppProps): JSX.Element {
   const combats = game.combats?.combats ?? [];
   const turns = combat?.turns.filter((combatant) => combatant.visible) ?? [];
+  const turnIndexes = new Map((combat?.turns ?? []).map((combatant, index) => [combatant.id, index]));
 
   return (
     <Sheet>
@@ -31,17 +32,14 @@ export function CombatTrackerApp({ combat }: CombatTrackerAppProps): JSX.Element
             </Text>
           ) : null}
           {combat
-            ? turns.map((combatant, index) => {
-                const turnIndex = combat.turns.indexOf(combatant);
-                return (
-                  <CombatantRow
-                    key={combatant.id}
-                    combat={combat}
-                    combatant={combatant}
-                    index={turnIndex === -1 ? index : turnIndex}
-                  />
-                );
-              })
+            ? turns.map((combatant, index) => (
+                <CombatantRow
+                  key={combatant.id}
+                  combat={combat}
+                  combatant={combatant}
+                  index={turnIndexes.get(combatant.id) ?? index}
+                />
+              ))
             : null}
         </Stack>
       </SheetBody>

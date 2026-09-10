@@ -1,14 +1,11 @@
-import { flushSync } from "react-dom";
-import { createRoot } from "react-dom/client";
-import type { Root } from "react-dom/client";
-
 import { ItemSheetApp } from "@/components/apps/ItemSheetApp";
+import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
+import type { ReactMount } from "@/sheets/reactMount";
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
-import { createSheetContainer, itemCardOf, sendToChat } from "@/utils";
+import { itemCardOf, sendToChat } from "@/utils";
 
 export class RobotechItemSheet extends foundry.applications.sheets.ItemSheetV2 {
-  private reactRoot: Root | null = null;
-  private container: HTMLElement | null = null;
+  private readonly mount: ReactMount = createReactMount();
 
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
@@ -30,29 +27,15 @@ export class RobotechItemSheet extends foundry.applications.sheets.ItemSheetV2 {
   };
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
-    this.container ??= createSheetContainer("robotech-item-container");
-
-    this.reactRoot ??= createRoot(this.container);
-
-    flushSync(() => {
-      this.reactRoot?.render(<ItemSheetApp item={this.item} />);
-    });
-
-    return this.container;
+    return renderReactMount(this.mount, "robotech-item-container", <ItemSheetApp item={this.item} />);
   }
 
   override _replaceHTML(result: HTMLElement, content: HTMLElement, _options: RenderOptions): void {
-    if (!content.contains(result)) {
-      content.replaceChildren(result);
-    }
+    replaceReactContent(result, content);
   }
 
   override _onClose(options: CloseOptions): void {
-    if (this.reactRoot) {
-      this.reactRoot.unmount();
-      this.reactRoot = null;
-    }
-    this.container = null;
+    unmountReactMount(this.mount);
     super._onClose(options);
   }
 }

@@ -1,34 +1,20 @@
 import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
-import type React from "react";
-import { flushSync } from "react-dom";
-import { createRoot } from "react-dom/client";
-import type { Root } from "react-dom/client";
 
-import { CharacterSheetApp } from "@/components/apps/CharacterSheetApp";
-import { ConflictSheetApp } from "@/components/apps/ConflictSheetApp";
-import { PlotEventSheetApp } from "@/components/apps/PlotEventSheetApp";
-import { SwarmSheetApp } from "@/components/apps/SwarmSheetApp";
-import { VesselSheetApp } from "@/components/apps/VesselSheetApp";
-import { UNIQUE_ITEM_TYPES, isAllowedOnActor } from "@/config";
+import { renderActorSheet } from "@/components/apps/actorSheets";
+import { UNIQUE_ITEM_TYPES, isAllowedOnActor } from "@/config/documentMeta";
 import type { ActorOf, SwarmMember } from "@/models";
+import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
+import type { ReactMount } from "@/sheets/reactMount";
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
-import {
-  addConflictActor,
-  addCrewMember,
-  addEventConflict,
-  calcReducedStructure,
-  createSheetContainer,
-  isActorOf,
-} from "@/utils";
+import { addConflictActor, addCrewMember, addEventConflict, calcReducedStructure, isActorOf } from "@/utils";
 
 type ActorSheetBase = foundry.applications.sheets.ActorSheetV2;
 type DropItemResult = ReturnType<ActorSheetBase["_onDropItem"]>;
 type DropActorResult = ReturnType<ActorSheetBase["_onDropActor"]>;
 
 export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2 {
-  private reactRoot: Root | null = null;
-  private container: HTMLElement | null = null;
+  private readonly mount: ReactMount = createReactMount();
 
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
@@ -46,41 +32,11 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
   }
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
-    this.container ??= createSheetContainer("robotech-sheet-container");
-
-    this.reactRoot ??= createRoot(this.container);
-
-    flushSync(() => {
-      this.reactRoot?.render(this.renderSheetApp());
-    });
-
-    return this.container;
-  }
-
-  private renderSheetApp(): React.JSX.Element | null {
-    const actor = this.actor;
-    if (isActorOf(actor, "vessel")) {
-      return <VesselSheetApp actor={actor} />;
-    }
-    if (isActorOf(actor, "character")) {
-      return <CharacterSheetApp actor={actor} />;
-    }
-    if (isActorOf(actor, "swarm")) {
-      return <SwarmSheetApp actor={actor} />;
-    }
-    if (isActorOf(actor, "conflict")) {
-      return <ConflictSheetApp actor={actor} />;
-    }
-    if (isActorOf(actor, "plot_event")) {
-      return <PlotEventSheetApp actor={actor} />;
-    }
-    return null;
+    return renderReactMount(this.mount, "robotech-sheet-container", renderActorSheet(this.actor));
   }
 
   override _replaceHTML(result: HTMLElement, content: HTMLElement, _options: RenderOptions): void {
-    if (!content.contains(result)) {
-      content.replaceChildren(result);
-    }
+    replaceReactContent(result, content);
   }
 
   protected override async _onDropActor(event: DragEvent, droppedActor: Actor): DropActorResult {
@@ -204,11 +160,7 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
   }
 
   override _onClose(options: CloseOptions): void {
-    if (this.reactRoot) {
-      this.reactRoot.unmount();
-      this.reactRoot = null;
-    }
-    this.container = null;
+    unmountReactMount(this.mount);
     super._onClose(options);
   }
 }

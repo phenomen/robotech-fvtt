@@ -3,7 +3,7 @@ import type { JSX, ReactNode } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type CalloutTone = "default" | "info" | "danger";
 

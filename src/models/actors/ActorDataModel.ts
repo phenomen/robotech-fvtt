@@ -1,19 +1,12 @@
 import type Actor from "@client/documents/actor.mjs";
 
-import type { ActorType, ParentOf } from "@/models/documents";
+import { ACTOR_META } from "@/config/documentMeta";
+import type { ParentOf } from "@/models/documents";
 
 type TypeDataModelBase = foundry.abstract.TypeDataModel;
 type PreCreateData = Parameters<TypeDataModelBase["_preCreate"]>[0];
 type PreCreateOptions = Parameters<TypeDataModelBase["_preCreate"]>[1];
 type PreCreateUser = Parameters<TypeDataModelBase["_preCreate"]>[2];
-
-const TOKEN_BARS: Record<ActorType, { bar1: string | null; bar2: string | null }> = {
-  character: { bar1: "vitals.wounds", bar2: null },
-  conflict: { bar1: "tracker", bar2: null },
-  plot_event: { bar1: null, bar2: null },
-  swarm: { bar1: "structure", bar2: "vessels" },
-  vessel: { bar1: "structure", bar2: "armor" },
-};
 
 export class ActorDataModel extends foundry.abstract.TypeDataModel {
   declare parent: ParentOf<Actor>;
@@ -45,7 +38,7 @@ export class ActorDataModel extends foundry.abstract.TypeDataModel {
     }
 
     const provided = prototypeTokenOf(data);
-    const bars = TOKEN_BARS[this.parent.type];
+    const bars = ACTOR_META[this.parent.type].tokenBars;
     const patch: {
       displayBars?: number;
       bar1?: { attribute: string | null };

@@ -1,8 +1,9 @@
 import React from "react";
 
-import { cn } from "@/utils";
+import type { IconTone } from "@/types/ui";
+import { cn } from "@/utils/cn";
 
-export type IconTone = "default" | "primary" | "muted" | "danger" | "current" | "green" | "teal" | "blue" | "amber";
+export type { IconTone } from "@/types/ui";
 
 interface IconProps {
   name: string;

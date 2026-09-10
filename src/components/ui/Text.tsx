@@ -3,7 +3,7 @@ import type { JSX, ReactNode } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize, TextVariant } from "@/components/ui/typo";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 export type { TextSize, TextVariant } from "@/components/ui/typo";
 

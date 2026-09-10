@@ -3,7 +3,7 @@ import type { CSSProperties, JSX, ReactNode } from "react";
 
 import { SPACE_PAD } from "@/components/ui/space";
 import type { Space } from "@/components/ui/space";
-import { cn } from "@/utils";
+import { cn } from "@/utils/cn";
 
 interface GridSystemValue {
   guideWidth: number;
@@ -180,6 +180,7 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
     width: 0,
   });
   const [crosses, setCrosses] = useState<{ x: number; y: number }[]>([]);
+  const linesRef = useRef<GridLines>({ height: 0, horizontal: [], vertical: [], width: 0 });
 
   useEffect(() => {
     const el = ref.current;
@@ -190,7 +191,11 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
     }
     const update = (): void => {
       const next = readLines(el);
-      setLines((prev) => (sameLines(prev, next) ? prev : next));
+      if (sameLines(linesRef.current, next)) {
+        return;
+      }
+      linesRef.current = next;
+      setLines(next);
       if (hideGuides === undefined) {
         const nextCrosses = findCrosses(el, next);
         setCrosses((prev) => (sameCrosses(prev, nextCrosses) ? prev : nextCrosses));
@@ -206,12 +211,9 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
     update();
     const observer = new ResizeObserver(scheduleUpdate);
     observer.observe(el);
-    const mutation = new MutationObserver(scheduleUpdate);
-    mutation.observe(el, { childList: true, subtree: true });
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
-      mutation.disconnect();
     };
     // columns/rows change track counts without always resizing the grid element.
     // oxlint-disable-next-line react/exhaustive-effect-dependencies
