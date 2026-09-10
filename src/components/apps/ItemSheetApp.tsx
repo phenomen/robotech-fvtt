@@ -14,7 +14,6 @@ import {
   TalentSheetFields,
   WeaponSheetFields,
 } from "@/components/items";
-import { Button } from "@/components/ui/Button";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { Input } from "@/components/ui/Input";
@@ -27,7 +26,7 @@ import { Text } from "@/components/ui/Text";
 import { itemHasEffects } from "@/config/effects";
 import { getLayoutMode } from "@/config/itemLayout";
 import type { FieldValue } from "@/models";
-import { isItemOf, itemCardOf, sendToChat } from "@/utils";
+import { isItemOf } from "@/utils";
 
 export type ItemTabType = "stats" | "description" | "effects";
 
@@ -116,14 +115,9 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
           <Grid columns={1} rows={1}>
             <GridCell solid pad={3}>
               <Stack gap={2}>
-                <Stack direction="row" gap={2} align="center" justify="between">
-                  <Text variant="label" color="primary">
-                    {game.i18n.localize(`TYPES.Item.${item.type}`) || item.type}
-                  </Text>
-                  <Button size="small" variant="secondary" onClick={() => void sendToChat(itemCardOf(item))}>
-                    {game.i18n.localize("ROBOTECH.Buttons.SendToChat")}
-                  </Button>
-                </Stack>
+                <Text variant="label" color="primary">
+                  {game.i18n.localize(`TYPES.Item.${item.type}`) || item.type}
+                </Text>
                 <Input
                   value={item.name}
                   onChange={handleNameChange}
