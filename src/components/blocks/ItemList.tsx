@@ -15,7 +15,7 @@ import { Tag } from "@/components/ui/Tag";
 import { Text } from "@/components/ui/Text";
 import type { ItemOf, ItemType } from "@/models";
 import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
-import { filterItemsOf, isItemOf, sendToChat } from "@/utils";
+import { filterItemsOf, isItemOf, itemCardOf, sendToChat } from "@/utils";
 import { hardwareSlotsOf, isFullyDestroyed, setSlotDestroyed } from "@/utils/hardwareUtils";
 import { weaponPropertyTags } from "@/utils/weaponUtils";
 
@@ -222,13 +222,8 @@ function openItemSheet(item: Item): void {
   void item.sheet?.render(true);
 }
 
-async function spendItemUse(actor: Actor, item: UsableItem): Promise<void> {
-  await sendToChat({
-    actor,
-    description: item.system.description,
-    relativeTo: item,
-    title: item.name,
-  });
+async function spendItemUse(item: UsableItem): Promise<void> {
+  await sendToChat(itemCardOf(item));
   await spendUse(item);
 }
 
@@ -382,7 +377,7 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
 
       {isItemOf(item, "element") && <ElementCells item={item} />}
 
-      {isUsableItem(item) && <UsesCells item={item} onUse={() => void spendItemUse(actor, item)} />}
+      {isUsableItem(item) && <UsesCells item={item} onUse={() => void spendItemUse(item)} />}
 
       {isItemOf(item, "equipment_suite") && <SuiteSkillCell item={item} />}
 

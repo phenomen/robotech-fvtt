@@ -163,6 +163,29 @@
   color: var(--rt-primary);
 }
 
+.rt-chat-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.rt-chat-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  font-family: var(--typo-label-family);
+  font-size: var(--typo-label-medium-size);
+  line-height: var(--typo-label-medium-leading);
+  font-weight: var(--typo-label-weight);
+  color: var(--rt-muted);
+}
+
+.rt-chat-field-value {
+  color: var(--rt-primary);
+}
+
 .rt-chat-meta {
   display: flex;
   flex-wrap: wrap;

@@ -23,7 +23,7 @@ export function DramaTracker({ actor }: DramaTrackerProps): JSX.Element {
     void sendToChat({
       actor,
       description: text,
-      title: game.i18n.localize("ROBOTECH.Stress.DramaN", { n: index + 1 }),
+      name: game.i18n.localize("ROBOTECH.Stress.DramaN", { n: index + 1 }),
     });
   };
 
