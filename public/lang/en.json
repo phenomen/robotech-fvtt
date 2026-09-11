@@ -673,7 +673,7 @@
       "Initiative": "Initiative",
       "Unrolled": "—",
       "RoundPhase": "Round {n}: {phase} Phase.",
-      "ConflictResolved": "Encounter resolved!",
+      "EncounterResolved": "Encounter resolved!",
       "RollInitiative": "Roll Initiative",
       "RoundBudget": "Skills: {skills} | Equipment Suite: {suite}",
       "SuiteAvailable": "Available",
