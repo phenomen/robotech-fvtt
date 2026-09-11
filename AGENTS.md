@@ -8,8 +8,8 @@ Foundry consumes the built output in `dist/` (`robotech.js`, `robotech.css`, `sy
 
 The system implements Robotech RPG on Foundry VTT 14:
 
-- **Actors:** `character`, `vessel` (mecha, vehicles, naval), `swarm` (groups of vessels).
-- **Items:** `career`, `race`, `skill`, `talent`, `gear`, `weapon`, `equipment_suite`, `feature`, `upgrade`.
+- **Actors:** `character`, `vessel` (mecha, vehicles, naval), `swarm` (groups of vessels), `conflict`, `plot_event`.
+- **Items:** `career`, `element`, `race`, `skill`, `talent`, `gear`, `weapon`, `equipment_suite`, `feature`, `upgrade`.
 - **Dice:** AD6 (success-counting d6s with system ratings such as Nominal, Edge, Advantage).
 - **UI:** ApplicationV2 windows whose bodies are React 19 trees (actor/item sheets, Action Center, Combat Tracker, dialogs).
 - **Canvas:** custom `TokenRuler` colored by actor speed.
@@ -29,11 +29,11 @@ The project is in an early phase: **breaking changes to schema, data, and identi
 | UI | **React 19** (function components, `react-jsx`) |
 | Styles | **Tailwind CSS 4** (`@theme` in `src/styles/robotech.css`, type tokens in `typography.css`) |
 | Bundler | **Bun** (`build.ts` → `dist/`). `bun-plugin-tailwind` for CSS. |
-| Lint / format | **oxlint** (type-aware) and **oxfmt** (double quotes, CRLF, sorted imports and Tailwind classes) |
-| Merged classes | `cn()` from `cnfast` (`src/utils/cn.ts`) when class merge is needed |
+| Lint / format | **oxlint** (type-aware) and **oxfmt** (double quotes, LF, sorted imports and Tailwind classes) |
+| Merged classes | `cn()` from `cn` (`src/utils/cn.ts`) when class merge is needed |
 | Types | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
 
-Scripts: `bun run build`, `bun run check`, `bun run fix`. `check` runs type-aware Oxlint + Oxfmt (fails on violations); `fix` applies both. `build` also asserts the manifest's `documentTypes` against the subtype registry. Run `bun run check; bun run build` after changes.
+Scripts: `bun run build`, `bun run check`, `bun run fix`. `check` runs type-aware Oxlint + Oxfmt (fails on violations); `fix` applies both. `build` also asserts the manifest's `documentTypes` (Actor, Item, Combat, Combatant) against the subtype registry and that `package.json` / `system.json` versions match. Run `bun run check; bun run build` after changes.
 
 Path alias `@/` maps to `src/`. Always import through `@/…`, never deep relative paths.
 
@@ -45,21 +45,24 @@ src/
   canvas/                     TokenRuler and other canvas overrides
   combat/                     Combat / Combatant document classes and React CombatTracker
   components/
-    apps/                     Full React trees mounted by ApplicationV2 (sheets, Action Center, Combat Tracker)
+    apps/                     Full React trees mounted by ApplicationV2 (sheets, Action Center, Combat Tracker, dialogs)
     blocks/                   Sheet sections composed into apps (header, trackers, item lists)
+    hooks/                    React hooks that subscribe to Foundry documents (`useLinkedActors`)
     items/                    Per-Item-type field groups for the item sheet
     ui/                       Shared primitives (Button, Input, Card, …)
   config/                     Closed choice lists, per-subtype metadata, theme, wounds, weapon property defs
+  documents/                  System document class overrides (`RobotechActor`)
   models/
     actors/                   TypeDataModels for Actor subtypes
     combat/                   TypeDataModels for Combat and Combatant
     items/                    TypeDataModels for Item subtypes
     documents.ts              ActorOf / ItemOf maps and document unions
+    effects.ts                Active Effect helpers
   registry/                   Subtype → data model binding, settings/optional-rule wiring
-  sheets/                     ActorSheetV2 / ItemSheetV2 adapters and the shared React mount
+  sheets/                     ActorSheetV2 / ItemSheetV2 / Effect sheet adapters and the shared React mount
   styles/                     Tailwind entry (`robotech.css`), type tokens (`typography.css`), chat, ProseMirror extras
-  types/                      Foundry module augmentations (`foundry.d.ts`, `vendor.d.ts`) and shared UI unions (`ui.ts`)
-  utils/                      Game rules, document helpers, chat, rolls — no React
+  types/                      Foundry module augmentations (`foundry.d.ts`, `vendor.d.ts`), `application.ts`, and shared UI unions (`ui.ts`)
+  utils/                      Game rules, document helpers, chat, rolls — no React (`synergy.ts`, `evaluateAd6Roll.ts`, …)
 public/
   system.json                 Manifest (id, compatibility, documentTypes, htmlFields, i18n)
   lang/en.json                All user-facing strings
@@ -72,11 +75,13 @@ Folder roles:
 
 - **`foundry/`** — authoritative Foundry API. Read types and JSDoc here before writing Foundry-specific code.
 - **`models/`** — schema, derived data, `_preUpdate` clamps. Source of truth for `actor.system` / `item.system`.
+- **`documents/`** — Foundry document class overrides (`RobotechActor` for token-bar writes).
 - **`config/`** — pure, runtime-free `as const` data: option lists (`labelKey` pointing at `en.json`), per-subtype metadata (`documentMeta.ts`), layout, theme. No hardcoded labels, no data-model classes.
 - **`registry/`** — binds subtype keys to data models (`documentTypes.ts`) and registers settings/optional rules (`settings.ts`). `build.ts` validates `public/system.json` against it; add a subtype here, in `config/documentMeta.ts`, and in the manifest.
 - **`utils/`** — pure or Foundry-document operations (rolls, damage, crew, HTML enrich). Keep UI out; only `@/types/ui` unions may describe presentation. Document I/O lives in `utils/documents.ts`.
+- **`components/hooks/`** — React hooks that subscribe to Foundry documents. Do not put hooks in `utils/`.
 - **`types/`** — augment Foundry document classes so `system` is the Robotech union, not `unknown`; `ui.ts` holds unions shared with game logic (`IconTone`, `TagColor`).
-- **`sheets/` + `components/apps/ReactDialog.tsx` + `combat/RobotechCombatTracker.ts`** — the only places that create a React root. Use the shared `sheets/reactMount` helpers.
+- **`sheets/` + `components/apps/ReactDialog.tsx` + `combat/RobotechCombatTracker.tsx`** — the only places that create a React root. Use the shared `sheets/reactMount` helpers. Actor sheets are `RobotechActorSheet` / `RobotechItemSheet` / `RobotechEffectSheet`; page trees include `EffectSheetApp`, `ConflictSheetApp`, and `PlotEventSheetApp`.
 - **`components/apps/`** — page-level composition. **`blocks/`** — reusable sheet sections. **`ui/`** — look-and-feel only (the only place Tailwind is allowed). Layout files compose primitives; see `DESIGN.md`.
 
 Barrel `index.ts` files re-export a folder’s public API. Import from the barrel when the folder is the module; import the file directly when that avoids a cycle.
@@ -92,7 +97,7 @@ The Foundry API lives in `foundry/` — copies of the client (`foundry/client`) 
 Use https://foundryvtt.com/api/ only as a fallback when the local sources do not explain a hook, concept, or overview.
 
 - Register data models and sheets only inside `Hooks.once("init", …)`.
-- Declare every Actor/Item subtype in `public/system.json` `documentTypes`, in `config/documentMeta.ts`, and in `registry/documentTypes.ts` (which assigns `CONFIG.Actor.dataModels` / `CONFIG.Item.dataModels`). Keys must match; `bun run build` fails otherwise.
+- Declare every Actor/Item/Combat/Combatant subtype in `public/system.json` `documentTypes`, in `config/documentMeta.ts`, and in `registry/documentTypes.ts` (which assigns `CONFIG.Actor.dataModels` / `CONFIG.Item.dataModels` / `CONFIG.Combat.dataModels` / `CONFIG.Combatant.dataModels`). Keys must match; `bun run build` fails otherwise.
 - List HTML fields under `htmlFields` in the manifest so the server sanitizes them. Back them with `HTMLField` in the schema. Enrich for chat with `enrichHtml()`; do not `escapeHtml` enriched HTML. Use `escapeHtml` only for user-controlled strings (document names) interpolated into HTML templates, not i18n labels or numbers.
 - Persist with `document.update()`, `createEmbeddedDocuments`, `deleteEmbeddedDocuments`. Never assign through `actor.system.foo =` from UI code.
 - Use dotted update paths: `{ "system.armor": 4 }`. For arrays/objects that must be replaced as a whole, pass the next value (do not mutate the live array in place and then update).
@@ -125,7 +130,7 @@ static override defineSchema() {
 
 Sheets extend `ActorSheetV2` / `ItemSheetV2`. Other windows extend `ReactDialog` (ApplicationV2). Configure with `static DEFAULT_OPTIONS` (`classes` must include `"robotech"`).
 
-- Create the React root once in `_renderHTML`, render with `flushSync` so Foundry receives committed DOM, unmount in `_onClose`.
+- Create the React root once in `_renderHTML`. First render with `flushSync` so Foundry receives committed DOM; later renders are async. Unmount in `_onClose`.
 - Do not call `createRoot` from a component. Do not use Handlebars for system UI.
 - `_replaceHTML` should only `replaceChildren` when the container is not already mounted.
 - New dialogs: subclass `ReactDialog` and implement `renderContent()`.

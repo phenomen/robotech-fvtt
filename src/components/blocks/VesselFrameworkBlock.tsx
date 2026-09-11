@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { openFrameworkDialog } from "@/components/blocks/FrameworkSettingsDialog";
+import { openFrameworkDialog } from "@/components/apps/FrameworkSettingsDialog";
 import { Button } from "@/components/ui/Button";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";

@@ -1,5 +1,6 @@
 import { DAMAGE_TYPE_VALUES, WEAPON_RANGE_VALUES } from "@/config/options";
 import type { DamageTypeValue, WeaponRangeValue } from "@/config/options";
+import { expandChanges, numberAt, pathTouched } from "@/models/changePatch";
 import { capHardwareDestroyed, hardwareSlotsFields } from "@/models/items/hardwareSlots";
 import type { HardwareSlots } from "@/models/items/hardwareSlots";
 import { ItemDataModel } from "@/models/items/ItemDataModel";
@@ -126,27 +127,26 @@ export class WeaponDataModel extends ItemDataModel {
   }
 }
 
-function isAmmoPatch(value: unknown): value is Partial<WeaponAmmunition> {
-  return typeof value === "object" && value !== null;
-}
-
 function capAmmunition(ammo: WeaponAmmunition, changes: object): void {
-  const patch = foundry.utils.getProperty(changes, "system.properties.ammunition");
-  if (!isAmmoPatch(patch)) {
+  const path = "system.properties.ammunition";
+  if (!pathTouched(changes, path)) {
     return;
   }
 
-  const nextMax = typeof patch.value === "number" ? patch.value : ammo.value;
-  let nextCurrent = typeof patch.current === "number" ? patch.current : ammo.current;
+  const expanded = expandChanges(changes);
+  const patchMax = numberAt(expanded, `${path}.value`);
+  const patchCurrent = numberAt(expanded, `${path}.current`);
+  const nextMax = patchMax ?? ammo.value;
+  let nextCurrent = patchCurrent ?? ammo.current;
 
-  if (typeof patch.value === "number") {
+  if (patchMax !== undefined) {
     nextCurrent = ammo.current >= ammo.value ? nextMax : Math.min(nextCurrent, nextMax);
   }
 
   nextCurrent = Math.min(Math.max(0, nextCurrent), nextMax);
-  if (nextCurrent === ammo.current && (patch.current === undefined || patch.current === nextCurrent)) {
+  if (nextCurrent === ammo.current && (patchCurrent === undefined || patchCurrent === nextCurrent)) {
     return;
   }
 
-  foundry.utils.setProperty(changes, "system.properties.ammunition.current", nextCurrent);
+  foundry.utils.setProperty(changes, `${path}.current`, nextCurrent);
 }

@@ -1,5 +1,7 @@
 import type { JSX } from "react";
 
+import { useLinkedActors } from "@/components/hooks/useLinkedActors";
+import type { LinkedActor } from "@/components/hooks/useLinkedActors";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
@@ -10,8 +12,7 @@ import { Text } from "@/components/ui/Text";
 import { CONFLICT_RECOGNITION_OPTIONS, CONFLICT_THREAT_OPTIONS, CONFLICT_TYPE_OPTIONS } from "@/config/options";
 import type { Option } from "@/config/options";
 import type { ActorOf } from "@/models";
-import { useLinkedActors, openActorSheet, removeEventConflict } from "@/utils";
-import type { LinkedActor } from "@/utils";
+import { openActorSheet, removeEventConflict } from "@/utils";
 
 interface PlotEventConflictListProps {
   actor: ActorOf<"plot_event">;

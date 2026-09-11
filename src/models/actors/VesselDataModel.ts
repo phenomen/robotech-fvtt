@@ -1,9 +1,11 @@
 import {
   ARMOR_CLASS_VALUES,
   ROLL_MODIFIER_VALUES,
+  SPEED_UNIT_OPTIONS,
   SPEED_UNIT_VALUES,
   VESSEL_MODE_VALUES,
   VESSEL_TYPE_VALUES,
+  isChoiceValue,
 } from "@/config/options";
 import type {
   ArmorClassValue,
@@ -13,8 +15,8 @@ import type {
   VesselTypeValue,
 } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
-import { gaugeSchema } from "@/models/actors/gauges";
-import type { Gauge } from "@/models/actors/gauges";
+import { clampGauge, gaugeSchema } from "@/models/actors/gaugeSchema";
+import type { Gauge } from "@/models/actors/gaugeSchema";
 import { calcEngineSpeed } from "@/utils/vesselUtils";
 
 export interface SpeedUnit {
@@ -131,20 +133,32 @@ export class VesselDataModel extends ActorDataModel {
     this.speed = this.activeSpeed.game;
   }
 
+  override async _preUpdate(
+    changes: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[0],
+    options: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[1],
+    user: Parameters<foundry.abstract.TypeDataModel["_preUpdate"]>[2]
+  ): Promise<boolean | void> {
+    clampGauge(this.structure, changes, "system.structure");
+    clampGauge(this.armor, changes, "system.armor");
+    return await super._preUpdate(changes, options, user);
+  }
+
   get activeSpeedMode(): SpeedModeName {
     const isTransformableMecha = this.vesselType === "mecha" && this.transformable;
     return isTransformableMecha ? this.mode : "general";
   }
 
   private computeActiveSpeed(): SpeedUnit {
-    const base = this.speedModes[this.activeSpeedMode];
+    const base = this.speedModes[this.activeSpeedMode] ?? this.speedModes.general;
     const engineLevel = this.systems.engines;
+    const selected = isChoiceValue(SPEED_UNIT_OPTIONS, base.selected) ? base.selected : "ground";
+    const selectedSpeed = base[selected] ?? 0;
 
     return {
-      game: calcEngineSpeed(base[base.selected], engineLevel),
+      game: calcEngineSpeed(selectedSpeed, engineLevel),
       ground: calcEngineSpeed(base.ground, engineLevel),
       planetary: calcEngineSpeed(base.planetary, engineLevel),
-      selected: base.selected,
+      selected,
       space: calcEngineSpeed(base.space, engineLevel),
     };
   }

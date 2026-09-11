@@ -3,26 +3,28 @@ import type Item from "@client/documents/item.mjs";
 import type { JSX, ReactNode } from "react";
 
 import { openActionCenter } from "@/components/apps/ActionCenterApp";
+import {
+  AmmoCell,
+  ElementCells,
+  HardwareSlotsCell,
+  SkillCells,
+  SuiteSkillCell,
+  UsesCells,
+  WeaponTagsCell,
+} from "@/components/blocks/ItemListCells";
+import type { ListedItem, ListedItemType, UsableItem } from "@/components/blocks/ItemListCells";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
-import { Checkbox } from "@/components/ui/Checkbox";
 import { Icon } from "@/components/ui/Icon";
-import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/Table";
-import { Tag } from "@/components/ui/Tag";
 import { Text } from "@/components/ui/Text";
-import type { ItemOf, ItemType } from "@/models";
-import { syncDestroyedSlots } from "@/models/items/hardwareSlots";
+import type { ItemOf } from "@/models";
 import { filterItemsOf, isItemOf, itemCardOf, sendToChat } from "@/utils";
-import { hardwareSlotsOf, isFullyDestroyed, setSlotDestroyed } from "@/utils/hardwareUtils";
-import { weaponPropertyTags } from "@/utils/weaponUtils";
+import { isFullyDestroyed } from "@/utils/hardwareUtils";
 
-export type ListedItemType = Exclude<ItemType, "career" | "race">;
-
-type ListedItem = ItemOf<ListedItemType>;
-type UsableItem = ItemOf<"talent"> | ItemOf<"equipment_suite">;
+export type { ListedItemType } from "@/components/blocks/ItemListCells";
 
 const HARDWARE_SLOT_TYPES = new Set<ListedItemType>(["weapon", "feature", "equipment_suite"]);
 const USABLE_TYPES = new Set<ListedItemType>(["talent", "equipment_suite"]);
@@ -49,165 +51,6 @@ function isElement(itemType: ListedItemType): boolean {
 
 function nameCellWidth(itemType: ListedItemType): "32" | "grow" {
   return isWeapon(itemType) || isElement(itemType) ? "32" : "grow";
-}
-
-function SkillCells({ item, onRoll }: { item: ItemOf<"skill">; onRoll: () => void }): JSX.Element {
-  return (
-    <>
-      <TableCell width="10" align="center">
-        <Text variant="mono" color="primary" align="center">
-          {item.system.value}
-        </Text>
-      </TableCell>
-      <TableCell width="12">
-        <Button size="small" variant="primary" onClick={onRoll} full>
-          {game.i18n.localize("ROBOTECH.Buttons.Roll")}
-        </Button>
-      </TableCell>
-    </>
-  );
-}
-
-function ElementCells({ item }: { item: ItemOf<"element"> }): JSX.Element {
-  return (
-    <TableCell width="grow">
-      <Text variant="label" truncate>
-        {item.system.talent}
-      </Text>
-    </TableCell>
-  );
-}
-
-function UsesCells({ item, onUse }: { item: UsableItem; onUse: () => void }): JSX.Element {
-  return (
-    <>
-      <TableCell width="12">
-        <Button size="small" variant="primary" onClick={onUse} full>
-          {game.i18n.localize("ROBOTECH.Buttons.Use")}
-        </Button>
-      </TableCell>
-      <TableCell width="10" align="center">
-        {isItemOf(item, "equipment_suite") ? (
-          <SuiteUsesValue item={item} />
-        ) : (
-          <NumberInput
-            value={item.system.uses}
-            min={0}
-            onValueChange={(val) => void item.update({ "system.uses": Math.max(0, val ?? 0) })}
-            width="small"
-          />
-        )}
-      </TableCell>
-    </>
-  );
-}
-
-function SuiteUsesValue({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Element {
-  const { value, max } = item.system.uses;
-  if (max === null) {
-    return (
-      <Text variant="label" color="muted" align="center">
-        {game.i18n.localize("ROBOTECH.Item.Unlimited")}
-      </Text>
-    );
-  }
-
-  return (
-    <Stack direction="row" gap={1} align="center" justify="center">
-      <NumberInput
-        value={value}
-        min={0}
-        max={max}
-        onValueChange={(val) => void item.update({ "system.uses.value": Math.max(0, val ?? 0) })}
-        width="small"
-      />
-      <Text variant="label" color="muted">
-        /
-      </Text>
-      <Text variant="mono" color="muted" align="center">
-        {max}
-      </Text>
-    </Stack>
-  );
-}
-
-function SuiteSkillCell({ item }: { item: ItemOf<"equipment_suite"> }): JSX.Element {
-  return (
-    <TableCell width="10" align="center">
-      <Text variant="mono" color="primary" align="center">
-        {item.system.skill}
-      </Text>
-    </TableCell>
-  );
-}
-
-function AmmoCell({
-  item,
-  onUpdateAmmo,
-}: {
-  item: ItemOf<"weapon">;
-  onUpdateAmmo: (val: number | null) => void;
-}): JSX.Element {
-  const { active, value, current } = item.system.properties.ammunition;
-
-  return (
-    <TableCell width="20" align="center">
-      {active ? (
-        <Stack direction="row" gap={1} align="center" justify="center">
-          <NumberInput value={current} min={0} max={value} onValueChange={onUpdateAmmo} width="small" />
-          <Text variant="label" color="muted">
-            /
-          </Text>
-          <Text variant="mono" color="muted" align="center">
-            {value}
-          </Text>
-        </Stack>
-      ) : null}
-    </TableCell>
-  );
-}
-
-function WeaponTagsCell({ item }: { item: ItemOf<"weapon"> }): JSX.Element {
-  const tags = weaponPropertyTags(item.system.properties);
-
-  return (
-    <TableCell width="grow">
-      {tags.length > 0 ? (
-        <Stack direction="row" gap={1} wrap>
-          {tags.map((tag) => (
-            <Tag key={tag.id} label={tag.label} color={tag.color} size="small" title={tag.title} />
-          ))}
-        </Stack>
-      ) : null}
-    </TableCell>
-  );
-}
-
-function HardwareSlotsCell({ item }: { item: ListedItem }): JSX.Element {
-  const slots = hardwareSlotsOf(item);
-  const destroyed = slots && slots.value > 0 ? syncDestroyedSlots(slots.value, slots.destroyed) : [];
-
-  return (
-    <TableCell width="auto" align="center">
-      {destroyed.length > 0 ? (
-        <Stack direction="row" gap={1} align="center" justify="center">
-          {destroyed.map((isDestroyed, index) => (
-            <Checkbox
-              // oxlint-disable-next-line react-doctor/no-array-index-as-key
-              key={index}
-              checked={isDestroyed}
-              onCheckedChange={(checked) => void setSlotDestroyed(item, index, checked)}
-              variant="danger"
-              title={game.i18n.localize("ROBOTECH.List.HardwareSlot", {
-                current: index + 1,
-                total: destroyed.length,
-              })}
-            />
-          ))}
-        </Stack>
-      ) : null}
-    </TableCell>
-  );
 }
 
 function skillDetailsOf(item: ItemOf<"skill">): string {
@@ -388,7 +231,9 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
       {isItemOf(item, "weapon") && (
         <AmmoCell
           item={item}
-          onUpdateAmmo={(val) => void item.update({ "system.properties.ammunition.current": Math.max(0, val ?? 0) })}
+          onUpdateAmmo={(val) => {
+            void item.update({ "system.properties.ammunition.current": Math.max(0, val ?? 0) });
+          }}
         />
       )}
 
@@ -418,7 +263,9 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
             size="icon"
             variant="danger"
             title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
-            onClick={() => void item.delete()}
+            onClick={() => {
+              void item.delete();
+            }}
           >
             <Icon name="x" />
           </Button>

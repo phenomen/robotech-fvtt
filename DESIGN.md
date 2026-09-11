@@ -97,7 +97,14 @@ Do not invent half-steps.
 | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableCell` | Tabular rows. Cell `width` is `grow` \| `auto` \| `10` \| `12` \| `16` \| `20` \| `32` |
 | `Card`, `CardHeader`, `CardTitle` | Off-grid surface; title is compact uppercase `mono`; header is a fixed 36px row |
 | `Button`, `Input`, `NumberInput`, `Select`, `Textarea`, `Field`, `Label`, `Checkbox`, `Tag`, `TabNav`, `ToggleGroup`, `ProseMirrorField` | Controls with baked type roles |
+| `Icon` | Named glyph for buttons and empty states |
+| `CombatantFrame` | Combat tracker row chrome |
+| `ContextAnchor` | Positions a popover/menu relative to a control |
 | `TrackerHex` | Game-specific hex input |
+
+`space.ts` and `typo.ts` are helpers consumed by primitives (gap/pad scale and type-role classes). Layout files never import them.
+
+Variant names describe intent, not CSS. Across controls: `variant` is the chrome recipe (`primary`, `secondary`, `ghost`, `outline`, `danger`); `tone` tints a surface (`default`, `info`, `danger`); `color` is a named palette token on `Text`/`Tag` (`amber`, `teal`, …). Do not mix these props.
 
 Layout-facing primitives do not accept `className`. Add a variant instead (`full`, `orientation`, `width`, `tone`, `truncate`).
 

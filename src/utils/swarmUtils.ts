@@ -1,7 +1,5 @@
-import type { DamageTypeValue, ArmorClassValue } from "@/config/options";
+import type { ArmorClassValue } from "@/config/options";
 import type { SwarmMember } from "@/models";
-import { appliedPenetrationOf, calcDamageCascade } from "@/utils/vesselUtils";
-import type { CascadeResult } from "@/utils/vesselUtils";
 
 /** Hardened Swarm members count as 1 Mecha-Class Structure and 0 Mecha-Class Armor. */
 export const HARDENED_ARMOR = 0;
@@ -48,46 +46,6 @@ export interface SwarmDamageResult {
   members: SwarmMember[];
   destroyed: number;
   absorbed: boolean;
-}
-
-export interface SwarmAttack {
-  attackType: DamageTypeValue;
-  attackSuccesses: number;
-  defendSuccesses: number;
-  armorClass: ArmorClassValue;
-  armorPenetration: number;
-  multiplier?: number;
-  hardened?: boolean;
-}
-
-export interface SwarmAttackResult extends SwarmDamageResult {
-  cascade: CascadeResult;
-}
-
-/**
- * The swarm is attacked as a single entity, so defence and class scaling resolve against the
- * swarm as a whole. Armor stays out of the cascade because each vessel must be bypassed in turn as
- * the surviving successes carry down the stack.
- */
-export function resolveSwarmAttack(members: SwarmMember[], attack: SwarmAttack): SwarmAttackResult {
-  const hardened = attack.hardened ?? false;
-  const armorClass = swarmArmorClassOf(attack.armorClass, hardened);
-  const cascade = calcDamageCascade({
-    armorClass,
-    attackHits: attack.attackSuccesses,
-    attackType: attack.attackType,
-    defendHits: attack.defendSuccesses,
-    multiplier: attack.multiplier,
-    targetArmor: 0,
-  });
-
-  const damage = applySwarmDamage(
-    members,
-    cascade.damageInflicted,
-    appliedPenetrationOf(attack.armorPenetration, attack.attackType, armorClass, 0),
-    hardened
-  );
-  return { ...damage, cascade };
 }
 
 interface VesselHit {

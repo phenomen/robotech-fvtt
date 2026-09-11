@@ -2,19 +2,17 @@ import type Item from "@client/documents/item.mjs";
 import { useState } from "react";
 import type { ChangeEvent, JSX } from "react";
 
-import { ItemEffectsList } from "@/components/blocks/ItemEffectsList";
+import { DescriptionTab } from "@/components/blocks/DescriptionTab";
+import { EffectsList } from "@/components/blocks/EffectsList";
 import { ItemStatsFields } from "@/components/items/ItemStatsFields";
-import { CardHeader, CardTitle } from "@/components/ui/Card";
 import { Grid, GridCell, GridSystem } from "@/components/ui/Grid";
 import { Input } from "@/components/ui/Input";
-import { ProseMirrorField } from "@/components/ui/ProseMirrorField";
 import { Sheet, SheetBody, SheetHeader } from "@/components/ui/Sheet";
 import { Stack } from "@/components/ui/Stack";
 import { TabNav } from "@/components/ui/TabNav";
 import type { TabItem } from "@/components/ui/TabNav";
 import { Text } from "@/components/ui/Text";
 import { getLayoutMode, itemHasEffects } from "@/config/documentMeta";
-import type { FieldValue } from "@/models";
 
 export type ItemTabType = "stats" | "description" | "effects";
 
@@ -37,7 +35,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
     void item.update({ name: e.target.value });
   };
 
-  const handleFieldChange = (path: string, val: FieldValue) => {
+  const handleFieldChange = (path: string, val: unknown) => {
     void item.update({ [path]: val });
   };
 
@@ -48,19 +46,14 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
   ];
 
   const descriptionBlock = (
-    <Stack gap={1}>
-      <CardHeader>
-        <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Description")}</CardTitle>
-      </CardHeader>
-      <ProseMirrorField
-        name="system.description"
-        value={system.description}
-        onChange={(val) => {
-          handleFieldChange("system.description", val);
-        }}
-        minHeight="tall"
-      />
-    </Stack>
+    <DescriptionTab
+      name="system.description"
+      value={system.description}
+      onChange={(val) => {
+        handleFieldChange("system.description", val);
+      }}
+      minHeight="tall"
+    />
   );
 
   return (
@@ -118,7 +111,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
           <GridSystem guideWidth={1}>
             <Grid columns={1} rows={1}>
               <GridCell solid pad={3}>
-                <ItemEffectsList item={item} />
+                <EffectsList parent={item} />
               </GridCell>
             </Grid>
           </GridSystem>

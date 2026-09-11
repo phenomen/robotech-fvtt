@@ -1,3 +1,4 @@
+import { expandChanges, numberAt, pathTouched } from "@/models/changePatch";
 import { capHardwareDestroyed, hardwareSlotsSchema } from "@/models/items/hardwareSlots";
 import type { HardwareSlots } from "@/models/items/hardwareSlots";
 import { ItemDataModel } from "@/models/items/ItemDataModel";
@@ -36,33 +37,32 @@ export class EquipmentSuiteDataModel extends ItemDataModel {
   }
 }
 
-function isUsesPatch(value: unknown): value is Partial<SuiteUses> {
-  return typeof value === "object" && value !== null;
-}
-
 function capUses(uses: SuiteUses, changes: object): void {
-  const patch = foundry.utils.getProperty(changes, "system.uses");
-  if (!isUsesPatch(patch)) {
+  const path = "system.uses";
+  if (!pathTouched(changes, path)) {
     return;
   }
 
+  const expanded = expandChanges(changes);
+  const patchMax = foundry.utils.getProperty(expanded, `${path}.max`);
   let nextMax = uses.max;
-  if ("max" in patch) {
-    nextMax = typeof patch.max === "number" ? patch.max : null;
+  if (pathTouched(changes, `${path}.max`)) {
+    nextMax = typeof patchMax === "number" ? patchMax : null;
   }
   if (nextMax === null) {
     return;
   }
 
-  let nextCurrent = typeof patch.value === "number" ? patch.value : uses.value;
-  if (typeof patch.max === "number") {
+  const patchValue = numberAt(expanded, `${path}.value`);
+  let nextCurrent = patchValue ?? uses.value;
+  if (typeof patchMax === "number") {
     nextCurrent = uses.max === null || uses.value >= uses.max ? nextMax : Math.min(uses.value, nextMax);
   }
 
   nextCurrent = Math.min(Math.max(0, nextCurrent), nextMax);
-  if (nextCurrent === uses.value && (patch.value === undefined || patch.value === nextCurrent)) {
+  if (nextCurrent === uses.value && (patchValue === undefined || patchValue === nextCurrent)) {
     return;
   }
 
-  foundry.utils.setProperty(changes, "system.uses.value", nextCurrent);
+  foundry.utils.setProperty(changes, `${path}.value`, nextCurrent);
 }

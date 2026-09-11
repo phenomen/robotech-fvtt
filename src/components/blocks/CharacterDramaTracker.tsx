@@ -6,17 +6,17 @@ import { LabelGrid, LabelRow } from "@/components/ui/LabelGrid";
 import type { ActorOf } from "@/models";
 import { sendToChat } from "@/utils";
 
-interface DramaTrackerProps {
+interface CharacterDramaTrackerProps {
   actor: ActorOf<"character">;
 }
 
-const DRAMA_KEYS = ["drama1", "drama2", "drama3", "drama4", "drama5"] as const;
+export function CharacterDramaTracker({ actor }: CharacterDramaTrackerProps): JSX.Element {
+  const dramas = actor.system.stress.dramas;
 
-export function DramaTracker({ actor }: DramaTrackerProps): JSX.Element {
-  const stress = actor.system.stress;
-
-  const updateDramaText = (field: (typeof DRAMA_KEYS)[number], text: string) => {
-    void actor.update({ [`system.stress.${field}`]: text });
+  const updateDramaText = (index: number, text: string) => {
+    const next = [...dramas];
+    next[index] = text;
+    void actor.update({ "system.stress.dramas": next });
   };
 
   const sendDrama = (index: number, text: string) => {
@@ -29,16 +29,18 @@ export function DramaTracker({ actor }: DramaTrackerProps): JSX.Element {
 
   return (
     <LabelGrid>
-      {DRAMA_KEYS.map((key, index) => (
+      {dramas.map((text, index) => (
         <LabelRow
-          key={key}
+          // Fixed drama slots; index is the slot identity.
+          // oxlint-disable-next-line react-doctor/no-array-index-as-key
+          key={index}
           label={
             <Button
               variant="ghost"
               align="start"
               title={game.i18n.localize("ROBOTECH.Buttons.SendToChat")}
               onClick={() => {
-                sendDrama(index, stress[key]);
+                sendDrama(index, text);
               }}
             >
               {game.i18n.localize("ROBOTECH.Stress.DramaN", { n: index + 1 })}
@@ -46,9 +48,9 @@ export function DramaTracker({ actor }: DramaTrackerProps): JSX.Element {
           }
         >
           <Input
-            value={stress[key]}
+            value={text}
             onChange={(e) => {
-              updateDramaText(key, e.target.value);
+              updateDramaText(index, e.target.value);
             }}
             placeholder={game.i18n.localize("ROBOTECH.Stress.DramaPlaceholder")}
             width="full"

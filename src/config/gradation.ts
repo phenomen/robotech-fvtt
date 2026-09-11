@@ -58,8 +58,8 @@ export const DIE_SUCCESS_GRADATION = {
 export function dieSuccessGradation(
   successes: number
 ): (typeof DIE_SUCCESS_GRADATION)[keyof typeof DIE_SUCCESS_GRADATION] {
-  if (successes in DIE_SUCCESS_GRADATION) {
-    return DIE_SUCCESS_GRADATION[successes as keyof typeof DIE_SUCCESS_GRADATION];
+  if (successes === 0 || successes === 1 || successes === 2) {
+    return DIE_SUCCESS_GRADATION[successes];
   }
   return GRADATION.worst;
 }

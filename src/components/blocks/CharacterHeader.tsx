@@ -72,7 +72,7 @@ function CharacterTags({ actor }: HeaderProps): JSX.Element | null {
   );
 }
 
-export function Header({ actor }: HeaderProps): JSX.Element {
+export function CharacterHeader({ actor }: HeaderProps): JSX.Element {
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     void actor.update({ name: e.target.value });
   };

@@ -26,24 +26,12 @@ export function isSceneActor(actor: Actor): actor is ActorOf<"character" | "vess
 
 export const SCENE_ACTOR_TYPES = ["character", "vessel", "swarm"] as const;
 
-/** World documents resolved this session, so repeated Action Center opens do not re-run `fromUuid`. */
-const actorCache = new Map<string, Actor>();
-
-/** Drops cached actors; call when a document may have been deleted. */
-export function clearActorCache(): void {
-  actorCache.clear();
-}
-
 /** Resolves a UUID into one of the given Actor subtypes; null when missing or of another subtype. */
 export async function actorFromUuid<T extends ActorType>(
   uuid: string,
   types: readonly T[]
 ): Promise<ActorOf<T> | null> {
-  const document = actorCache.get(uuid) ?? (await foundry.utils.fromUuid(uuid));
-  // Cache only world actors: token actors differ by identity and compendium documents are transient.
-  if (document instanceof foundry.documents.Actor && document.id && game.actors?.get(document.id) === document) {
-    actorCache.set(uuid, document);
-  }
+  const document = await foundry.utils.fromUuid(uuid);
   return document instanceof foundry.documents.Actor && isActorOfType(document, types) ? document : null;
 }
 

@@ -20,7 +20,7 @@ export function itemCardOf(item: Item): DescriptionCardInput {
   };
 }
 
-export function chatFieldsOf(item: Item): ChatCardField[] {
+function chatFieldsOf(item: Item): ChatCardField[] {
   if (isItemOf(item, "talent")) {
     return talentFields(item);
   }

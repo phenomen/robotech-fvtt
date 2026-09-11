@@ -9,7 +9,6 @@ export interface NumberInputProps {
   value?: number | null;
   defaultValue?: number;
   onValueChange?: (value: number | null) => void;
-  onChange?: (value: number | null) => void;
   min?: number;
   max?: number;
   step?: number;
@@ -29,7 +28,6 @@ export const NumberInput = React.memo(
     value,
     defaultValue,
     onValueChange,
-    onChange,
     min,
     max,
     step,
@@ -67,15 +65,13 @@ export const NumberInput = React.memo(
         const raw = e.target.value;
         if (raw === "") {
           onValueChange?.(null);
-          onChange?.(null);
           return;
         }
         const parsed = Number(raw);
         const clamped = clampValue(Number.isNaN(parsed) ? null : parsed);
         onValueChange?.(clamped);
-        onChange?.(clamped);
       },
-      [clampValue, onValueChange, onChange]
+      [clampValue, onValueChange]
     );
 
     const handleDecrement = useCallback(() => {
@@ -86,8 +82,7 @@ export const NumberInput = React.memo(
       const base = currentValue ?? min ?? 0;
       const next = clampValue(base - stepVal);
       onValueChange?.(next);
-      onChange?.(next);
-    }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange, onChange]);
+    }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]);
 
     const handleIncrement = useCallback(() => {
       if (disabled || readOnly) {
@@ -97,8 +92,7 @@ export const NumberInput = React.memo(
       const base = currentValue ?? min ?? 0;
       const next = clampValue(base + stepVal);
       onValueChange?.(next);
-      onChange?.(next);
-    }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange, onChange]);
+    }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]);
 
     return (
       <div className={cn("inline-flex min-w-0 items-center gap-1", width === "full" && "w-full")}>

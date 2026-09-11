@@ -2,7 +2,7 @@ import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
 
 import { renderActorSheet } from "@/components/apps/actorSheets";
-import { UNIQUE_ITEM_TYPES, isAllowedOnActor } from "@/config/documentMeta";
+import { UNIQUE_ITEM_TYPES, itemAllowedOn } from "@/config/documentMeta";
 import type { ActorOf, SwarmMember } from "@/models";
 import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
 import type { ReactMount } from "@/sheets/reactMount";
@@ -129,7 +129,7 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
       return await super._onDropItem(event, item);
     }
 
-    if (!isAllowedOnActor(this.actor.type, item.type)) {
+    if (!itemAllowedOn(this.actor.type, item.type)) {
       ui.notifications.warn(
         game.i18n.localize("ROBOTECH.Item.ItemNotAllowed", {
           actorType: game.i18n.localize(`TYPES.Actor.${this.actor.type}`),

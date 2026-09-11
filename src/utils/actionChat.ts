@@ -5,7 +5,7 @@ import { dieSuccessGradation, modifierLabelOf } from "@/config";
 import { ACTION_OPTIONS, isConflictAction } from "@/config/options";
 import type { ActionValue, DamageTypeValue, RollModifierValue } from "@/config/options";
 import { CHAT_TAG_CLASS } from "@/config/tagColors";
-import type { Ad6DieResult } from "@/utils/AD6Roll";
+import type { Ad6DieResult } from "@/utils/evaluateAd6Roll";
 import { enrichHtml, escapeHtml } from "@/utils/html";
 import type { IncomingAttack, WeaponTag } from "@/utils/weaponUtils";
 

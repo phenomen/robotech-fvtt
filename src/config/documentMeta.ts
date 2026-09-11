@@ -71,12 +71,8 @@ export const ITEM_META = {
 /** At most one of each of these types may exist on an actor; a new drop replaces the old. */
 export const UNIQUE_ITEM_TYPES = ["career", "race"] as const satisfies readonly ItemType[];
 
-export function isAllowedOnActor(actorType: ActorType, itemType: ItemType): boolean {
+export function itemAllowedOn(actorType: ActorType, itemType: ItemType): boolean {
   return ACTOR_META[actorType].itemTypes.some((type) => type === itemType);
-}
-
-export function actorHasEffects(actorType: ActorType): boolean {
-  return ACTOR_META[actorType].hasEffects;
 }
 
 export function itemHasEffects(itemType: ItemType): boolean {
@@ -86,3 +82,6 @@ export function itemHasEffects(itemType: ItemType): boolean {
 export function getLayoutMode(itemType: ItemType): ItemSheetLayoutMode {
   return ITEM_META[itemType].layout;
 }
+
+export const COMBAT_TYPES = ["robotech"] as const;
+export const COMBATANT_TYPES = ["robotech"] as const;

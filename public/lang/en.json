@@ -27,7 +27,6 @@
     }
   },
   "ROBOTECH": {
-    "Title": "Robotech: Macross Saga",
     "Sheet": {
       "Actor": "Robotech Actor Sheet",
       "Item": "Robotech Item Sheet",
@@ -35,6 +34,7 @@
       "Name": "Name",
       "NamePlaceholder": "Name",
       "Open": "Open sheet",
+      "Redacted": "[ REDACTED ]",
       "NoPermission": "You do not have permission to update that actor.",
       "MissingActor": "No actor found for {uuid}"
     },
@@ -50,7 +50,6 @@
       "Talents": "Talents",
       "Career": "Career",
       "Equipment": "Equipment",
-      "Vessel": "Vessel",
       "Crew": "Crew",
       "Data": "Data",
       "Effects": "Effects",
@@ -108,15 +107,12 @@
       "Rank": "Rank",
       "RankN": "R{n}",
       "RankNTitle": "R{n}: {title}",
-      "RankTitle": "Rank Title",
       "Fame": "Fame",
       "FameN": "F{n}",
       "FameNTitle": "F{n}: {title}",
-      "FameTitle": "Fame Title",
       "Burnout": "Burnout",
       "Speed": "Speed",
       "Wealth": "Wealth",
-      "Miscellaneous": "Misc",
       "Encounter": "Encounter",
       "Proficiencies": "Proficiencies",
       "ProficienciesPlaceholder": "Special weapons, vehicle proficiencies, specialized training...",
@@ -140,7 +136,6 @@
       "Box": "{type} {n}",
       "Settings": "Vitals Settings",
       "Max": "Max {max}",
-      "Min": "Min {min}",
       "Triumvirate": "Triumvirate"
     },
     "ArmorClass": {
@@ -214,7 +209,6 @@
       "TotalArmor": "Total Armor",
       "TotalStructure": "Total Structure",
       "BasicStructure": "Basic Structure",
-      "Suite": "Suite",
       "Sensors": "Sensors",
       "Targeting": "Targeting",
       "Thrusters": "Thrusters",
@@ -276,23 +270,11 @@
       "NamePlaceholder": "Item Name",
       "TagCount": "{name} ({current}/{total})",
       "ItemNotAllowed": "{itemType} cannot be added to {actorType}.",
-      "Career": "Career",
-      "CareerPl": "Careers",
-      "Race": "Race",
-      "RacePl": "Races",
-      "Gear": "Gear",
       "GearPl": "Gear",
       "Skill": "Skill",
-      "SkillPl": "Skills",
-      "Talent": "Talent",
-      "TalentPl": "Talents",
-      "Weapon": "Weapon",
       "WeaponPl": "Weapons",
-      "Feature": "Feature",
       "FeaturePl": "Features",
-      "EquipmentSuite": "Equipment Suite",
       "EquipmentSuitePl": "Equipment Suites",
-      "Upgrade": "Mecha Upgrade",
       "UpgradePl": "Mecha Upgrades",
       "Quantity": "Quantity",
       "Value": "Value",
@@ -300,9 +282,7 @@
       "Unlimited": "Unlimited",
       "HardwarePoints": "Hardware Points",
       "Category": "Category",
-      "Damage": "Damage",
       "Prerequisites": "Prerequisites",
-      "SlotType": "Slot Type",
       "Element": "Element",
       "ElementPl": "Elements",
       "ElementTalent": "Element Talent",
@@ -316,7 +296,6 @@
       "PrerequisitePlaceholder": "",
       "Benefit": "Benefit",
       "Cost": "Cost",
-      "Condition": "Condition",
       "Bonus": "Bonus",
       "Properties": "Weapon Properties",
       "Ranges": {
@@ -414,10 +393,7 @@
       }
     },
     "LinkedCharacter": {
-      "DropHint": "Assign a character",
-      "Clear": "Clear",
       "OpenSheet": "Open character sheet",
-      "WrongType": "Drop a character actor, not a vessel or swarm.",
       "Missing": "Linked character is missing"
     },
     "Crew": {
@@ -471,7 +447,6 @@
         }
       },
       "Phases": {
-        "Phase": "Phase",
         "Support": "Support Phase",
         "Ops": "Ops Phase",
         "Cinematic": "Cinematic Phase",
@@ -487,13 +462,11 @@
       "Title": "Action Center",
       "Action": "Action",
       "Roll": "Roll",
-      "RollButton": "Roll Dice",
       "SelectSkill1": "First Skill",
       "SelectSkill2": "Second Skill",
       "SelectSuite": "Equipment Suite",
       "Modifier": "Modifier",
       "Successes": "Successes",
-      "NoSuccesses": "No Successes",
       "ManualDice": "Bonus Dice",
       "ManualSuccesses": "Successes",
       "TotalDice": "Total Dice Pool",
@@ -504,7 +477,6 @@
       "Rolled": "Rolled",
       "None": "None",
       "Weapon": "Weapon",
-      "DamageClass": "Damage Class",
       "ArmorPenetration": "Armor Penetration",
       "IncomingAttack": "Incoming Attack",
       "AttackSuccesses": "Attack Successes",
@@ -527,7 +499,6 @@
       "SynergyMissingActor": "The actor for that roll could not be found.",
       "CalledShot": "Called Shot",
       "CalledShotYes": "Called Shot: Assign damage to a system or hardware",
-      "CalledShotHint": "Called Shot: {damage} {type} damage. Assign it to a system or hardware on the target.",
       "RollTitle": "{name} — {action}",
       "PushedTitle": "{name} — Pushed {action}",
       "NoVesselCrew": "Assign a crew member to this vessel before using the Action Center.",
@@ -555,9 +526,7 @@
       "Save": "Save",
       "Cancel": "Cancel",
       "Decrement": "Decrease",
-      "Increment": "Increase",
-      "Equip": "Equip",
-      "Unequip": "Unequip"
+      "Increment": "Increase"
     },
     "List": {
       "HeaderName": "Name",
@@ -567,10 +536,7 @@
       "HeaderUses": "Uses",
       "HeaderAmmo": "Ammo",
       "HeaderSkill": "Skill",
-      "HeaderQty": "Qty",
-      "HeaderDestroyed": "Destroyed",
       "HardwareSlot": "Hardware {current}/{total}",
-      "HeaderManage": "Manage",
       "HeaderValue": "Value",
       "Empty": "No items",
       "NewItem": "New {type}"
@@ -600,7 +566,6 @@
       }
     },
     "Conflict": {
-      "Title": "Conflict",
       "Type": "Type",
       "TypeSwarm": "Swarm",
       "TypeBoss": "Boss",
@@ -636,7 +601,6 @@
       "PoolRollTitle": "{name} — Conflict Pool"
     },
     "PlotEvent": {
-      "Title": "Plot Event",
       "Level": "Level",
       "Rounds": "Rounds",
       "RisingAction": "Rising Action",
@@ -645,7 +609,6 @@
       "SetActivePhase": "Mark {phase} as the active round phase",
       "Conflicts": "Conflicts",
       "ConflictsHint": "Drag & Drop conflicts to add them to this event",
-      "AlreadyAssigned": "That conflict is already in this Plot Event.",
       "WrongType": "Drop a Conflict actor.",
       "MissingConflict": "Linked conflict is missing",
       "HeaderType": "Type",

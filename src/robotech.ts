@@ -3,21 +3,24 @@ import { RobotechCombat, RobotechCombatant, RobotechCombatTracker } from "@/comb
 import { bindChatButtons } from "@/components/apps/chatActions";
 import { STATUS_EFFECTS } from "@/config";
 import { ACTOR_META } from "@/config/documentMeta";
+import { RobotechActor } from "@/documents/RobotechActor";
 import { registerDataModels } from "@/registry/documentTypes";
 import { registerSystemSettings } from "@/registry/settings";
 import { RobotechActorSheet } from "@/sheets/RobotechActorSheet";
 import { RobotechEffectSheet } from "@/sheets/RobotechEffectSheet";
 import { RobotechItemSheet } from "@/sheets/RobotechItemSheet";
-import { clearActorCache } from "@/utils/documents";
 import { applyTheme } from "@/utils/theme";
 
 function registerSystemSheets(): void {
+  // Core still ships AppV1 defaults; unregister them before registering ApplicationV2 sheets.
+  // oxlint-disable-next-line typescript/no-deprecated
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("robotech", RobotechActorSheet, {
     label: "ROBOTECH.Sheet.Actor",
     makeDefault: true,
   });
 
+  // oxlint-disable-next-line typescript/no-deprecated
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("robotech", RobotechItemSheet, {
     label: "ROBOTECH.Sheet.Item",
@@ -55,10 +58,9 @@ function registerTrackableAttributes(): void {
 }
 
 function registerStatusEffects(): void {
-  const config = CONFIG as unknown as {
-    statusEffects: { id: string; img: string; name: string; order: number }[];
-  };
-  config.statusEffects = STATUS_EFFECTS.map((effect) => ({
+  // Foundry types `CONFIG.statusEffects` as a Proxy array that also indexes by id.
+  // @ts-expect-error Assignment through the proxy is the supported replacement path.
+  CONFIG.statusEffects = STATUS_EFFECTS.map((effect) => ({
     id: effect.id,
     img: effect.img,
     name: effect.name,
@@ -67,6 +69,7 @@ function registerStatusEffects(): void {
 }
 
 foundry.helpers.Hooks.once("init", () => {
+  CONFIG.Actor.documentClass = RobotechActor;
   CONFIG.Token.rulerClass = RobotechTokenRuler;
   CONFIG.Combat.documentClass = RobotechCombat;
   CONFIG.Combatant.documentClass = RobotechCombatant;
@@ -81,9 +84,6 @@ foundry.helpers.Hooks.once("init", () => {
 
 foundry.helpers.Hooks.once("ready", () => {
   applyTheme();
-  foundry.helpers.Hooks.on("deleteActor", () => {
-    clearActorCache();
-  });
 });
 
 foundry.helpers.Hooks.on("renderChatMessageHTML", (message: foundry.documents.ChatMessage, html: HTMLElement) => {

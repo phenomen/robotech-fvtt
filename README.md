@@ -26,6 +26,15 @@ Build the system into `dist/`:
 bun run build
 ```
 
+Lint and format (type-aware Oxlint + Oxfmt):
+
+```bash
+bun run check
+bun run fix
+```
+
+Pushes to `main` publish a floating `release` tag (`system.json` + `robotech.zip`). Pull requests run the same check and build.
+
 ### Foundry API Types
 
 Type checking resolves the Foundry API from the real client. Copy `client/` and `common/` out of your Foundry install directory into a `foundry` folder at the root:
@@ -35,3 +44,7 @@ foundry/
   client/
   common/
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE).

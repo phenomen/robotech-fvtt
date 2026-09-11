@@ -1,7 +1,7 @@
 import type { ActorOf } from "@/models";
 import { postPoolCard } from "@/utils/actionChat";
-import { evaluateAd6Roll } from "@/utils/AD6Roll";
 import { actorFromUuid, isSceneActor } from "@/utils/documents";
+import { evaluateAd6Roll } from "@/utils/evaluateAd6Roll";
 
 export async function linkPlotEvent(conflict: ActorOf<"conflict">, plotEventUuid: string): Promise<void> {
   if (!plotEventUuid) {

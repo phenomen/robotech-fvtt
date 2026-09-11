@@ -1,10 +1,11 @@
 import type { JSX } from "react";
 
+import { useLinkedActors } from "@/components/hooks/useLinkedActors";
 import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { useLinkedActors, openActorSheet } from "@/utils";
+import { openActorSheet } from "@/utils";
 
 interface ConflictPlotLinkProps {
   actor: ActorOf<"conflict">;

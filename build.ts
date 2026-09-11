@@ -3,9 +3,19 @@ import path from "node:path";
 
 import tailwind from "bun-plugin-tailwind";
 
-import { ACTOR_META, ITEM_META } from "./src/config/documentMeta";
+import { ACTOR_META, COMBAT_TYPES, COMBATANT_TYPES, ITEM_META } from "./src/config/documentMeta";
 
-function compareTypes(scope: "Actor" | "Item", expected: string[], declared: Record<string, unknown>): string[] {
+interface SystemManifest {
+  version?: string;
+  documentTypes?: {
+    Actor?: Record<string, unknown>;
+    Combat?: Record<string, unknown>;
+    Combatant?: Record<string, unknown>;
+    Item?: Record<string, unknown>;
+  };
+}
+
+function compareTypes(scope: string, expected: string[], declared: Record<string, unknown>): string[] {
   const problems: string[] = [];
   const expectedTypes = new Set(expected);
   for (const type of expected) {
@@ -26,13 +36,26 @@ function compareTypes(scope: "Actor" | "Item", expected: string[], declared: Rec
  * Foundry rejects them at runtime. Fail the build instead.
  */
 async function validateManifest(): Promise<void> {
-  const manifest = JSON.parse(await readFile(path.join(process.cwd(), "public", "system.json"), "utf-8")) as {
-    documentTypes?: { Actor?: Record<string, unknown>; Item?: Record<string, unknown> };
+  const pkg = JSON.parse(await readFile(path.join(process.cwd(), "package.json"), "utf-8")) as { version?: string };
+  const manifest = JSON.parse(
+    await readFile(path.join(process.cwd(), "public", "system.json"), "utf-8")
+  ) as SystemManifest;
+  if (pkg.version !== manifest.version) {
+    console.error(`version mismatch: package.json ${pkg.version} vs system.json ${manifest.version}`);
+    process.exit(1);
+  }
+
+  const declared = {
+    Actor: manifest.documentTypes?.Actor ?? {},
+    Combat: manifest.documentTypes?.Combat ?? {},
+    Combatant: manifest.documentTypes?.Combatant ?? {},
+    Item: manifest.documentTypes?.Item ?? {},
   };
-  const declared = { Actor: manifest.documentTypes?.Actor ?? {}, Item: manifest.documentTypes?.Item ?? {} };
   const problems = [
     ...compareTypes("Actor", Object.keys(ACTOR_META), declared.Actor),
     ...compareTypes("Item", Object.keys(ITEM_META), declared.Item),
+    ...compareTypes("Combat", [...COMBAT_TYPES], declared.Combat),
+    ...compareTypes("Combatant", [...COMBATANT_TYPES], declared.Combatant),
   ];
 
   if (problems.length > 0) {

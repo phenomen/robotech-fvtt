@@ -57,7 +57,7 @@ function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxP
   );
 }
 
-export function StressTracker({ actor }: StressTrackerProps): JSX.Element {
+export function CharacterStressTracker({ actor }: StressTrackerProps): JSX.Element {
   const boxes = actor.system.stress.boxes;
   const burnout = actor.system.burnout;
   const mentalBreak = actor.system.isMentalBreak;

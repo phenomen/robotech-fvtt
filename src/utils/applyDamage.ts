@@ -80,15 +80,16 @@ export function selectedSlotsOf(sink: DamageSink, amounts: DamageAmounts): numbe
 
 export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
   if (isActorOf(actor, "character")) {
+    const capacity = emptyWoundBoxes(actor);
     return [
       {
-        capacity: emptyWoundBoxes(actor),
+        capacity,
         icon: "brawl-wound",
         iconTone: "danger",
         id: "wounds",
         kind: "wounds",
         labelKey: "ROBOTECH.Damage.Assign.Wounds",
-        maxAssign: damage,
+        maxAssign: Math.min(damage, capacity),
       },
     ];
   }
@@ -384,12 +385,11 @@ async function applyCharacterWounds(actor: ActorOf<"character">, damage: number)
   });
 }
 
-function emptyCount(states: boolean[]): number {
-  return states.reduce((count, filled) => count + (filled ? 0 : 1), 0);
-}
-
 function emptyWoundBoxes(actor: ActorOf<"character">): number {
-  return emptyCount(actor.system.wounds.brawl.states) + emptyCount(actor.system.wounds.critical.states);
+  const { brawl, critical } = actor.system.wounds;
+  return (
+    brawl.states.length + critical.states.length - countCheckedBoxes(brawl.states) - countCheckedBoxes(critical.states)
+  );
 }
 
 function distributionOf(preview: DamagePreview, amounts: DamageAmounts): DamageDistribution {

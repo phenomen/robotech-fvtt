@@ -9,3 +9,4 @@ export * from "./SkillSheetFields";
 export * from "./TalentSheetFields";
 export * from "./UpgradeSheetFields";
 export * from "./WeaponSheetFields";
+export * from "./ItemStatsFields";

@@ -138,8 +138,7 @@ export const ACTION_PHASE_OPTIONS = [
   { labelKey: "ROBOTECH.Roll.Phases.Cinematic", value: "cinematic" },
   { labelKey: "ROBOTECH.Roll.Phases.Any", value: "any" },
 ] as const satisfies readonly Option[];
-export const ACTION_PHASE_VALUES = toValues(ACTION_PHASE_OPTIONS);
-export type ActionPhaseValue = (typeof ACTION_PHASE_VALUES)[number];
+export type ActionPhaseValue = (typeof ACTION_PHASE_OPTIONS)[number]["value"];
 
 export const ACTION_OPTIONS = [
   {

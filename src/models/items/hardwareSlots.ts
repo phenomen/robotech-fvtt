@@ -1,3 +1,5 @@
+import { expandChanges, numberAt, pathTouched } from "@/models/changePatch";
+
 export interface HardwareSlots {
   value: number;
   destroyed: boolean[];
@@ -36,27 +38,24 @@ export function syncDestroyedSlots(value: number, destroyed: boolean[]): boolean
 }
 
 export function capHardwareDestroyed(hardware: HardwareSlots, changes: object, path: string): void {
-  const patch = foundry.utils.getProperty(changes, path);
-  if (!isHardwarePatch(patch)) {
+  if (!pathTouched(changes, path)) {
     return;
   }
 
-  const nextValue = typeof patch.value === "number" ? patch.value : hardware.value;
-  const sourceDestroyed = Array.isArray(patch.destroyed) ? patch.destroyed : hardware.destroyed;
+  const expanded = expandChanges(changes);
+  const nextValue = numberAt(expanded, `${path}.value`) ?? hardware.value;
+  const patchDestroyed = foundry.utils.getProperty(expanded, `${path}.destroyed`);
+  const sourceDestroyed = Array.isArray(patchDestroyed) ? patchDestroyed : hardware.destroyed;
   const nextDestroyed = syncDestroyedSlots(nextValue, sourceDestroyed);
 
   if (
     destroyedEquals(nextDestroyed, hardware.destroyed) &&
-    (patch.destroyed === undefined || destroyedEquals(patch.destroyed, nextDestroyed))
+    (patchDestroyed === undefined || destroyedEquals(patchDestroyed, nextDestroyed))
   ) {
     return;
   }
 
   foundry.utils.setProperty(changes, `${path}.destroyed`, nextDestroyed);
-}
-
-function isHardwarePatch(value: unknown): value is Partial<HardwareSlots> {
-  return typeof value === "object" && value !== null;
 }
 
 function destroyedEquals(left: boolean[], right: boolean[]): boolean {

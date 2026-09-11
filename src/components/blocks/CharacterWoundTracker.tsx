@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { openVitalsDialog } from "@/components/blocks/VitalsSettingsDialog";
+import { openVitalsDialog } from "@/components/apps/VitalsSettingsDialog";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Divider } from "@/components/ui/Divider";
@@ -71,7 +71,7 @@ function WoundGroup({ refs, brawlStates, criticalStates, onToggle, justify = "st
   );
 }
 
-export function WoundTracker({ actor }: WoundTrackerProps): JSX.Element {
+export function CharacterWoundTracker({ actor }: WoundTrackerProps): JSX.Element {
   const system = actor.system;
   const { isTriumvirateWounds } = system.vitalsSettings;
   const isLightArmor = system.armorClass === "light";

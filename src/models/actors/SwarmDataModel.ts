@@ -1,7 +1,7 @@
 import { ARMOR_CLASS_VALUES } from "@/config/options";
 import type { ArmorClassValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
-import type { Gauge } from "@/models/actors/gauges";
+import type { Gauge } from "@/models/actors/gaugeSchema";
 import { isMemberAlive, leadStructureOf, memberStructureOf } from "@/utils/swarmUtils";
 
 export interface SwarmMember {

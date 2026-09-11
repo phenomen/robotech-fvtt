@@ -1,5 +1,6 @@
 import type ActiveEffect from "@client/documents/active-effect.mjs";
 import type Actor from "@client/documents/actor.mjs";
+import type Item from "@client/documents/item.mjs";
 import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -12,12 +13,13 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components
 import { Text } from "@/components/ui/Text";
 import { actorEffects, createEffect, effectSource, isOwnEffect } from "@/utils";
 
-interface ActorEffectsListProps {
-  actor: Actor;
+interface EffectsListProps {
+  parent: Actor | Item;
 }
 
-export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element {
-  const effects = actorEffects(actor);
+export function EffectsList({ parent }: EffectsListProps): JSX.Element {
+  const isActor = parent instanceof foundry.documents.Actor;
+  const effects = isActor ? actorEffects(parent) : [...parent.effects];
 
   return (
     <Stack gap={1}>
@@ -26,7 +28,9 @@ export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element 
         <Button
           size="icon"
           variant="secondary"
-          onClick={() => void createEffect(actor)}
+          onClick={() => {
+            void createEffect(parent);
+          }}
           title={game.i18n.localize("ROBOTECH.Effect.Add")}
         >
           <Icon name="add" size="small" />
@@ -37,29 +41,33 @@ export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element 
         <Callout>{game.i18n.localize("ROBOTECH.Effect.Empty")}</Callout>
       ) : (
         <Table>
-          <TableHeader>
+          <TableHeader hidden={!isActor}>
             <TableRow>
               <TableCell width="grow">
                 <Text variant="label" color="muted">
                   {game.i18n.localize("ROBOTECH.Effect.Name")}
                 </Text>
               </TableCell>
-              <TableCell width="auto">
-                <Text variant="label" color="muted">
-                  {game.i18n.localize("ROBOTECH.Effect.Source")}
-                </Text>
-              </TableCell>
-              <TableCell width="12" align="center">
-                <Text variant="label" color="muted" align="center">
-                  {game.i18n.localize("ROBOTECH.Effect.Enabled")}
-                </Text>
-              </TableCell>
+              {isActor ? (
+                <TableCell width="auto">
+                  <Text variant="label" color="muted">
+                    {game.i18n.localize("ROBOTECH.Effect.Source")}
+                  </Text>
+                </TableCell>
+              ) : null}
+              {isActor ? (
+                <TableCell width="12" align="center">
+                  <Text variant="label" color="muted" align="center">
+                    {game.i18n.localize("ROBOTECH.Effect.Enabled")}
+                  </Text>
+                </TableCell>
+              ) : null}
               <TableCell width="16" align="end" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {effects.map((effect) => (
-              <ActorEffectRow key={effect.id} effect={effect} />
+              <EffectRow key={effect.id} effect={effect} showSource={isActor} showEnabled={isActor} />
             ))}
           </TableBody>
         </Table>
@@ -68,8 +76,17 @@ export function ActorEffectsList({ actor }: ActorEffectsListProps): JSX.Element 
   );
 }
 
-function ActorEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
+function EffectRow({
+  effect,
+  showSource,
+  showEnabled,
+}: {
+  effect: ActiveEffect;
+  showSource: boolean;
+  showEnabled: boolean;
+}): JSX.Element {
   const own = isOwnEffect(effect);
+  const canDelete = showSource ? own : true;
 
   return (
     <TableRow>
@@ -84,24 +101,27 @@ function ActorEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
           </Text>
         </Button>
       </TableCell>
-
-      <TableCell width="auto">
-        <Text variant="label" color="muted" truncate>
-          {effectSource(effect)}
-        </Text>
-      </TableCell>
-
-      <TableCell width="12" align="center">
-        <Checkbox
-          id={`${effect.id}-enabled`}
-          checked={!effect.disabled}
-          title={game.i18n.localize("ROBOTECH.Effect.Enabled")}
-          onCheckedChange={(checked) => void effect.update({ disabled: !checked })}
-        />
-      </TableCell>
-
+      {showSource ? (
+        <TableCell width="auto">
+          <Text variant="label" color="muted" truncate>
+            {effectSource(effect)}
+          </Text>
+        </TableCell>
+      ) : null}
+      {showEnabled ? (
+        <TableCell width="12" align="center">
+          <Checkbox
+            id={`${effect.id}-enabled`}
+            checked={!effect.disabled}
+            title={game.i18n.localize("ROBOTECH.Effect.Enabled")}
+            onCheckedChange={(checked) => {
+              void effect.update({ disabled: !checked });
+            }}
+          />
+        </TableCell>
+      ) : null}
       <TableCell width="16" align="end">
-        {own && (
+        {canDelete ? (
           <Button
             size="icon"
             variant="danger"
@@ -110,7 +130,7 @@ function ActorEffectRow({ effect }: { effect: ActiveEffect }): JSX.Element {
           >
             <Icon name="x" />
           </Button>
-        )}
+        ) : null}
       </TableCell>
     </TableRow>
   );

@@ -8,51 +8,25 @@ import { cn } from "@/utils/cn";
 export type { TagColor } from "@/types/ui";
 
 export type TagSize = TextSize;
-export type TagVariant = "subtle" | "solid" | "outline";
 
 export interface TagProps {
   label?: React.ReactNode;
   children?: React.ReactNode;
   color?: TagColor;
   size?: TagSize;
-  variant?: TagVariant;
   title?: string;
 }
 
-const colorStyles: Record<TagVariant, Record<TagColor, string>> = {
-  outline: {
-    amber: "bg-transparent text-rt-custom-amber border-rt-custom-amber",
-    blue: "bg-transparent text-rt-custom-blue border-rt-custom-blue",
-    default: "bg-transparent text-rt-foreground border-rt-border",
-    green: "bg-transparent text-rt-custom-green border-rt-custom-green",
-    pink: "bg-transparent text-rt-custom-pink border-rt-custom-pink",
-    primary: "bg-transparent text-rt-primary border-rt-primary",
-    purple: "bg-transparent text-rt-custom-purple border-rt-custom-purple",
-    red: "bg-transparent text-rt-custom-red border-rt-custom-red",
-    teal: "bg-transparent text-rt-custom-teal border-rt-custom-teal",
-  },
-  solid: {
-    amber: "bg-rt-custom-amber text-rt-primary-foreground border-rt-custom-amber",
-    blue: "bg-rt-custom-blue text-rt-primary-foreground border-rt-custom-blue",
-    default: "bg-rt-secondary text-rt-secondary-foreground border-rt-border",
-    green: "bg-rt-custom-green text-rt-primary-foreground border-rt-custom-green",
-    pink: "bg-rt-custom-pink text-rt-primary-foreground border-rt-custom-pink",
-    primary: "bg-rt-primary text-rt-primary-foreground border-rt-primary",
-    purple: "bg-rt-custom-purple text-rt-primary-foreground border-rt-custom-purple",
-    red: "bg-rt-custom-red text-rt-primary-foreground border-rt-custom-red",
-    teal: "bg-rt-custom-teal text-rt-primary-foreground border-rt-custom-teal",
-  },
-  subtle: {
-    amber: "bg-rt-custom-amber/15 text-rt-custom-amber border-rt-custom-amber/50",
-    blue: "bg-rt-custom-blue/15 text-rt-custom-blue border-rt-custom-blue/50",
-    default: "bg-rt-secondary text-rt-secondary-foreground border-rt-border",
-    green: "bg-rt-custom-green/15 text-rt-custom-green border-rt-custom-green/50",
-    pink: "bg-rt-custom-pink/15 text-rt-custom-pink border-rt-custom-pink/50",
-    primary: "bg-rt-primary/15 text-rt-primary border-rt-primary/50",
-    purple: "bg-rt-custom-purple/15 text-rt-custom-purple border-rt-custom-purple/50",
-    red: "bg-rt-custom-red/15 text-rt-custom-red border-rt-custom-red/50",
-    teal: "bg-rt-custom-teal/15 text-rt-custom-teal border-rt-custom-teal/50",
-  },
+const colorStyles: Record<TagColor, string> = {
+  amber: "bg-rt-custom-amber/15 text-rt-custom-amber border-rt-custom-amber/50",
+  blue: "bg-rt-custom-blue/15 text-rt-custom-blue border-rt-custom-blue/50",
+  default: "bg-rt-secondary text-rt-secondary-foreground border-rt-border",
+  green: "bg-rt-custom-green/15 text-rt-custom-green border-rt-custom-green/50",
+  pink: "bg-rt-custom-pink/15 text-rt-custom-pink border-rt-custom-pink/50",
+  primary: "bg-rt-primary/15 text-rt-primary border-rt-primary/50",
+  purple: "bg-rt-custom-purple/15 text-rt-custom-purple border-rt-custom-purple/50",
+  red: "bg-rt-custom-red/15 text-rt-custom-red border-rt-custom-red/50",
+  teal: "bg-rt-custom-teal/15 text-rt-custom-teal border-rt-custom-teal/50",
 };
 
 const SIZE_PAD: Record<TagSize, string> = {
@@ -62,14 +36,7 @@ const SIZE_PAD: Record<TagSize, string> = {
 };
 
 export const Tag = React.memo(
-  ({
-    label,
-    children,
-    color = "amber",
-    size = "small",
-    variant = "subtle",
-    title,
-  }: TagProps): React.JSX.Element | null => {
+  ({ label, children, color = "amber", size = "small", title }: TagProps): React.JSX.Element | null => {
     const content = label ?? children;
     if (!content) {
       return null;
@@ -81,7 +48,7 @@ export const Tag = React.memo(
         className={cn(
           "inline-flex w-fit items-center border font-rt-mono",
           typoClass("label", size),
-          colorStyles[variant]?.[color] ?? colorStyles.subtle.amber,
+          colorStyles[color] ?? colorStyles.amber,
           SIZE_PAD[size] ?? SIZE_PAD.small
         )}
       >

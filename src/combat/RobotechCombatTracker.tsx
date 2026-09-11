@@ -8,6 +8,7 @@ type TrackerBase = foundry.applications.sidebar.tabs.CombatTracker;
 // @ts-expect-error CombatTracker is typed as Handlebars parts; this class mounts React instead.
 export class RobotechCombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
   private readonly mount: ReactMount = createReactMount();
+  private scrollFrame = 0;
 
   static override DEFAULT_OPTIONS = {
     classes: ["robotech"],
@@ -33,12 +34,13 @@ export class RobotechCombatTracker extends foundry.applications.sidebar.tabs.Com
 
   protected override async _onRender(...args: Parameters<TrackerBase["_onRender"]>): Promise<void> {
     await foundry.applications.sidebar.AbstractSidebarTab.prototype._onRender.call(this, ...args);
-    requestAnimationFrame(() => {
+    this.scrollFrame = requestAnimationFrame(() => {
       this.element.querySelector(".combatant.active")?.scrollIntoView({ block: "nearest" });
     });
   }
 
   override _onClose(options: CloseOptions): void {
+    cancelAnimationFrame(this.scrollFrame);
     unmountReactMount(this.mount);
     super._onClose(options);
   }

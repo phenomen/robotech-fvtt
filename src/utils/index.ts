@@ -1,5 +1,5 @@
 export * from "./actionChat";
-export * from "./AD6Roll";
+export * from "./evaluateAd6Roll";
 export * from "./applyDamage";
 export * from "./combat";
 export * from "./conflictUtils";
@@ -8,7 +8,6 @@ export * from "./effects";
 export * from "./hardwareUtils";
 export * from "./html";
 export * from "./itemChat";
-export * from "./linkedActors";
 export * from "./sheetContainer";
 export * from "./swarmUtils";
 export * from "./synergy";

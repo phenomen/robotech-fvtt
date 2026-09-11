@@ -9,10 +9,11 @@ import {
   woundBaselines,
 } from "@/config/wounds";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
-import { gaugeSchema } from "@/models/actors/gauges";
-import type { Gauge } from "@/models/actors/gauges";
+import { gaugeSchema, woundCategorySchema } from "@/models/actors/gaugeSchema";
+import type { Gauge } from "@/models/actors/gaugeSchema";
+import { expandChanges, numberAt, pathTouched } from "@/models/changePatch";
 import { findItemOf } from "@/utils/documents";
-import { countCheckedBoxes } from "@/utils/trackers";
+import { syncBoxTracker } from "@/utils/trackers";
 
 export interface WoundCategory {
   value: number;
@@ -30,11 +31,7 @@ export interface StressData {
   value: number;
   drama: number;
   fatigue: number;
-  drama1: string;
-  drama2: string;
-  drama3: string;
-  drama4: string;
-  drama5: string;
+  dramas: string[];
   boxes: string[];
 }
 
@@ -78,7 +75,6 @@ export class CharacterDataModel extends ActorDataModel {
   declare stress: StressData;
   declare heroicMove: HeroicMove;
   declare proficiencies: string[];
-  declare skills: Record<string, unknown>;
 
   declare rank: number;
   declare rankTitle: string;
@@ -116,16 +112,13 @@ export class CharacterDataModel extends ActorDataModel {
       organization: new fields.StringField({ initial: "" }),
       proficiencies: new fields.ArrayField(new fields.StringField()),
       resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      skills: new fields.ObjectField({ initial: {} }),
       speed: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
       stress: new fields.SchemaField({
         boxes: new fields.ArrayField(new fields.StringField({ initial: "" })),
         drama: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        drama1: new fields.StringField({ initial: "" }),
-        drama2: new fields.StringField({ initial: "" }),
-        drama3: new fields.StringField({ initial: "" }),
-        drama4: new fields.StringField({ initial: "" }),
-        drama5: new fields.StringField({ initial: "" }),
+        dramas: new fields.ArrayField(new fields.StringField({ initial: "" }), {
+          initial: () => Array.from({ length: STRESS_BOX_COUNT }, () => ""),
+        }),
         fatigue: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         value: new fields.NumberField({
           initial: 0,
@@ -169,28 +162,10 @@ export class CharacterDataModel extends ActorDataModel {
         initial: WEALTH_VALUES[1],
       }),
       wounds: new fields.SchemaField({
-        brawl: new fields.SchemaField({
-          max: new fields.NumberField({ initial: 2, integer: true, min: 0 }),
-          states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        }),
-        critical: new fields.SchemaField({
-          max: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-          states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        }),
+        brawl: woundCategorySchema(2),
+        critical: woundCategorySchema(1),
       }),
     };
-  }
-
-  /* Remove armor migration later after the new version adoption */
-  static override migrateData(source: object, options?: object): object {
-    const data = super.migrateData(source, options) as { armor?: unknown };
-    const armor = gaugeOf(data.armor);
-    if (armor) {
-      data.armor = armor;
-    }
-    return data;
   }
 
   override prepareDerivedData() {
@@ -241,13 +216,10 @@ export class CharacterDataModel extends ActorDataModel {
   private prepareStress() {
     const stress = this.stress;
     stress.boxes = syncStressBoxes(stress.boxes, stress.value);
+    stress.dramas = syncDramaLines(stress.dramas);
     stress.fatigue = stress.boxes.filter((box) => box === "F").length;
     stress.drama = stress.boxes.filter((box) => box === "D").length;
     stress.value = stress.boxes.filter(Boolean).length;
-  }
-
-  get totalStress(): number {
-    return this.stress.value;
   }
 
   get isMentalBreak(): boolean {
@@ -273,16 +245,10 @@ function clampMax(value: number, ceiling: number): number {
 
 function syncWoundCategory(category: WoundCategory, max: number) {
   category.max = max;
-  const previous = category.states;
-  if (previous.length !== max) {
-    category.states = Array.from({ length: max }, (_unused, index) => {
-      if (index < previous.length) {
-        return previous[index] ?? false;
-      }
-      return previous.length === 0 && index < category.value;
-    });
+  if (category.states.length === 0 && category.value > 0) {
+    category.states = Array.from({ length: max }, (_unused, index) => index < category.value);
   }
-  category.value = countCheckedBoxes(category.states);
+  syncBoxTracker(category);
 }
 
 function syncStressBoxes(boxes: string[], value: number): string[] {
@@ -295,6 +261,13 @@ function syncStressBoxes(boxes: string[], value: number): string[] {
     }
     return boxes.length === 0 && index < value ? "F" : "";
   });
+}
+
+function syncDramaLines(dramas: string[]): string[] {
+  if (dramas.length === STRESS_BOX_COUNT) {
+    return dramas;
+  }
+  return Array.from({ length: STRESS_BOX_COUNT }, (_unused, index) => dramas[index] ?? "");
 }
 
 function applyMentalBreak(system: CharacterDataModel, changed: object): void {
@@ -317,40 +290,11 @@ function stressChanged(changed: object): boolean {
   );
 }
 
-function gaugeOf(value: unknown): Gauge | null {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    return null;
-  }
-  const rating = Math.max(0, Math.round(value));
-  return { max: rating, value: rating };
-}
-
 function syncArmorValue(armor: Gauge, changes: object): void {
-  if (!armorTouched(changes)) {
+  if (!pathTouched(changes, "system.armor")) {
     return;
   }
-  const nextMax = armorMaxOf(changes) ?? armor.max;
-  foundry.utils.setProperty(changes, "system.armor.value", nextMax);
-}
-
-function armorTouched(changes: object): boolean {
-  return Object.keys(foundry.utils.flattenObject(changes)).some(
-    (key) => key === "system.armor" || key.startsWith("system.armor.")
-  );
-}
-
-function armorMaxOf(changes: object): number | null {
-  const nested = foundry.utils.getProperty(changes, "system.armor");
-  if (isGaugePatch(nested) && typeof nested.max === "number") {
-    return Math.max(0, nested.max);
-  }
-  const dotted = foundry.utils.getProperty(changes, "system.armor.max");
-  if (typeof dotted === "number") {
-    return Math.max(0, dotted);
-  }
-  return null;
-}
-
-function isGaugePatch(value: unknown): value is Partial<Gauge> {
-  return typeof value === "object" && value !== null;
+  const expanded = expandChanges(changes);
+  const nextMax = numberAt(expanded, "system.armor.max") ?? armor.max;
+  foundry.utils.setProperty(changes, "system.armor.value", Math.max(0, nextMax));
 }

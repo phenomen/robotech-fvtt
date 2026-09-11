@@ -1,5 +1,7 @@
 import type { JSX } from "react";
 
+import { useLinkedActors } from "@/components/hooks/useLinkedActors";
+import type { LinkedActor } from "@/components/hooks/useLinkedActors";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
@@ -9,8 +11,7 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { useLinkedActors, openActorSheet, SCENE_ACTOR_TYPES } from "@/utils";
-import type { LinkedActor } from "@/utils";
+import { openActorSheet, SCENE_ACTOR_TYPES } from "@/utils";
 
 interface ConflictActorListProps {
   actor: ActorOf<"conflict">;

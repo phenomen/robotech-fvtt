@@ -20,14 +20,17 @@ export const COMBAT_DOCUMENT_TYPE = "robotech";
 
 /** Stamp the system subtype before Foundry applies the `base` DocumentTypeField initial. */
 export function applyCombatType(data: object): void {
-  if (!foundry.utils.isPlainObject(data)) {
+  if (!isCombatSource(data)) {
     return;
   }
-  const source = data as { type?: unknown };
-  if (source.type === COMBAT_DOCUMENT_TYPE) {
+  if (data.type === COMBAT_DOCUMENT_TYPE) {
     return;
   }
-  source.type = COMBAT_DOCUMENT_TYPE;
+  data.type = COMBAT_DOCUMENT_TYPE;
+}
+
+function isCombatSource(data: object): data is { type?: unknown } {
+  return foundry.utils.isPlainObject(data);
 }
 
 export function actorSpeed(actor: Actor | null): number {

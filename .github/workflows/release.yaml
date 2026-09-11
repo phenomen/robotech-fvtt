@@ -20,7 +20,8 @@ jobs:
 
       - name: Build
         run: |
-          bun install
+          bun install --frozen-lockfile
+          bun run check
           bun run build
 
       - name: Zip build output

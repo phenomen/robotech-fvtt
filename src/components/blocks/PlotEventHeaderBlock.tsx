@@ -29,7 +29,9 @@ export function PlotEventHeaderBlock({ actor }: PlotEventHeaderBlockProps): JSX.
         <NumberInput
           value={actor.system.eventLevel}
           min={0}
-          onValueChange={(val) => void actor.update({ "system.eventLevel": val ?? 0 })}
+          onValueChange={(val) => {
+            void actor.update({ "system.eventLevel": val ?? 0 });
+          }}
         />
       </Field>
     </Stack>

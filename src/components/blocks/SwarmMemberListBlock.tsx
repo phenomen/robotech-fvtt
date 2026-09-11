@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 
+import { useLinkedActors } from "@/components/hooks/useLinkedActors";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
@@ -12,7 +13,7 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf, SwarmMember } from "@/models";
-import { leadStructureOf, memberArmorOf, memberStructureOf, openActorSheet, useLinkedActors } from "@/utils";
+import { leadStructureOf, memberArmorOf, memberStructureOf, openActorSheet } from "@/utils";
 
 interface SwarmMemberListBlockProps {
   actor: ActorOf<"swarm">;

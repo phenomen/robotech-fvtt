@@ -67,7 +67,6 @@ export default defineConfig({
     ],
     "react/prefer-function-component": "off",
     "require-await": "off",
-    "typescript/no-deprecated": "off",
     "typescript/no-extraneous-class": "off",
     "typescript/no-invalid-void-type": "off",
     "typescript/no-unsafe-argument": "off",

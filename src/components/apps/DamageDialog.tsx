@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { JSX } from "react";
 
 import { ReactDialog } from "@/components/apps/ReactDialog";
-import { Button } from "@/components/ui/Button";
+import { DialogFooter } from "@/components/blocks/DialogFooter";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Divider } from "@/components/ui/Divider";
 import { Field } from "@/components/ui/Field";
@@ -103,14 +103,12 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
         </Stack>
       )}
 
-      <Stack direction="row" gap={2} justify="end" shrink>
-        <Button size="medium" variant="outline" onClick={onClose}>
-          {game.i18n.localize("ROBOTECH.Buttons.Cancel")}
-        </Button>
-        <Button size="medium" variant="primary" disabled={!canApply} onClick={() => void handleApply()}>
-          {game.i18n.localize("ROBOTECH.Roll.ApplyDamage")}
-        </Button>
-      </Stack>
+      <DialogFooter
+        onCancel={onClose}
+        onConfirm={() => void handleApply()}
+        confirmKey="ROBOTECH.Roll.ApplyDamage"
+        confirmDisabled={!canApply}
+      />
     </Stack>
   );
 }

@@ -1,3 +1,4 @@
+import { cloneElement, useId } from "react";
 import type { JSX, ReactElement, ReactNode } from "react";
 
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -38,14 +39,18 @@ export function Field({
   grow = false,
   children,
 }: FieldProps): JSX.Element {
+  const generatedId = useId();
+  const childId = children.props.id ?? generatedId;
   const center = orientation === "vertical" && isCenteredControl(children);
 
   return (
-    <label className={cn("flex", fieldLayoutClass(orientation, center), grow && "min-w-0 flex-1")}>
-      <Label icon={icon} iconTone={iconTone} title={title}>
+    <div className={cn("flex", fieldLayoutClass(orientation, center), grow && "min-w-0 flex-1")}>
+      <Label htmlFor={childId} icon={icon} iconTone={iconTone} title={title}>
         {label}
       </Label>
-      {children}
-    </label>
+      {/* Field owns the label/control pairing; clone is how the generated id reaches the child. */}
+      {/* oxlint-disable-next-line react/no-clone-element */}
+      {cloneElement(children, { id: childId })}
+    </div>
   );
 }

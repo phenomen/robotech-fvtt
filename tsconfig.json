@@ -37,6 +37,6 @@
   },
 
   "files": ["foundry/common/global.d.mts", "foundry/client/global.d.mts"],
-  "include": ["src", "build.ts", "bun-env.d.ts"],
+  "include": ["src", "build.ts"],
   "exclude": ["dist", "node_modules"]
 }

@@ -14,7 +14,7 @@ export type {
   VitalsSettings,
   WoundCategory,
 } from "@/models/actors/CharacterDataModel";
-export type { Gauge } from "@/models/actors/gauges";
+export type { Gauge } from "@/models/actors/gaugeSchema";
 export type { SpeedModeName, SpeedUnit, VesselSystemName, VesselSystems } from "@/models/actors/VesselDataModel";
 export type { ConflictTracker } from "@/models/actors/ConflictDataModel";
 export type { PlotEventRounds } from "@/models/actors/PlotEventDataModel";
