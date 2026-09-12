@@ -403,6 +403,81 @@
       "AlreadyAssigned": "That character is already in the crew.",
       "InheritedFromVessels": "Assign crew on a vessel sheet. Swarm crew is inherited from member vessels."
     },
+    "Lieutenant": {
+      "Create": "Create Lieutenant",
+      "Title": "Create Lieutenant",
+      "Type": "Type",
+      "Element": "Element",
+      "Veteran": "Veteran",
+      "Flavor": "Flavor",
+      "Noun": "Lieutenant",
+      "NoPermission": "You do not have permission to create actors.",
+      "CreateFailed": "Failed to create the Lieutenant.",
+      "Types": {
+        "minor": "Minor",
+        "major": "Major",
+        "ultra": "Ultra"
+      },
+      "Flavors": {
+        "supportive": "Supportive",
+        "aggressive": "Aggressive",
+        "technical": "Technical"
+      },
+      "Elements": {
+        "pilot": {
+          "label": "Pilot",
+          "description": "A Pilot Lieutenant is in their Element when acting in the Ops Phase."
+        },
+        "officer": {
+          "label": "Officer",
+          "description": "An Officer Lieutenant is in their Element when Assisting or Inhibiting."
+        },
+        "marine": {
+          "label": "Marine",
+          "description": "A Marine Lieutenant is in their Element in the Ops Phase."
+        },
+        "technician": {
+          "label": "Technician",
+          "description": "A Technician Lieutenant is in their Element when acting in the Cinematic Phase."
+        },
+        "spy": {
+          "label": "Spy",
+          "description": "A Spy Lieutenant is in their Element when acting in the Support Phase."
+        },
+        "volunteer": {
+          "label": "Volunteer",
+          "supportive": "A Supportive Volunteer Lieutenant is in their Element when acting in the Support Phase.",
+          "aggressive": "An Aggressive Volunteer Lieutenant is in their Element in the Ops Phase.",
+          "technical": "A Technical Volunteer Lieutenant is in their Element in the Cinematic Phase."
+        },
+        "entertainer": {
+          "label": "Entertainer",
+          "supportive": "A Supportive Entertainer Lieutenant is in their Element when acting in the Support Phase.",
+          "aggressive": "An Aggressive Entertainer Lieutenant is in their Element in the Ops Phase.",
+          "technical": "A Technical Entertainer Lieutenant is in their Element in the Cinematic Phase."
+        },
+        "triumvirate": {
+          "label": "Triumvirate",
+          "description": "A Triumvirate Lieutenant is in their Element when working together as a team."
+        },
+        "nomad": {
+          "label": "Nomad",
+          "description": "A Nomad Lieutenant is in their Element when acting in the Support Phase."
+        },
+        "mercenary": {
+          "label": "Mercenary",
+          "description": "A Mercenary Lieutenant is in their Element in the Ops Phase."
+        },
+        "animalHandler": {
+          "label": "Animal Handler",
+          "description": "An Animal Handler Lieutenant is in their Element when Observing or Defending."
+        },
+        "spleen": {
+          "label": "Spleen",
+          "description": "A Spleen Lieutenant is in their Element when performing in the Ops Phase."
+        }
+      }
+    },
     "Roll": {
       "Actions": {
         "Assist": {

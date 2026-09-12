@@ -27,12 +27,18 @@ const ALIGN_CLASS: Record<TableAlign, string> = {
 
 export interface TableProps {
   children?: ReactNode;
+  fixed?: boolean;
 }
 
-export function Table({ children }: TableProps): JSX.Element {
+export function Table({ children, fixed = false }: TableProps): JSX.Element {
   return (
     <div className="max-h-72 min-w-0 overflow-x-hidden overflow-y-auto">
-      <table className="m-0! w-full min-w-0 border-separate! border-spacing-x-0 border-spacing-y-1 border-none! bg-transparent!">
+      <table
+        className={cn(
+          "m-0! w-full min-w-0 border-separate! border-spacing-x-0 border-spacing-y-1 border-none! bg-transparent!",
+          fixed && "table-fixed"
+        )}
+      >
         {children}
       </table>
     </div>

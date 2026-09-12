@@ -9,6 +9,7 @@ import { registerSystemSettings } from "@/registry/settings";
 import { RobotechActorSheet } from "@/sheets/RobotechActorSheet";
 import { RobotechEffectSheet } from "@/sheets/RobotechEffectSheet";
 import { RobotechItemSheet } from "@/sheets/RobotechItemSheet";
+import { RobotechActorDirectory } from "@/sidebar/RobotechActorDirectory";
 import { applyTheme } from "@/utils/theme";
 
 function registerSystemSheets(): void {
@@ -74,6 +75,7 @@ foundry.helpers.Hooks.once("init", () => {
   CONFIG.Combat.documentClass = RobotechCombat;
   CONFIG.Combatant.documentClass = RobotechCombatant;
   CONFIG.ui.combat = RobotechCombatTracker as unknown as typeof foundry.applications.sidebar.tabs.CombatTracker;
+  CONFIG.ui.actors = RobotechActorDirectory;
   registerStatusEffects();
   registerTrackableAttributes();
   registerDataModels();

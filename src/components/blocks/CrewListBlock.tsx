@@ -1,10 +1,12 @@
 import type { JSX } from "react";
 
+import { openLieutenantGenerator } from "@/components/apps/LieutenantGeneratorDialog";
 import { useLinkedActors } from "@/components/hooks/useLinkedActors";
 import type { LinkedActor } from "@/components/hooks/useLinkedActors";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Callout";
 import { CardHeader, CardTitle } from "@/components/ui/Card";
+import { Divider } from "@/components/ui/Divider";
 import { Field } from "@/components/ui/Field";
 import { Icon } from "@/components/ui/Icon";
 import { NumberInput } from "@/components/ui/NumberInput";
@@ -13,7 +15,7 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { openActorSheet } from "@/utils";
+import { canCreateActor, openActorSheet } from "@/utils";
 
 interface CrewListBlockProps {
   actor: ActorOf<"vessel">;
@@ -36,9 +38,24 @@ export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
     <Stack gap={1}>
       <CardHeader>
         <CardTitle>{game.i18n.localize("ROBOTECH.Tabs.Crew")}</CardTitle>
-        <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Vessel.Capacity")}>
-          <NumberInput value={actor.system.crew} min={0} onValueChange={handleCapacityChange} />
-        </Field>
+        <Stack direction="row" gap={2} align="center" shrink>
+          {canCreateActor() && (
+            <>
+              <Button
+                size="small"
+                onClick={() => {
+                  openLieutenantGenerator(actor);
+                }}
+              >
+                {game.i18n.localize("ROBOTECH.Lieutenant.Create")}
+              </Button>
+              <Divider orientation="vertical" />
+            </>
+          )}
+          <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Vessel.Capacity")}>
+            <NumberInput value={actor.system.crew} min={0} onValueChange={handleCapacityChange} />
+          </Field>
+        </Stack>
       </CardHeader>
 
       {actor.system.characterUuids.length > actor.system.crew && (

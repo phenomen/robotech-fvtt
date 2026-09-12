@@ -8,8 +8,9 @@ export type InputSize = TextSize;
 export type InputWidth = "auto" | "full" | "small" | "medium" | "large";
 
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "className" | "size"> {
-  value?: string | number;
+  ref?: React.Ref<HTMLInputElement>;
   size?: InputSize;
+  value?: string | number;
   width?: InputWidth;
 }
 
@@ -38,6 +39,7 @@ export const Input = React.memo(
     onFocus,
     onKeyDown,
     spellCheck = false,
+    ref,
     ...props
   }: InputProps): React.JSX.Element => {
     const [draft, setDraft] = useState<string | null>(null);
@@ -71,6 +73,7 @@ export const Input = React.memo(
 
     return (
       <input
+        ref={ref}
         type={type}
         spellCheck={spellCheck}
         value={displayValue}

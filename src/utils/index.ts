@@ -3,6 +3,7 @@ export * from "./evaluateAd6Roll";
 export * from "./applyDamage";
 export * from "./combat";
 export * from "./conflictUtils";
+export * from "./createLieutenant";
 export * from "./documents";
 export * from "./effects";
 export * from "./hardwareUtils";

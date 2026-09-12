@@ -1,4 +1,5 @@
 export * from "./options";
+export * from "./lieutenants";
 export * from "./documentMeta";
 export * from "./effects";
 export * from "./gradation";

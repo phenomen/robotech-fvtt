@@ -12,4 +12,5 @@ export * from "./ReactDialog";
 export * from "./actorSheets";
 export * from "./chatActions";
 export * from "./FrameworkSettingsDialog";
+export * from "./LieutenantGeneratorDialog";
 export * from "./VitalsSettingsDialog";
