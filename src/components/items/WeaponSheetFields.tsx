@@ -1,8 +1,10 @@
 import type { JSX } from "react";
 
 import type { ItemFieldsProps } from "@/components/items/types";
-import { CardHeader, CardTitle } from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Divider } from "@/components/ui/Divider";
+import { Field } from "@/components/ui/Field";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
@@ -27,7 +29,7 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
   };
 
   return (
-    <Stack direction="row" gap={4} align="center" justify="between">
+    <Stack direction="row" gap={4} align="center" justify="between" minHeight="input">
       <Checkbox checked={isActive} onCheckedChange={handleCheckboxChange} label={game.i18n.localize(def.nameKey)} />
 
       {isActive && def.inputType === "damage" && (
@@ -96,7 +98,8 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
 }
 
 export function WeaponSheetFields({ item, handleFieldChange }: ItemFieldsProps<"weapon">): JSX.Element {
-  const properties = item.system.properties;
+  const system = item.system;
+  const properties = system.properties;
 
   const setProp = (path: string, val: FieldValue) => {
     handleFieldChange(`system.properties.${path}`, val);
@@ -108,28 +111,38 @@ export function WeaponSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
 
   return (
     <Stack gap={4}>
-      <Stack direction="row" gap={2} wrap>
-        {weaponPropertyTags(properties).map((tag) => (
-          <Tag key={tag.id} label={tag.label} color={tag.color} size="small" title={tag.title} />
-        ))}
-      </Stack>
+      <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.RequiredRank")}>
+        <NumberInput
+          controls
+          width="small"
+          min={0}
+          value={system.requiredRank}
+          onValueChange={(val) => {
+            handleFieldChange("system.requiredRank", val ?? 1);
+          }}
+        />
+      </Field>
 
-      <Stack gap={3}>
-        <CardHeader>
-          <CardTitle>{game.i18n.localize("ROBOTECH.Item.Properties")}</CardTitle>
-        </CardHeader>
+      <Divider />
 
-        <Stack direction="row" gap={4}>
-          <Stack gap={1} grow>
-            {left.map((def) => (
-              <WeaponPropertyRow key={def.key} def={def} properties={properties} setProp={setProp} />
-            ))}
-          </Stack>
-          <Stack gap={1} grow>
-            {right.map((def) => (
-              <WeaponPropertyRow key={def.key} def={def} properties={properties} setProp={setProp} />
-            ))}
-          </Stack>
+      <Card tone="background">
+        <Stack direction="row" gap={2} wrap>
+          {weaponPropertyTags(properties).map((tag) => (
+            <Tag key={tag.id} label={tag.label} color={tag.color} size="small" title={tag.title} />
+          ))}
+        </Stack>
+      </Card>
+
+      <Stack direction="row" gap={4}>
+        <Stack gap={1} grow>
+          {left.map((def) => (
+            <WeaponPropertyRow key={def.key} def={def} properties={properties} setProp={setProp} />
+          ))}
+        </Stack>
+        <Stack gap={1} grow>
+          {right.map((def) => (
+            <WeaponPropertyRow key={def.key} def={def} properties={properties} setProp={setProp} />
+          ))}
         </Stack>
       </Stack>
     </Stack>

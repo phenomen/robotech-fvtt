@@ -59,7 +59,7 @@ Foundry windows are fixed width. Do not pass responsive `{ sm, md, lg }` maps.
 
 ## Stack
 
-`direction`, `gap`, `align`, `justify`, `pad`, `wrap`, `grow`. `Field` also accepts `grow` so a row of full-width controls shares leftover space.
+`direction`, `gap`, `align`, `justify`, `pad`, `wrap`, `grow`, `minHeight` (`"input"` — at least as tall as Input/Select). `Field` also accepts `grow` so a row of full-width controls shares leftover space.
 
 Gap and pad use the 4px scale:
 

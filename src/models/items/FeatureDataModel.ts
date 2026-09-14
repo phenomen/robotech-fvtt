@@ -4,16 +4,16 @@ import { ItemDataModel } from "@/models/items/ItemDataModel";
 
 export class FeatureDataModel extends ItemDataModel {
   declare slotType: string;
-  declare bonus: string;
   declare hardware: HardwareSlots;
+  declare requiredRank: number;
 
   static override defineSchema() {
     const fields = foundry.data.fields;
     return {
       ...super.defineSchema(),
-      bonus: new fields.StringField({ initial: "" }),
       hardware: hardwareSlotsSchema(),
-      slotType: new fields.StringField({ initial: "general" }),
+      requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+      slotType: new fields.StringField({ initial: "General" }),
     };
   }
 

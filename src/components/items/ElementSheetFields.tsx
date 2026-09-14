@@ -10,7 +10,7 @@ export function ElementSheetFields({ item, handleFieldChange }: ItemFieldsProps<
 
   return (
     <Stack direction="row" gap={3}>
-      <Field label={game.i18n.localize("ROBOTECH.Item.StartingRank")} grow>
+      <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.StartingRank")} grow>
         <Input
           width="full"
           value={system.rank}

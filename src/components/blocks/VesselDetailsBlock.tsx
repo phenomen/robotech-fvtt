@@ -20,21 +20,6 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
   return (
     <Stack gap={3} justify="center">
       <Field
-        icon="hardware-point"
-        iconTone="amber"
-        orientation="horizontal"
-        label={game.i18n.localize("ROBOTECH.Vessel.HardwarePoints")}
-      >
-        <NumberInput
-          value={system.hardwarePoints}
-          onValueChange={(val) => {
-            handleFieldChange("system.hardwarePoints", val ?? 0);
-          }}
-          min={0}
-        />
-      </Field>
-
-      <Field
         icon="rank"
         iconTone="primary"
         orientation="horizontal"
@@ -44,6 +29,21 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
           value={system.requiredRank}
           onValueChange={(val) => {
             handleFieldChange("system.requiredRank", val ?? 0);
+          }}
+          min={0}
+        />
+      </Field>
+
+      <Field
+        icon="hardware-point"
+        iconTone="amber"
+        orientation="horizontal"
+        label={game.i18n.localize("ROBOTECH.Vessel.HardwarePoints")}
+      >
+        <NumberInput
+          value={system.hardwarePoints}
+          onValueChange={(val) => {
+            handleFieldChange("system.hardwarePoints", val ?? 0);
           }}
           min={0}
         />

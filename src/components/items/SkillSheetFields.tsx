@@ -11,18 +11,19 @@ export function SkillSheetFields({ item, handleFieldChange }: ItemFieldsProps<"s
 
   return (
     <Stack direction="row" gap={3}>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Value")}>
+      <Field icon="skill" iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.Value")}>
         <NumberInput
+          controls
+          width="full"
           min={1}
-          max={5}
+          max={6}
           value={system.value}
           onValueChange={(val) => {
             handleFieldChange("system.value", val ?? 1);
           }}
-          width="full"
         />
       </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Benefit")}>
+      <Field icon="bonus-up" iconTone="amber" label={game.i18n.localize("ROBOTECH.Item.Benefit")}>
         <Input
           width="full"
           value={system.benefit}
@@ -31,7 +32,7 @@ export function SkillSheetFields({ item, handleFieldChange }: ItemFieldsProps<"s
           }}
         />
       </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Cost")}>
+      <Field icon="bonus-down" iconTone="danger" label={game.i18n.localize("ROBOTECH.Item.Cost")}>
         <Input
           width="full"
           value={system.cost}

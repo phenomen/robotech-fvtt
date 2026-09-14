@@ -11,12 +11,13 @@ export function GearSheetFields({ item, handleFieldChange }: ItemFieldsProps<"ge
 
   return (
     <Stack direction="row" gap={3}>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Quantity")}>
+      <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.RequiredRank")}>
         <NumberInput
+          controls
           min={0}
-          value={system.quantity}
+          value={system.requiredRank}
           onValueChange={(val) => {
-            handleFieldChange("system.quantity", val ?? 1);
+            handleFieldChange("system.requiredRank", val ?? 1);
           }}
         />
       </Field>

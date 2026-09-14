@@ -12,12 +12,14 @@ export class EquipmentSuiteDataModel extends ItemDataModel {
   declare skill: number;
   declare uses: SuiteUses;
   declare hardware: HardwareSlots;
+  declare requiredRank: number;
 
   static override defineSchema() {
     const fields = foundry.data.fields;
     return {
       ...super.defineSchema(),
       hardware: hardwareSlotsSchema(),
+      requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
       skill: new fields.NumberField({ initial: 1, integer: true, min: 1 }),
       uses: new fields.SchemaField({
         max: new fields.NumberField({ initial: 1, integer: true, min: 0, nullable: true }),

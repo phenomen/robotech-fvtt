@@ -28,7 +28,7 @@ export function TalentSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
           ))}
         </Select>
       </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Prerequisites")} grow>
+      <Field icon="relation" label={game.i18n.localize("ROBOTECH.Item.Prerequisites")} grow>
         <Input
           width="full"
           value={system.prerequisite}
@@ -38,7 +38,7 @@ export function TalentSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
           placeholder={game.i18n.localize("ROBOTECH.Item.PrerequisitePlaceholder")}
         />
       </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Uses")}>
+      <Field icon="stack" label={game.i18n.localize("ROBOTECH.Item.Uses")}>
         <NumberInput
           min={0}
           value={system.uses}

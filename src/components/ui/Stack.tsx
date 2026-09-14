@@ -7,6 +7,7 @@ import { cn } from "@/utils/cn";
 export type StackDirection = "row" | "column";
 export type StackAlign = "start" | "center" | "end" | "stretch";
 export type StackJustify = "start" | "center" | "end" | "between";
+export type StackMinHeight = "input";
 
 export interface StackProps {
   direction?: StackDirection;
@@ -17,8 +18,13 @@ export interface StackProps {
   wrap?: boolean;
   grow?: boolean;
   shrink?: boolean;
+  minHeight?: StackMinHeight;
   children?: ReactNode;
 }
+
+const MIN_HEIGHT_CLASS: Record<StackMinHeight, string> = {
+  input: "min-h-8",
+};
 
 const DIRECTION_CLASS: Record<StackDirection, string> = {
   column: "flex-col",
@@ -48,6 +54,7 @@ export function Stack({
   wrap = false,
   grow = false,
   shrink = false,
+  minHeight,
   children,
 }: StackProps): JSX.Element {
   return (
@@ -61,7 +68,8 @@ export function Stack({
         justify ? JUSTIFY_CLASS[justify] : undefined,
         wrap && "flex-wrap",
         grow && "min-h-0 min-w-0 flex-1",
-        shrink && "shrink-0"
+        shrink && "shrink-0",
+        minHeight ? MIN_HEIGHT_CLASS[minHeight] : undefined
       )}
     >
       {children}

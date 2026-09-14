@@ -55,6 +55,7 @@ export interface WeaponProperties {
 
 export class WeaponDataModel extends ItemDataModel {
   declare properties: WeaponProperties;
+  declare requiredRank: number;
 
   static override defineSchema() {
     const fields = foundry.data.fields;
@@ -113,6 +114,7 @@ export class WeaponDataModel extends ItemDataModel {
         sniper: new fields.BooleanField({ initial: false }),
         water: new fields.BooleanField({ initial: false }),
       }),
+      requiredRank: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
     };
   }
 

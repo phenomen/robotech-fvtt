@@ -76,13 +76,14 @@ function skillFields(item: ItemOf<"skill">): ChatCardField[] {
 
 function gearFields(item: ItemOf<"gear">): ChatCardField[] {
   return collectFields(
-    chatField(game.i18n.localize("ROBOTECH.Item.Quantity"), item.system.quantity),
+    chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank),
     chatField(game.i18n.localize("ROBOTECH.Item.Category"), item.system.category)
   );
 }
 
 function suiteFields(item: ItemOf<"equipment_suite">): ChatCardField[] {
   return collectFields(
+    chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank),
     chatField(game.i18n.localize("ROBOTECH.Item.Skill"), item.system.skill),
     chatField(game.i18n.localize("ROBOTECH.Item.Uses"), suiteUsesOf(item)),
     chatField(game.i18n.localize("ROBOTECH.Item.HardwarePoints"), item.system.hardware.value)
@@ -91,7 +92,7 @@ function suiteFields(item: ItemOf<"equipment_suite">): ChatCardField[] {
 
 function featureFields(item: ItemOf<"feature">): ChatCardField[] {
   return collectFields(
-    chatField(game.i18n.localize("ROBOTECH.Item.Bonus"), item.system.bonus),
+    chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank),
     chatField(game.i18n.localize("ROBOTECH.Item.HardwarePoints"), item.system.hardware.value)
   );
 }
@@ -122,6 +123,10 @@ function upgradeFields(item: ItemOf<"upgrade">): ChatCardField[] {
 
 function weaponFields(item: ItemOf<"weapon">): ChatCardField[] {
   const fields: ChatCardField[] = [];
+  const requiredRank = chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank);
+  if (requiredRank) {
+    fields.push(requiredRank);
+  }
   const properties = item.system.properties;
 
   for (const def of WEAPON_PROPERTIES) {

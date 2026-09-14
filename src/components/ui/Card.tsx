@@ -6,11 +6,13 @@ import { typoClass } from "@/components/ui/typo";
 import { cn } from "@/utils/cn";
 
 export type CardDirection = "column" | "row";
-export type CardTone = "default" | "primary" | "secondary" | "danger" | "positive";
+export type CardTone = "default" | "primary" | "secondary" | "danger" | "positive" | "background" | "input";
 
 const TONE_FILL: Record<CardTone, string> = {
+  background: "var(--rt-background)",
   danger: "color-mix(in srgb, var(--rt-danger) 15%, var(--rt-background))",
   default: "",
+  input: "var(--rt-input)",
   positive: "color-mix(in srgb, var(--rt-gradation-good) 15%, var(--rt-background))",
   primary: "color-mix(in srgb, var(--rt-primary) 15%, var(--rt-background))",
   secondary: "var(--rt-secondary)",

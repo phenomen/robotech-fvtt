@@ -12,7 +12,7 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
   return (
     <Stack gap={3}>
       <Stack direction="row" gap={3}>
-        <Field label={game.i18n.localize("ROBOTECH.Character.Rank")}>
+        <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Character.Rank")}>
           <NumberInput
             controls
             min={0}
@@ -22,7 +22,7 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
             }}
           />
         </Field>
-        <Field label={game.i18n.localize("ROBOTECH.Item.RankTitle")}>
+        <Field iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.RankTitle")}>
           <Input
             width="full"
             value={system.rankTitle}
@@ -34,7 +34,7 @@ export function CareerSheetFields({ item, handleFieldChange }: ItemFieldsProps<"
         </Field>
       </Stack>
       <Stack direction="row" gap={3}>
-        <Field label={game.i18n.localize("ROBOTECH.Character.Fame")}>
+        <Field icon="star" iconTone="amber" label={game.i18n.localize("ROBOTECH.Character.Fame")}>
           <NumberInput
             controls
             min={0}

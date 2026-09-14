@@ -276,7 +276,6 @@
       "FeaturePl": "Features",
       "EquipmentSuitePl": "Equipment Suites",
       "UpgradePl": "Mecha Upgrades",
-      "Quantity": "Quantity",
       "Value": "Value",
       "Uses": "Uses",
       "Unlimited": "Unlimited",
@@ -296,7 +295,6 @@
       "PrerequisitePlaceholder": "",
       "Benefit": "Benefit",
       "Cost": "Cost",
-      "Bonus": "Bonus",
       "Properties": "Weapon Properties",
       "Ranges": {
         "Me": "Melee",

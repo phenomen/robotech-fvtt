@@ -12,36 +12,50 @@ export function EquipmentSuiteSheetFields({
   const system = item.system;
 
   return (
-    <Stack direction="row" gap={3}>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Skill")}>
+    <Stack direction="row" gap={4} justify="center">
+      <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.RequiredRank")}>
         <NumberInput
+          controls
+          width="small"
+          min={0}
+          value={system.requiredRank}
+          onValueChange={(val) => {
+            handleFieldChange("system.requiredRank", val ?? 1);
+          }}
+        />
+      </Field>
+      <Field icon="skill" iconTone="teal" label={game.i18n.localize("ROBOTECH.Item.Skill")}>
+        <NumberInput
+          controls
+          width="small"
           min={1}
           value={system.skill}
           onValueChange={(val) => {
             handleFieldChange("system.skill", val ?? 1);
           }}
-          width="full"
         />
       </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.Uses")}>
+      <Field icon="stack" label={game.i18n.localize("ROBOTECH.Item.Uses")}>
         <NumberInput
+          controls
+          width="small"
           min={0}
           value={system.uses.max}
           onValueChange={(val) => {
             handleFieldChange("system.uses.max", val);
           }}
           placeholder={game.i18n.localize("ROBOTECH.Item.Unlimited")}
-          width="full"
         />
       </Field>
-      <Field label={game.i18n.localize("ROBOTECH.Item.HardwarePoints")}>
+      <Field icon="hardware-point" iconTone="amber" label={game.i18n.localize("ROBOTECH.Item.HardwarePoints")}>
         <NumberInput
+          controls
+          width="small"
           min={0}
           value={system.hardware.value}
           onValueChange={(val) => {
             handleFieldChange("system.hardware.value", val ?? 0);
           }}
-          width="full"
         />
       </Field>
     </Stack>

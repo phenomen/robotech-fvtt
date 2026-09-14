@@ -8,9 +8,10 @@ export function UpgradeSheetFields({ item, handleFieldChange }: ItemFieldsProps<
   const system = item.system;
 
   return (
-    <Field label={game.i18n.localize("ROBOTECH.Item.RequiredRank")}>
+    <Field icon="rank" iconTone="primary" label={game.i18n.localize("ROBOTECH.Item.RequiredRank")}>
       <NumberInput
         controls
+        width="small"
         min={0}
         value={system.requiredRank}
         onValueChange={(val) => {
