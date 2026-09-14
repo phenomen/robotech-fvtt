@@ -10,14 +10,8 @@ import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
-import {
-  LIEUTENANT_ELEMENT_OPTIONS,
-  LIEUTENANT_FLAVOR_OPTIONS,
-  LIEUTENANT_TYPE_OPTIONS,
-  isChoiceValue,
-  lieutenantHasFlavor,
-} from "@/config";
-import type { LieutenantElementValue, LieutenantFlavorValue, LieutenantTypeValue } from "@/config";
+import { LIEUTENANT_ELEMENT_OPTIONS, LIEUTENANT_TYPE_OPTIONS, isChoiceValue } from "@/config";
+import type { LieutenantElementValue, LieutenantTypeValue } from "@/config";
 import type { ActorOf } from "@/models";
 import type { AppOptions, CloseOptions } from "@/types/application";
 import { createLieutenant, lieutenantNameOf, lieutenantSkillsOf } from "@/utils/createLieutenant";
@@ -31,14 +25,11 @@ interface LieutenantGeneratorContentProps {
 export function LieutenantGeneratorContent({ onClose, vessel }: LieutenantGeneratorContentProps): JSX.Element {
   const [type, setType] = useState<LieutenantTypeValue>("minor");
   const [element, setElement] = useState<LieutenantElementValue>("pilot");
-  const [flavor, setFlavor] = useState<LieutenantFlavorValue>("supportive");
   const [veteran, setVeteran] = useState(false);
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
-  const showFlavor = lieutenantHasFlavor(element);
-  const flavorValue = showFlavor ? flavor : undefined;
-  const generatedName = lieutenantNameOf({ element, flavor: flavorValue, type, veteran });
+  const generatedName = lieutenantNameOf({ element, type, veteran });
 
   const handleCreate = async (): Promise<void> => {
     if (creating) {
@@ -48,7 +39,6 @@ export function LieutenantGeneratorContent({ onClose, vessel }: LieutenantGenera
     const typed = (nameRef.current?.value ?? name).trim();
     const actor = await createLieutenant({
       element,
-      flavor: flavorValue,
       name: typed === "" ? generatedName : typed,
       openSheet: !vessel,
       type,
@@ -102,27 +92,6 @@ export function LieutenantGeneratorContent({ onClose, vessel }: LieutenantGenera
             ))}
           </Select>
         </Field>
-
-        {showFlavor && (
-          <Field orientation="vertical" label={game.i18n.localize("ROBOTECH.Lieutenant.Flavor")}>
-            <Select
-              width="full"
-              value={flavor}
-              onChange={(event) => {
-                const next = event.target.value;
-                if (isChoiceValue(LIEUTENANT_FLAVOR_OPTIONS, next)) {
-                  setFlavor(next);
-                }
-              }}
-            >
-              {LIEUTENANT_FLAVOR_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {game.i18n.localize(option.labelKey)}
-                </option>
-              ))}
-            </Select>
-          </Field>
-        )}
 
         <Field orientation="vertical" label={game.i18n.localize("ROBOTECH.Lieutenant.Veteran")}>
           <Checkbox checked={veteran} onCheckedChange={setVeteran} size="large" />
@@ -203,7 +172,7 @@ export class LieutenantGeneratorApp extends ReactDialog {
     ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "dialog", "lieutenant-generator"],
     id: "robotech-lieutenant-generator",
-    position: { height: "auto", width: 450 },
+    position: { height: "auto", width: 470 },
     window: {
       ...super.DEFAULT_OPTIONS.window,
       resizable: false,

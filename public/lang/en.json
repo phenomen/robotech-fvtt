@@ -409,7 +409,6 @@
       "Type": "Type",
       "Element": "Element",
       "Veteran": "Veteran",
-      "Flavor": "Flavor",
       "Noun": "Lieutenant",
       "NoPermission": "You do not have permission to create actors.",
       "CreateFailed": "Failed to create the Lieutenant.",
@@ -417,11 +416,6 @@
         "minor": "Minor",
         "major": "Major",
         "ultra": "Ultra"
-      },
-      "Flavors": {
-        "supportive": "Supportive",
-        "aggressive": "Aggressive",
-        "technical": "Technical"
       },
       "Elements": {
         "pilot": {
@@ -444,17 +438,29 @@
           "label": "Spy",
           "description": "A Spy Lieutenant is in their Element when acting in the Support Phase."
         },
-        "volunteer": {
-          "label": "Volunteer",
-          "supportive": "A Supportive Volunteer Lieutenant is in their Element when acting in the Support Phase.",
-          "aggressive": "An Aggressive Volunteer Lieutenant is in their Element in the Ops Phase.",
-          "technical": "A Technical Volunteer Lieutenant is in their Element in the Cinematic Phase."
+        "volunteerSupportive": {
+          "label": "Volunteer (Supportive)",
+          "description": "A Supportive Volunteer Lieutenant is in their Element when acting in the Support Phase."
         },
-        "entertainer": {
-          "label": "Entertainer",
-          "supportive": "A Supportive Entertainer Lieutenant is in their Element when acting in the Support Phase.",
-          "aggressive": "An Aggressive Entertainer Lieutenant is in their Element in the Ops Phase.",
-          "technical": "A Technical Entertainer Lieutenant is in their Element in the Cinematic Phase."
+        "volunteerAggressive": {
+          "label": "Volunteer (Aggressive)",
+          "description": "An Aggressive Volunteer Lieutenant is in their Element in the Ops Phase."
+        },
+        "volunteerTechnical": {
+          "label": "Volunteer (Technical)",
+          "description": "A Technical Volunteer Lieutenant is in their Element in the Cinematic Phase."
+        },
+        "entertainerSupportive": {
+          "label": "Entertainer (Supportive)",
+          "description": "A Supportive Entertainer Lieutenant is in their Element when acting in the Support Phase."
+        },
+        "entertainerAggressive": {
+          "label": "Entertainer (Aggressive)",
+          "description": "An Aggressive Entertainer Lieutenant is in their Element in the Ops Phase."
+        },
+        "entertainerTechnical": {
+          "label": "Entertainer (Technical)",
+          "description": "A Technical Entertainer Lieutenant is in their Element in the Cinematic Phase."
         },
         "triumvirate": {
           "label": "Triumvirate",

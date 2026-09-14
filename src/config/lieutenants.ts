@@ -13,13 +13,6 @@ export const LIEUTENANT_TYPE_INDEX = {
   ultra: 2,
 } as const satisfies Record<LieutenantTypeValue, 0 | 1 | 2>;
 
-export const LIEUTENANT_FLAVOR_OPTIONS = [
-  { labelKey: "ROBOTECH.Lieutenant.Flavors.supportive", value: "supportive" },
-  { labelKey: "ROBOTECH.Lieutenant.Flavors.aggressive", value: "aggressive" },
-  { labelKey: "ROBOTECH.Lieutenant.Flavors.technical", value: "technical" },
-] as const satisfies readonly Option[];
-export type LieutenantFlavorValue = (typeof LIEUTENANT_FLAVOR_OPTIONS)[number]["value"];
-
 export const LIEUTENANT_SKILL_ACTIONS = [
   "assist",
   "observe",
@@ -163,16 +156,34 @@ export const LIEUTENANT_ELEMENT_OPTIONS = [
     value: "spy",
   },
   {
-    flavors: true,
-    labelKey: "ROBOTECH.Lieutenant.Elements.volunteer.label",
+    labelKey: "ROBOTECH.Lieutenant.Elements.volunteerSupportive.label",
     skillRow: "volunteer",
-    value: "volunteer",
+    value: "volunteerSupportive",
   },
   {
-    flavors: true,
-    labelKey: "ROBOTECH.Lieutenant.Elements.entertainer.label",
+    labelKey: "ROBOTECH.Lieutenant.Elements.volunteerAggressive.label",
     skillRow: "volunteer",
-    value: "entertainer",
+    value: "volunteerAggressive",
+  },
+  {
+    labelKey: "ROBOTECH.Lieutenant.Elements.volunteerTechnical.label",
+    skillRow: "volunteer",
+    value: "volunteerTechnical",
+  },
+  {
+    labelKey: "ROBOTECH.Lieutenant.Elements.entertainerSupportive.label",
+    skillRow: "volunteer",
+    value: "entertainerSupportive",
+  },
+  {
+    labelKey: "ROBOTECH.Lieutenant.Elements.entertainerAggressive.label",
+    skillRow: "volunteer",
+    value: "entertainerAggressive",
+  },
+  {
+    labelKey: "ROBOTECH.Lieutenant.Elements.entertainerTechnical.label",
+    skillRow: "volunteer",
+    value: "entertainerTechnical",
   },
   {
     labelKey: "ROBOTECH.Lieutenant.Elements.triumvirate.label",
@@ -199,10 +210,7 @@ export const LIEUTENANT_ELEMENT_OPTIONS = [
     skillRow: "spleen",
     value: "spleen",
   },
-] as const satisfies readonly (Option & {
-  flavors?: true;
-  skillRow: LieutenantSkillRowId;
-})[];
+] as const satisfies readonly (Option & { skillRow: LieutenantSkillRowId })[];
 export type LieutenantElementValue = (typeof LIEUTENANT_ELEMENT_OPTIONS)[number]["value"];
 
 export function lieutenantElementOf(value: LieutenantElementValue): (typeof LIEUTENANT_ELEMENT_OPTIONS)[number] {
@@ -213,15 +221,6 @@ export function lieutenantElementOf(value: LieutenantElementValue): (typeof LIEU
   return option;
 }
 
-export function lieutenantHasFlavor(element: LieutenantElementValue): boolean {
-  const option = lieutenantElementOf(element);
-  return "flavors" in option && option.flavors;
-}
-
-export function lieutenantDescriptionKey(element: LieutenantElementValue, flavor?: LieutenantFlavorValue): string {
-  if (lieutenantHasFlavor(element)) {
-    const used = flavor ?? "supportive";
-    return `ROBOTECH.Lieutenant.Elements.${element}.${used}`;
-  }
+export function lieutenantDescriptionKey(element: LieutenantElementValue): string {
   return `ROBOTECH.Lieutenant.Elements.${element}.description`;
 }

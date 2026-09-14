@@ -1,21 +1,18 @@
 import {
   ACTION_OPTIONS,
-  LIEUTENANT_FLAVOR_OPTIONS,
   LIEUTENANT_SKILL_ACTIONS,
   LIEUTENANT_SKILL_ROWS,
   LIEUTENANT_TYPE_INDEX,
   LIEUTENANT_TYPE_OPTIONS,
   lieutenantDescriptionKey,
   lieutenantElementOf,
-  lieutenantHasFlavor,
 } from "@/config";
-import type { LieutenantElementValue, LieutenantFlavorValue, LieutenantTypeValue } from "@/config";
+import type { LieutenantElementValue, LieutenantTypeValue } from "@/config";
 import type { ActorOf } from "@/models";
 import { addCrewMember, isActorOf } from "@/utils/documents";
 
 export interface CreateLieutenantInput {
   element: LieutenantElementValue;
-  flavor?: LieutenantFlavorValue;
   name?: string;
   openSheet?: boolean;
   type: LieutenantTypeValue;
@@ -79,13 +76,9 @@ function customNameOf(input: CreateLieutenantInput): string {
 
 export function lieutenantNameOf(input: CreateLieutenantInput): string {
   const typeOption = LIEUTENANT_TYPE_OPTIONS.find((option) => option.value === input.type);
-  const flavorOption = LIEUTENANT_FLAVOR_OPTIONS.find((option) => option.value === input.flavor);
   const parts = [typeOption ? game.i18n.localize(typeOption.labelKey) : input.type];
   if (input.veteran) {
     parts.push(game.i18n.localize("ROBOTECH.Lieutenant.Veteran"));
-  }
-  if (lieutenantHasFlavor(input.element) && flavorOption) {
-    parts.push(game.i18n.localize(flavorOption.labelKey));
   }
   parts.push(
     game.i18n.localize(lieutenantElementOf(input.element).labelKey),
@@ -122,7 +115,7 @@ function lieutenantItemsOf(input: CreateLieutenantInput): Record<string, unknown
     ...skills,
     {
       name: game.i18n.localize(lieutenantElementOf(input.element).labelKey),
-      system: { description: game.i18n.localize(lieutenantDescriptionKey(input.element, input.flavor)) },
+      system: { description: game.i18n.localize(lieutenantDescriptionKey(input.element)) },
       type: "element",
     },
   ];
