@@ -74,7 +74,7 @@ export const Button = React.memo(
         type="button"
         className={cn(
           typoClass("mono", BUTTON_TYPO[size]),
-          "flex cursor-pointer items-center gap-1! border font-rt-mono tracking-wider! outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+          "font-rt-mono flex cursor-pointer items-center gap-1! border tracking-wider! outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
           align === "start" ? "justify-start" : "justify-center",
           buttonType !== "ghost" && "uppercase",
           SIZE_CLASS[size],

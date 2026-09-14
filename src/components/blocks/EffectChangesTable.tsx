@@ -52,7 +52,6 @@ export function EffectChangesTable({ effect }: EffectChangesTableProps): JSX.Ele
           <TableBody>
             {changes.map((change, index) => (
               // Foundry stores changes as a plain array, so the row index is the only available key.
-              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               <ChangeRow key={index} effect={effect} change={change} index={index} />
             ))}
           </TableBody>

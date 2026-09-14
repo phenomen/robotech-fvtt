@@ -82,7 +82,7 @@ export const Input = React.memo(
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={cn(
-          "bg-rt-input text-rt-foreground! placeholder:text-rt-muted border border-rt-border focus:border-rt-primary! focus:outline-none",
+          "bg-rt-input text-rt-foreground! placeholder:text-rt-muted border-rt-border focus:border-rt-primary! border focus:outline-none",
           typoClass(type === "number" ? "mono" : "label", size),
           SIZE_PAD[size],
           WIDTH_CLASS[width],

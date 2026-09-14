@@ -32,7 +32,6 @@ export function CharacterDramaTracker({ actor }: CharacterDramaTrackerProps): JS
       {dramas.map((text, index) => (
         <LabelRow
           // Fixed drama slots; index is the slot identity.
-          // oxlint-disable-next-line react-doctor/no-array-index-as-key
           key={index}
           label={
             <Button

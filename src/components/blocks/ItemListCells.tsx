@@ -164,7 +164,6 @@ export function HardwareSlotsCell({ item }: { item: ListedItem }): JSX.Element {
           {destroyed.map((isDestroyed, index) => (
             <Checkbox
               // Fixed-position hardware slot; index is the slot identity.
-              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               key={`hardware-slot-${index}`}
               checked={isDestroyed}
               onCheckedChange={(checked) => {

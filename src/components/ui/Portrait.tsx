@@ -25,7 +25,7 @@ export function Portrait({ src, alt, title, size = "medium", onClick }: Portrait
         src={src}
         alt={alt}
         title={title}
-        className={cn("bg-rt-secondary shrink-0 object-cover border", SIZE_CLASS[size])}
+        className={cn("bg-rt-secondary shrink-0 border object-cover", SIZE_CLASS[size])}
       />
     );
   }
@@ -36,7 +36,7 @@ export function Portrait({ src, alt, title, size = "medium", onClick }: Portrait
       title={title}
       onClick={onClick}
       className={cn(
-        "bg-rt-secondary shrink-0 cursor-pointer overflow-hidden border p-0 hover:border-rt-primary",
+        "bg-rt-secondary hover:border-rt-primary shrink-0 cursor-pointer overflow-hidden border p-0",
         SIZE_CLASS[size]
       )}
     >

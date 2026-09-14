@@ -46,7 +46,6 @@ export function ConflictTrackerBlock({ actor }: ConflictTrackerBlockProps): JSX.
         <Stack direction="row" gap={2} wrap>
           {states.map((checked, index) => (
             <Checkbox
-              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               key={`tracker-${index}`}
               id={`${actor.id}-tracker-${index}`}
               checked={checked}

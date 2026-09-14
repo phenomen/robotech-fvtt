@@ -118,7 +118,7 @@ export const ProseMirrorField = React.memo(
         spellCheck={spellCheck}
         data-toolbar-open={isToolbarOpen}
         className={cn(
-          "prosemirror-react-wrapper relative flex h-full w-full min-h-30 flex-col overflow-auto border bg-rt-input text-rt-foreground",
+          "prosemirror-react-wrapper bg-rt-input text-rt-foreground relative flex h-full min-h-30 w-full flex-col overflow-auto border",
           minHeight === "tall" && "min-h-48"
         )}
       >

@@ -29,11 +29,11 @@ The project is in an early phase: **breaking changes to schema, data, and identi
 | UI | **React 19** (function components, `react-jsx`) |
 | Styles | **Tailwind CSS 4** (`@theme` in `src/styles/robotech.css`, type tokens in `typography.css`) |
 | Bundler | **Bun** (`build.ts` → `dist/`). `bun-plugin-tailwind` for CSS. |
-| Lint / format | **oxlint** (type-aware) and **oxfmt** (double quotes, LF, sorted imports and Tailwind classes) |
+| Lint / format | **oxlint** (type-aware, `oxlint.config.ts`) and **oxfmt** (`oxfmt.config.ts`: double quotes, LF, sorted imports and Tailwind classes). No preset wrapper — both are configured directly. |
 | Merged classes | `cn()` from `cn` (`src/utils/cn.ts`) when class merge is needed |
 | Types | Real Foundry client sources in `foundry/client` and `foundry/common` (gitignored). Import via `@client/*` and `@common/*`. |
 
-Scripts: `bun run build`, `bun run check`, `bun run fix`. `check` runs type-aware Oxlint + Oxfmt (fails on violations); `fix` applies both. `build` also asserts the manifest's `documentTypes` (Actor, Item, Combat, Combatant) against the subtype registry and that `package.json` / `system.json` versions match. Run `bun run check; bun run build` after changes.
+Scripts: `bun run build`, `bun run check` (`oxlint && oxfmt --check`), `bun run fix` (`oxlint --fix && oxfmt`). `check` fails on any lint violation, type error, or unformatted file. `build` also asserts the manifest's `documentTypes` (Actor, Item, Combat, Combatant) against the subtype registry and that `package.json` / `system.json` versions match. Run `bun run check; bun run build` after changes.
 
 Path alias `@/` maps to `src/`. Always import through `@/…`, never deep relative paths.
 
@@ -199,106 +199,21 @@ game.i18n.localize("ROBOTECH.Wounds.Max", { max });
 - Classes and components: `PascalCase`. Hooks: `use` prefix. Constants: `SCREAMING_SNAKE` or `camelCase` `as const`.
 - Keep game formulas in `utils/` or the data model. Keep Foundry document I/O in `utils/documents.ts` (or a focused sibling). Keep JSX out of those layers.
 
+### Lint and format
+
+`oxlint.config.ts` turns on every oxlint category (`correctness`, `suspicious`, `pedantic`, `perf`, `style`, `restriction`) and then lists the opt-outs, so `rules` reads as the set of rules this project rejects. Add an entry only to record a decision about this codebase, with a comment saying why; never to silence a finding that is actually a bug. Prefer configuring a rule over turning it off — `no-console` allows `error`/`warn`, `unicorn/filename-case` allows both PascalCase and camelCase, `no-use-before-define` allows hoisted declarations. Type-aware rules and TypeScript diagnostics run through `oxlint-tsgolint` (`options.typeAware` and `options.typeCheck`), so there is no separate `tsc --noEmit` step.
+
+- Some rules are pinned to a non-default option because their fixers otherwise rewrite the codebase the wrong way: `one-var` (`never`), `typescript/return-await` (`always`), `unicorn/text-encoding-identifier-case` (`withDash`), `no-duplicate-imports` (`allowSeparateTypeImports`), and `func-style`. Leave the options in place.
+- `capitalized-comments` and `no-implicit-coercion` are off for the same reason: the first rewords existing comments, and the second turns `!!actor` into `Boolean(actor)`, which stops TypeScript from narrowing.
+- **An `overrides` directory glob only matches when it starts with `**/`.** `"src/types/**"` silently matches nothing, so the override reads as if it works while every rule in it stays on; write `"**/src/types/**"`. Bare filenames (`"build.ts"`, `"*.config.ts"`) match as written.
+- `plugins` replaces the default set rather than extending it, so `unicorn`, `typescript`, and `oxc` have to be repeated even though they are on by default. Core rules are always active; there is no `"eslint"` plugin to list. `jsx-a11y` is on and currently costs no opt-outs — it is what mechanically enforces the label/`htmlFor` and icon-title requirements above.
+- Suppress a single finding with `// oxlint-disable-next-line <rule>` plus a reason. Do not disable a rule for a whole file. `options.reportUnusedDisableDirectives` fails the build on suppressions that no longer suppress anything, so delete a directive when you remove the code that needed it. Note that `react/exhaustive-effect-dependencies` and `react-hooks/exhaustive-deps` both fire on effects and a suppression has to name both.
+- `oxfmt` owns import order, Tailwind class order (including inside `cn()`), and `package.json` key order. Do not hand-sort any of them.
+- `.cursor/hooks.json` runs `bun run fix` after every file edit, so expect formatting and safe fixes to land on their own.
+
 ### When changing behavior
 
 1. Check types and JSDoc in `foundry/` (website API docs only if that is not enough). Decide whether the change belongs on the data model, a util, or the sheet.
 2. Update `defineSchema` / `documentTypes` / `htmlFields` together when the persisted shape changes. Replace old fields; do not keep a compatibility path unless explicitly asked.
 3. Add or reuse `en.json` keys before wiring UI.
 4. Run `bun run check; bun run build` to type-check, lint, and assert the manifest.
-
-# Ultracite Code Standards
-
-This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
-
-## Quick Reference
-
-- **Format code**: `bun ultracite fix`
-- **Check for issues**: `bun ultracite check`
-
-Oxlint + Oxfmt (the underlying engine) provides robust linting and formatting. Most issues are automatically fixable.
-
----
-
-## Core Principles
-
-Write code that is **accessible, performant, type-safe, and maintainable**. Focus on clarity and explicit intent over brevity.
-
-### Type Safety & Explicitness
-
-- Use explicit types for function parameters and return values when they enhance clarity
-- Prefer `unknown` over `any` when the type is genuinely unknown
-- Use const assertions (`as const`) for immutable values and literal types
-- Leverage TypeScript's type narrowing instead of type assertions
-- Use meaningful variable names instead of magic numbers - extract constants with descriptive names
-
-### Modern JavaScript/TypeScript
-
-- Use arrow functions for callbacks and short functions
-- Prefer `for...of` loops over `.forEach()` and indexed `for` loops
-- Use optional chaining (`?.`) and nullish coalescing (`??`) for safer property access
-- Prefer template literals over string concatenation
-- Use destructuring for object and array assignments
-- Use `const` by default, `let` only when reassignment is needed, never `var`
-
-### Async & Promises
-
-- Always `await` promises in async functions - don't forget to use the return value
-- Use `async/await` syntax instead of promise chains for better readability
-- Handle errors appropriately in async code with try-catch blocks
-- Don't use async functions as Promise executors
-
-### React & JSX
-
-- Use function components over class components
-- Call hooks at the top level only, never conditionally
-- Specify all dependencies in hook dependency arrays correctly
-- Use the `key` prop for elements in iterables (prefer unique IDs over array indices)
-- Nest children between opening and closing tags instead of passing as props
-- Don't define components inside other components
-
-### Error Handling & Debugging
-
-- Remove `console.log`, `debugger`, and `alert` statements from production code
-- Throw `Error` objects with descriptive messages, not strings or other values
-- Use `try-catch` blocks meaningfully - don't catch errors just to rethrow them
-- Prefer early returns over nested conditionals for error cases
-
-### Code Organization
-
-- Keep functions focused and under reasonable cognitive complexity limits
-- Extract complex conditions into well-named boolean variables
-- Use early returns to reduce nesting
-- Prefer simple conditionals over nested ternary operators
-- Group related code together and separate concerns
-
-### Security
-
-- Avoid `dangerouslySetInnerHTML` unless absolutely necessary
-- Don't use `eval()` or assign directly to `document.cookie`
-
-### Performance
-
-- Avoid spread syntax in accumulators within loops
-- Use top-level regex literals instead of creating them in loops
-- Prefer specific imports over namespace imports
-
-### React 19+
-
-- Use ref as a prop instead of `React.forwardRef`
-
----
-
-## When Oxlint + Oxfmt Can't Help
-
-Oxlint + Oxfmt's linter will catch most issues automatically. Focus your attention on:
-
-1. **Business logic correctness** - Oxlint + Oxfmt can't validate your algorithms
-2. **Meaningful naming** - Use descriptive names for functions, variables, and types
-3. **Architecture decisions** - Component structure, data flow, and API design
-4. **Edge cases** - Handle boundary conditions and error states
-5. **User experience** - Accessibility, performance, and usability considerations
-6. **Documentation** - Add comments for complex logic, but prefer self-documenting code
-
----
-
-Most formatting and common issues are automatically fixed by Oxlint + Oxfmt. Run `bun run fix` before committing to ensure compliance.

@@ -174,7 +174,6 @@ function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): 
           const assigned = selectedSet.has(index);
           return (
             <Checkbox
-              // oxlint-disable-next-line react-doctor/no-array-index-as-key
               key={`slot-${index}`}
               checked={wasDestroyed || assigned}
               disabled={wasDestroyed || (!assigned && !canSpend)}

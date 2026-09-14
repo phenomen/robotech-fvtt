@@ -32,7 +32,7 @@ export const Select = React.memo(
     <select
       className={cn(
         typoClass("label", size),
-        "bg-rt-input h-8 cursor-pointer border px-2.5 py-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&_optgroup]:bg-rt-secondary [&_optgroup]:text-rt-muted [&_option]:bg-rt-secondary [&_option]:text-rt-secondary-foreground",
+        "bg-rt-input [&_optgroup]:bg-rt-secondary [&_optgroup]:text-rt-muted [&_option]:bg-rt-secondary [&_option]:text-rt-secondary-foreground h-8 cursor-pointer border px-2.5 py-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         TONE_CLASS[tone],
         WIDTH_CLASS[width],
         width === "full" && "min-w-0 flex-1"

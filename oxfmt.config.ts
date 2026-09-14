@@ -1,12 +1,11 @@
 import { defineConfig } from "oxfmt";
-import ultracite from "ultracite/oxfmt";
 
 export default defineConfig({
-  ...ultracite,
-  endOfLine: "lf",
+  ignorePatterns: ["dist", "foundry"],
   printWidth: 120,
-  quoteStyle: "double",
+  proseWrap: "never",
   sortImports: true,
-  sortPackageJson: true,
-  sortTailwindcss: true,
+  // `cn()` is the class-merge helper, so its arguments hold Tailwind classes too.
+  sortTailwindcss: { functions: ["cn"] },
+  trailingComma: "es5",
 });

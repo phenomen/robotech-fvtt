@@ -46,7 +46,7 @@ export const Tag = React.memo(
       <span
         title={title}
         className={cn(
-          "inline-flex w-fit items-center border font-rt-mono",
+          "font-rt-mono inline-flex w-fit items-center border",
           typoClass("label", size),
           colorStyles[color] ?? colorStyles.amber,
           SIZE_PAD[size] ?? SIZE_PAD.small

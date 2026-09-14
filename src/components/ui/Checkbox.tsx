@@ -84,7 +84,7 @@ export const Checkbox = React.memo(
         <span
           aria-hidden
           className={cn(
-            "box-border flex size-full items-center justify-center border bg-rt-input leading-none select-none peer-focus-visible:ring-1 peer-focus-visible:ring-rt-border peer-disabled:opacity-50",
+            "bg-rt-input peer-focus-visible:ring-rt-border box-border flex size-full items-center justify-center border leading-none select-none peer-focus-visible:ring-1 peer-disabled:opacity-50",
             checkedStyles
           )}
         >

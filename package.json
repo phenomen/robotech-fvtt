@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "bun run build.ts",
-    "check": "ultracite check --type-aware",
-    "fix": "ultracite fix --type-aware"
+    "check": "oxlint && oxfmt --check",
+    "fix": "oxlint --fix && oxfmt"
   },
   "dependencies": {
     "react": "^19.3.0",
@@ -19,12 +19,10 @@
     "@types/react-dom": "^19.3.0",
     "bun-plugin-tailwind": "^0.1.2",
     "cn": "^0.3.0",
-    "oxfmt": "^0.67.0",
-    "oxlint": "^1.82.0",
-    "oxlint-plugin-react-doctor": "^0.9.14",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
     "oxlint-tsgolint": "^7.0.2001",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
-    "ultracite": "7.11.1"
+    "typescript": "^7.0.2"
   }
 }

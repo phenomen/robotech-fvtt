@@ -90,7 +90,6 @@ export function CharacterStressTracker({ actor }: StressTrackerProps): JSX.Eleme
           <Stack direction="row" gap={1} align="center">
             {boxes.map((state, i) => (
               <StressHexBox
-                // oxlint-disable-next-line react-doctor/no-array-index-as-key
                 key={`stress-hex-${i}`}
                 index={i}
                 state={state}
