@@ -61,6 +61,15 @@ export const LIEUTENANT_SKILL_ROWS = {
     observe: [2, 3, 4],
     redirect: [1, 2, 3],
   },
+  nomad: {
+    assist: [2, 3, 4],
+    attack: [2, 3, 4],
+    defend: [2, 3, 4],
+    interact: [2, 3, 4],
+    obscure: [2, 3, 4],
+    observe: [2, 3, 4],
+    redirect: [2, 3, 4],
+  },
   officer: {
     assist: [3, 4, 5],
     attack: [1, 2, 3],
@@ -172,7 +181,7 @@ export const LIEUTENANT_ELEMENT_OPTIONS = [
   },
   {
     labelKey: "ROBOTECH.Lieutenant.Elements.nomad.label",
-    skillRow: "mercenary",
+    skillRow: "nomad",
     value: "nomad",
   },
   {
