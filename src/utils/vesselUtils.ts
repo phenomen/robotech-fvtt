@@ -1,4 +1,4 @@
-import type { DamageTypeValue, ArmorClassValue } from "@/config/options";
+import type { ArmorClassValue, DamageTypeValue } from "@/config/options";
 
 export interface CascadeInput {
   attackType: DamageTypeValue;
@@ -46,17 +46,16 @@ export interface CascadeResult {
 
 export function calcDamageCascade(input: CascadeInput): CascadeResult {
   const {
-    attackType,
-    attackHits,
-    defendHits,
-    armorClass,
-    targetArmor,
-    armorPenetration = 0,
-    multiplier = 1,
-    resistance = 0,
-  } = input;
-
-  const netHits = Math.max(0, attackHits - defendHits);
+      attackType,
+      attackHits,
+      defendHits,
+      armorClass,
+      targetArmor,
+      armorPenetration = 0,
+      multiplier = 1,
+      resistance = 0,
+    } = input,
+    netHits = Math.max(0, attackHits - defendHits);
   if (netHits <= 0) {
     return {
       damageInflicted: 0,
@@ -69,9 +68,9 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
     };
   }
 
-  const effectiveHits = netHits * Math.max(1, multiplier);
-  const effectiveArmor = effectiveArmorOf(targetArmor, armorPenetration, attackType, armorClass, resistance);
-  const hitsOverArmor = Math.max(0, effectiveHits - effectiveArmor);
+  const effectiveHits = netHits * Math.max(1, multiplier),
+    effectiveArmor = effectiveArmorOf(targetArmor, armorPenetration, attackType, armorClass, resistance),
+    hitsOverArmor = Math.max(0, effectiveHits - effectiveArmor);
 
   if (hitsOverArmor <= 0) {
     return {
@@ -97,8 +96,8 @@ export function calcDamageCascade(input: CascadeInput): CascadeResult {
     };
   }
 
-  let damageInflicted = 0;
-  let isOverkill = false;
+  let damageInflicted = 0,
+    isOverkill = false;
 
   if (attackType === armorClass) {
     damageInflicted = hitsOverArmor;

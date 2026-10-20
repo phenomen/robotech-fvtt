@@ -29,8 +29,8 @@ export abstract class ReactDialog extends foundry.applications.api.ApplicationV2
   }
 
   private fitHeight(): void {
-    const content = this.element?.querySelector(".window-content");
-    const scrollHeight = content instanceof HTMLElement ? content.scrollHeight : -1;
+    const content = this.element?.querySelector(".window-content"),
+      scrollHeight = content instanceof HTMLElement ? content.scrollHeight : -1;
     if (scrollHeight !== this.lastAutoHeight) {
       this.lastAutoHeight = scrollHeight;
       this.setPosition({ height: "auto" });

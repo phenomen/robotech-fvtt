@@ -21,11 +21,10 @@ function resolveAll<T extends ActorType>(uuids: readonly string[], types: readon
  * driven by content, not array identity.
  */
 export function useLinkedActors<T extends ActorType>(uuids: readonly string[], types: readonly T[]): LinkedActor<T>[] {
-  const inputsRef = useRef({ types, uuids });
-  const [actors, setActors] = useState<LinkedActor<T>[]>(() => resolveAll(uuids, types));
-  const [, bumpVersion] = useReducer((count: number): number => count + 1, 0);
-
-  const signature = `${uuids.length}:${uuids.join("|")}#${types.join("|")}`;
+  const inputsRef = useRef({ types, uuids }),
+    [actors, setActors] = useState<LinkedActor<T>[]>(() => resolveAll(uuids, types)),
+    [, bumpVersion] = useReducer((count: number): number => count + 1, 0),
+    signature = `${uuids.length}:${uuids.join("|")}#${types.join("|")}`;
 
   useEffect(() => {
     inputsRef.current = { types, uuids };
@@ -50,7 +49,7 @@ export function useLinkedActors<T extends ActorType>(uuids: readonly string[], t
       cancelled = true;
     };
     // Signature is the content-based trigger; the effect reads the latest inputs from the ref.
-    // oxlint-disable-next-line react/exhaustive-effect-dependencies
+    // eslint-disable-next-line react/exhaustive-effect-dependencies
   }, [signature]);
 
   const idKey = actors.map((entry) => entry.actor?.id ?? "-").join("|");
@@ -65,17 +64,17 @@ export function useLinkedActors<T extends ActorType>(uuids: readonly string[], t
       };
     }
     const handleUpdate = (actor: foundry.documents.Actor): void => {
-      if (actor.id !== null && ids.has(actor.id)) {
-        bumpVersion();
-      }
-    };
-    const handleDelete = (actor: foundry.documents.Actor): void => {
-      if (actor.id === null || !ids.has(actor.id)) {
-        return;
-      }
-      const { uuids: currentUuids, types: currentTypes } = inputsRef.current;
-      setActors(resolveAll(currentUuids, currentTypes));
-    };
+        if (actor.id !== null && ids.has(actor.id)) {
+          bumpVersion();
+        }
+      },
+      handleDelete = (actor: foundry.documents.Actor): void => {
+        if (actor.id === null || !ids.has(actor.id)) {
+          return;
+        }
+        const { uuids: currentUuids, types: currentTypes } = inputsRef.current;
+        setActors(resolveAll(currentUuids, currentTypes));
+      };
     foundry.helpers.Hooks.on("updateActor", handleUpdate);
     foundry.helpers.Hooks.on("deleteActor", handleDelete);
     return () => {

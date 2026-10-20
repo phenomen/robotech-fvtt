@@ -1,11 +1,11 @@
 import {
   ARMOR_CLASS_VALUES,
+  isChoiceValue,
   ROLL_MODIFIER_VALUES,
   SPEED_UNIT_OPTIONS,
   SPEED_UNIT_VALUES,
   VESSEL_MODE_VALUES,
   VESSEL_TYPE_VALUES,
-  isChoiceValue,
 } from "@/config/options";
 import type {
   ArmorClassValue,
@@ -63,18 +63,16 @@ export class VesselDataModel extends ActorDataModel {
   declare speed: number;
 
   static override defineSchema() {
-    const fields = foundry.data.fields;
-
-    const speedUnitSchema = () =>
-      new fields.SchemaField({
-        game: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        ground: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        planetary: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        selected: new fields.StringField({ choices: SPEED_UNIT_VALUES, initial: "ground" }),
-        space: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      });
-
-    const ratingField = () => new fields.StringField({ choices: ROLL_MODIFIER_VALUES, initial: "nominal" });
+    const fields = foundry.data.fields,
+      speedUnitSchema = () =>
+        new fields.SchemaField({
+          game: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+          ground: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+          planetary: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+          selected: new fields.StringField({ choices: SPEED_UNIT_VALUES, initial: "ground" }),
+          space: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+        }),
+      ratingField = () => new fields.StringField({ choices: ROLL_MODIFIER_VALUES, initial: "nominal" });
 
     return {
       ...super.defineSchema(),
@@ -149,10 +147,10 @@ export class VesselDataModel extends ActorDataModel {
   }
 
   private computeActiveSpeed(): SpeedUnit {
-    const base = this.speedModes[this.activeSpeedMode] ?? this.speedModes.general;
-    const engineLevel = this.systems.engines;
-    const selected = isChoiceValue(SPEED_UNIT_OPTIONS, base.selected) ? base.selected : "ground";
-    const selectedSpeed = base[selected] ?? 0;
+    const base = this.speedModes[this.activeSpeedMode] ?? this.speedModes.general,
+      engineLevel = this.systems.engines,
+      selected = isChoiceValue(SPEED_UNIT_OPTIONS, base.selected) ? base.selected : "ground",
+      selectedSpeed = base[selected] ?? 0;
 
     return {
       game: calcEngineSpeed(selectedSpeed, engineLevel),

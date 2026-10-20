@@ -40,8 +40,8 @@ async function resolveActors<T extends ActorType>(
   uuids: readonly string[],
   types: readonly T[]
 ): Promise<ActorOf<T>[]> {
-  const seen = new Set<string>();
-  const targets: string[] = [];
+  const seen = new Set<string>(),
+    targets: string[] = [];
   for (const uuid of uuids) {
     if (!uuid || seen.has(uuid)) {
       continue;
@@ -49,8 +49,8 @@ async function resolveActors<T extends ActorType>(
     seen.add(uuid);
     targets.push(uuid);
   }
-  const resolved = await Promise.all(targets.map(async (uuid) => await actorFromUuid(uuid, types)));
-  const actors: ActorOf<T>[] = [];
+  const resolved = await Promise.all(targets.map(async (uuid) => await actorFromUuid(uuid, types))),
+    actors: ActorOf<T>[] = [];
   for (const actor of resolved) {
     if (actor) {
       actors.push(actor);
@@ -147,8 +147,8 @@ export function ownedControlledActor(): Actor | null {
 
 /** The actor of the single currently controlled token, or null if the selection is empty or mixed. */
 export function controlledTokenActor(): Actor | null {
-  const layer = canvas.getLayerByEmbeddedName("Token");
-  const controlled = layer?.controlled ?? [];
+  const layer = canvas.getLayerByEmbeddedName("Token"),
+    controlled = layer?.controlled ?? [];
   if (controlled.length !== 1) {
     return null;
   }

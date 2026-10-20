@@ -46,14 +46,14 @@ interface ActorSheetAppProps {
 }
 
 async function addGenericSkills(actor: ActorOf<"character">): Promise<void> {
-  const existing = new Set(filterItemsOf(actor, "skill").map((skill) => skill.name.toLowerCase()));
-  const items = GENERIC_SKILL_LABEL_KEYS.flatMap((key) => {
-    const name = game.i18n.localize(key);
-    if (existing.has(name.toLowerCase())) {
-      return [];
-    }
-    return [{ name, system: { value: 1 }, type: "skill" as const }];
-  });
+  const existing = new Set(filterItemsOf(actor, "skill").map((skill) => skill.name.toLowerCase())),
+    items = GENERIC_SKILL_LABEL_KEYS.flatMap((key) => {
+      const name = game.i18n.localize(key);
+      if (existing.has(name.toLowerCase())) {
+        return [];
+      }
+      return [{ name, system: { value: 1 }, type: "skill" as const }];
+    });
   if (items.length === 0) {
     return;
   }
@@ -61,16 +61,14 @@ async function addGenericSkills(actor: ActorOf<"character">): Promise<void> {
 }
 
 export function CharacterSheetApp({ actor }: ActorSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<ActorTabType>("stats");
-  const system = actor.system;
-
-  const handleFieldChange = (path: string, val: unknown) => {
-    void actor.update({ [path]: val });
-  };
-
-  const handleOpenRoll = (skill?: ItemOf<"skill">) => {
-    void openActionCenter(actor, { skill1Id: skill?.id ?? undefined });
-  };
+  const [activeTab, setActiveTab] = useState<ActorTabType>("stats"),
+    system = actor.system,
+    handleFieldChange = (path: string, val: unknown) => {
+      void actor.update({ [path]: val });
+    },
+    handleOpenRoll = (skill?: ItemOf<"skill">) => {
+      void openActionCenter(actor, { skill1Id: skill?.id ?? undefined });
+    };
 
   return (
     <Sheet>

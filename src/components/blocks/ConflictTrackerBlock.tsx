@@ -13,26 +13,24 @@ interface ConflictTrackerBlockProps {
 }
 
 export function ConflictTrackerBlock({ actor }: ConflictTrackerBlockProps): JSX.Element {
-  const tracker = actor.system.tracker;
-  const states = tracker.states;
-
-  const handleMaxChange = (val: number | null) => {
-    const max = Math.max(0, val ?? 0);
-    const next = resizeBoxStates(states, max);
-    void actor.update({
-      "system.tracker.max": max,
-      "system.tracker.states": next,
-      "system.tracker.value": countCheckedBoxes(next),
-    });
-  };
-
-  const handleToggle = (index: number, checked: boolean) => {
-    const next = states.map((state, i) => (i === index ? checked : state));
-    void actor.update({
-      "system.tracker.states": next,
-      "system.tracker.value": countCheckedBoxes(next),
-    });
-  };
+  const tracker = actor.system.tracker,
+    states = tracker.states,
+    handleMaxChange = (val: number | null) => {
+      const max = Math.max(0, val ?? 0),
+        next = resizeBoxStates(states, max);
+      void actor.update({
+        "system.tracker.max": max,
+        "system.tracker.states": next,
+        "system.tracker.value": countCheckedBoxes(next),
+      });
+    },
+    handleToggle = (index: number, checked: boolean) => {
+      const next = states.map((state, i) => (i === index ? checked : state));
+      void actor.update({
+        "system.tracker.states": next,
+        "system.tracker.value": countCheckedBoxes(next),
+      });
+    };
 
   return (
     <Stack gap={1}>

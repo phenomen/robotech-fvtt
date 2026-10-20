@@ -46,29 +46,28 @@ export async function applySynergy(input: ApplySynergyInput): Promise<boolean> {
     return false;
   }
 
-  const snapshot = flags.snapshot;
-  const remaining = flags.successes - input.transferred;
-  const childPushed = actionIsPushed(input.action);
-  const fatigueNotice = Boolean(flags.pushed) || childPushed;
-  const sourceIncoming =
-    flags.kind === "attack" && flags.incoming ? { ...flags.incoming, attackSuccesses: remaining } : flags.incoming;
-
-  const child = await postActionCard({
-    action: input.action,
-    actor: input.actor,
-    bonusSuccesses: 0,
-    dice: [],
-    diceCount: snapshot.diceCount,
-    fatigueNotice,
-    incoming: input.incoming,
-    modifier: snapshot.modifier,
-    pushed: childPushed,
-    rolledSuccesses: input.transferred,
-    skillNames: snapshot.skillNames,
-    successes: input.transferred,
-    synergy: { partnerId: input.message.id ?? undefined, role: "child" },
-    title: actionCardTitle(input.actor, input.action, childPushed, true),
-  });
+  const snapshot = flags.snapshot,
+    remaining = flags.successes - input.transferred,
+    childPushed = actionIsPushed(input.action),
+    fatigueNotice = Boolean(flags.pushed) || childPushed,
+    sourceIncoming =
+      flags.kind === "attack" && flags.incoming ? { ...flags.incoming, attackSuccesses: remaining } : flags.incoming,
+    child = await postActionCard({
+      action: input.action,
+      actor: input.actor,
+      bonusSuccesses: 0,
+      dice: [],
+      diceCount: snapshot.diceCount,
+      fatigueNotice,
+      incoming: input.incoming,
+      modifier: snapshot.modifier,
+      pushed: childPushed,
+      rolledSuccesses: input.transferred,
+      skillNames: snapshot.skillNames,
+      successes: input.transferred,
+      synergy: { partnerId: input.message.id ?? undefined, role: "child" },
+      title: actionCardTitle(input.actor, input.action, childPushed, true),
+    });
 
   await updateActionCard(input.message, {
     ...flags,

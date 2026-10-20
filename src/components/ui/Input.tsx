@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { memo, useState } from "react";
+import type { ChangeEvent, FocusEvent, InputHTMLAttributes, JSX, KeyboardEvent, Ref } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
@@ -7,28 +8,27 @@ import { cn } from "@/utils/cn";
 export type InputSize = TextSize;
 export type InputWidth = "auto" | "full" | "small" | "medium" | "large";
 
-export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "className" | "size"> {
-  ref?: React.Ref<HTMLInputElement>;
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "className" | "size"> {
+  ref?: Ref<HTMLInputElement>;
   size?: InputSize;
   value?: string | number;
   width?: InputWidth;
 }
 
 const SIZE_PAD: Record<InputSize, string> = {
-  large: "px-3 py-1",
-  medium: "px-2.5 py-1",
-  small: "px-2 py-0.5",
-};
+    large: "px-3 py-1",
+    medium: "px-2.5 py-1",
+    small: "px-2 py-0.5",
+  },
+  WIDTH_CLASS: Record<InputWidth, string> = {
+    auto: "",
+    full: "w-full",
+    large: "w-44",
+    medium: "w-32",
+    small: "w-12",
+  };
 
-const WIDTH_CLASS: Record<InputWidth, string> = {
-  auto: "",
-  full: "w-full",
-  large: "w-44",
-  medium: "w-32",
-  small: "w-12",
-};
-
-export const Input = React.memo(
+export const Input = memo(
   ({
     type = "text",
     value,
@@ -41,35 +41,31 @@ export const Input = React.memo(
     spellCheck = false,
     ref,
     ...props
-  }: InputProps): React.JSX.Element => {
-    const [draft, setDraft] = useState<string | null>(null);
-    const displayValue = draft ?? value ?? "";
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDraft(e.target.value);
-      if (type === "checkbox" || type === "radio") {
-        onChange?.(e);
-      }
-    };
-
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      onFocus?.(e);
-    };
-
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      if (type !== "checkbox" && type !== "radio" && draft !== null && onChange && draft !== String(value ?? "")) {
-        onChange(e);
-      }
-      setDraft(null);
-      onBlur?.(e);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      onKeyDown?.(e);
-      if (e.key === "Enter" && type !== "checkbox" && type !== "radio") {
-        (e.target as HTMLInputElement).blur();
-      }
-    };
+  }: InputProps): JSX.Element => {
+    const [draft, setDraft] = useState<string | null>(null),
+      displayValue = draft ?? value ?? "",
+      handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setDraft(e.target.value);
+        if (type === "checkbox" || type === "radio") {
+          onChange?.(e);
+        }
+      },
+      handleFocus = (e: FocusEvent<HTMLInputElement>) => {
+        onFocus?.(e);
+      },
+      handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+        if (type !== "checkbox" && type !== "radio" && draft !== null && onChange && draft !== String(value ?? "")) {
+          onChange(e);
+        }
+        setDraft(null);
+        onBlur?.(e);
+      },
+      handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        onKeyDown?.(e);
+        if (e.key === "Enter" && type !== "checkbox" && type !== "radio") {
+          (e.target as HTMLInputElement).blur();
+        }
+      };
 
     return (
       <input

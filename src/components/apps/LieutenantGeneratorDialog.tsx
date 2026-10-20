@@ -10,7 +10,7 @@ import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
-import { LIEUTENANT_ELEMENT_OPTIONS, LIEUTENANT_TYPE_OPTIONS, isChoiceValue } from "@/config";
+import { isChoiceValue, LIEUTENANT_ELEMENT_OPTIONS, LIEUTENANT_TYPE_OPTIONS } from "@/config";
 import type { LieutenantElementValue, LieutenantTypeValue } from "@/config";
 import type { ActorOf } from "@/models";
 import type { AppOptions, CloseOptions } from "@/types/application";
@@ -23,34 +23,33 @@ interface LieutenantGeneratorContentProps {
 }
 
 export function LieutenantGeneratorContent({ onClose, vessel }: LieutenantGeneratorContentProps): JSX.Element {
-  const [type, setType] = useState<LieutenantTypeValue>("minor");
-  const [element, setElement] = useState<LieutenantElementValue>("pilot");
-  const [veteran, setVeteran] = useState(false);
-  const [name, setName] = useState("");
-  const [creating, setCreating] = useState(false);
-  const nameRef = useRef<HTMLInputElement>(null);
-  const generatedName = lieutenantNameOf({ element, type, veteran });
-
-  const handleCreate = async (): Promise<void> => {
-    if (creating) {
-      return;
-    }
-    setCreating(true);
-    const typed = (nameRef.current?.value ?? name).trim();
-    const actor = await createLieutenant({
-      element,
-      name: typed === "" ? generatedName : typed,
-      openSheet: !vessel,
-      type,
-      vessel,
-      veteran,
-    });
-    if (actor) {
-      onClose();
-      return;
-    }
-    setCreating(false);
-  };
+  const [type, setType] = useState<LieutenantTypeValue>("minor"),
+    [element, setElement] = useState<LieutenantElementValue>("pilot"),
+    [veteran, setVeteran] = useState(false),
+    [name, setName] = useState(""),
+    [creating, setCreating] = useState(false),
+    nameRef = useRef<HTMLInputElement>(null),
+    generatedName = lieutenantNameOf({ element, type, veteran }),
+    handleCreate = async (): Promise<void> => {
+      if (creating) {
+        return;
+      }
+      setCreating(true);
+      const typed = (nameRef.current?.value ?? name).trim(),
+        actor = await createLieutenant({
+          element,
+          name: typed === "" ? generatedName : typed,
+          openSheet: !vessel,
+          type,
+          vessel,
+          veteran,
+        });
+      if (actor) {
+        onClose();
+        return;
+      }
+      setCreating(false);
+    };
 
   return (
     <Stack pad={4} gap={3} direction="column">

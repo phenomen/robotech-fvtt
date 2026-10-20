@@ -72,31 +72,29 @@ function WoundGroup({ refs, brawlStates, criticalStates, onToggle, justify = "st
 }
 
 export function CharacterWoundTracker({ actor }: WoundTrackerProps): JSX.Element {
-  const system = actor.system;
-  const { isTriumvirateWounds } = system.vitalsSettings;
-  const isLightArmor = system.armorClass === "light";
-  const brawlStates = system.wounds.brawl.states;
-  const criticalStates = system.wounds.critical.states;
-
-  const groups = isTriumvirateWounds
-    ? triumvirateGroupsOf(system.wounds.brawl.max, system.wounds.critical.max)
-    : [flatWoundGroup(system.wounds.brawl.max, system.wounds.critical.max)];
-
-  const toggleWoundHex = (ref: WoundRef) => {
-    const nextBrawl = [...brawlStates];
-    const nextCritical = [...criticalStates];
-    if (ref.type === "brawl") {
-      nextBrawl[ref.index] = !(nextBrawl[ref.index] ?? false);
-    } else {
-      nextCritical[ref.index] = !(nextCritical[ref.index] ?? false);
-    }
-    void actor.update({
-      "system.wounds.brawl.states": nextBrawl,
-      "system.wounds.brawl.value": countCheckedBoxes(nextBrawl),
-      "system.wounds.critical.states": nextCritical,
-      "system.wounds.critical.value": countCheckedBoxes(nextCritical),
-    });
-  };
+  const system = actor.system,
+    { isTriumvirateWounds } = system.vitalsSettings,
+    isLightArmor = system.armorClass === "light",
+    brawlStates = system.wounds.brawl.states,
+    criticalStates = system.wounds.critical.states,
+    groups = isTriumvirateWounds
+      ? triumvirateGroupsOf(system.wounds.brawl.max, system.wounds.critical.max)
+      : [flatWoundGroup(system.wounds.brawl.max, system.wounds.critical.max)],
+    toggleWoundHex = (ref: WoundRef) => {
+      const nextBrawl = [...brawlStates],
+        nextCritical = [...criticalStates];
+      if (ref.type === "brawl") {
+        nextBrawl[ref.index] = !(nextBrawl[ref.index] ?? false);
+      } else {
+        nextCritical[ref.index] = !(nextCritical[ref.index] ?? false);
+      }
+      void actor.update({
+        "system.wounds.brawl.states": nextBrawl,
+        "system.wounds.brawl.value": countCheckedBoxes(nextBrawl),
+        "system.wounds.critical.states": nextCritical,
+        "system.wounds.critical.value": countCheckedBoxes(nextCritical),
+      });
+    };
 
   return (
     <Card pad={0}>

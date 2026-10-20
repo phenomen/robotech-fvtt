@@ -16,45 +16,41 @@ import { getLayoutMode, itemHasEffects } from "@/config/documentMeta";
 
 export type ItemTabType = "stats" | "description" | "effects";
 
-const ITEM_STATS_TAB: TabItem<ItemTabType> = { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" };
-const ITEM_DESCRIPTION_TAB: TabItem<ItemTabType> = { key: "description", labelKey: "ROBOTECH.Tabs.Description" };
-const ITEM_EFFECTS_TAB: TabItem<ItemTabType> = { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" };
+const ITEM_STATS_TAB: TabItem<ItemTabType> = { key: "stats", labelKey: "ROBOTECH.Tabs.Stats" },
+  ITEM_DESCRIPTION_TAB: TabItem<ItemTabType> = { key: "description", labelKey: "ROBOTECH.Tabs.Description" },
+  ITEM_EFFECTS_TAB: TabItem<ItemTabType> = { key: "effects", labelKey: "ROBOTECH.Tabs.Effects" };
 
 interface ItemSheetAppProps {
   item: Item;
 }
 
 export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<ItemTabType>("stats");
-  const stacked = getLayoutMode(item.type) === "stacked";
-  const hasEffects = itemHasEffects(item.type);
-  const showTabNav = !stacked || hasEffects;
-  const system = item.system;
-
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    void item.update({ name: e.target.value });
-  };
-
-  const handleFieldChange = (path: string, val: unknown) => {
-    void item.update({ [path]: val });
-  };
-
-  const itemTabs: TabItem<ItemTabType>[] = [
-    ITEM_STATS_TAB,
-    ...(stacked ? [] : [ITEM_DESCRIPTION_TAB]),
-    ...(hasEffects ? [ITEM_EFFECTS_TAB] : []),
-  ];
-
-  const descriptionBlock = (
-    <DescriptionTab
-      name="system.description"
-      value={system.description}
-      onChange={(val) => {
-        handleFieldChange("system.description", val);
-      }}
-      minHeight="tall"
-    />
-  );
+  const [activeTab, setActiveTab] = useState<ItemTabType>("stats"),
+    stacked = getLayoutMode(item.type) === "stacked",
+    hasEffects = itemHasEffects(item.type),
+    showTabNav = !stacked || hasEffects,
+    system = item.system,
+    handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+      void item.update({ name: e.target.value });
+    },
+    handleFieldChange = (path: string, val: unknown) => {
+      void item.update({ [path]: val });
+    },
+    itemTabs: TabItem<ItemTabType>[] = [
+      ITEM_STATS_TAB,
+      ...(stacked ? [] : [ITEM_DESCRIPTION_TAB]),
+      ...(hasEffects ? [ITEM_EFFECTS_TAB] : []),
+    ],
+    descriptionBlock = (
+      <DescriptionTab
+        name="system.description"
+        value={system.description}
+        onChange={(val) => {
+          handleFieldChange("system.description", val);
+        }}
+        minHeight="tall"
+      />
+    );
 
   return (
     <Sheet>

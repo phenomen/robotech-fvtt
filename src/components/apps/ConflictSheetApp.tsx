@@ -25,11 +25,10 @@ const CONFLICT_TABS: TabItem<ConflictTabType>[] = [
 ];
 
 export function ConflictSheetApp({ actor }: ConflictSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<ConflictTabType>("data");
-
-  const handleFieldChange = (path: string, val: unknown) => {
-    void actor.update({ [path]: val });
-  };
+  const [activeTab, setActiveTab] = useState<ConflictTabType>("data"),
+    handleFieldChange = (path: string, val: unknown) => {
+      void actor.update({ [path]: val });
+    };
 
   return (
     <Sheet>

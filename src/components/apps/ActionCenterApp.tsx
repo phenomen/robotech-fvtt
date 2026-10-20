@@ -38,9 +38,9 @@ import type { ActionCenterItems } from "@/utils/actionCenterItems";
 import { actionCardTitle, actionFlagsOf, postActionCard } from "@/utils/actionChat";
 import type { IncomingAttack } from "@/utils/actionChat";
 import {
-  actorSpeed,
   actionBudgetError,
   actionIsPushed,
+  actorSpeed,
   applyInitiative,
   combatantOf,
   combatPhaseOf,
@@ -69,184 +69,175 @@ interface ActionCenterContentProps {
 }
 
 export function ActionCenterContent({ contextActor, items, prefill, onClose }: ActionCenterContentProps): JSX.Element {
-  const incoming = prefill?.incoming;
-  const combatant = combatantFromPrefill(prefill);
-  const consumeSlot = Boolean(combatant);
-  const synergyFlags = prefill?.synergyMessage ? actionFlagsOf(prefill.synergyMessage) : null;
-  const isSynergy = Boolean(synergyFlags);
-  const lockedAction = lockedActionOf(prefill, isSynergy);
-
-  const { skills: skillItems, suites: suiteItems, weapons: weaponItems } = items;
-
-  const [action, setAction] = useState<ActionValue>(
-    lockedAction ??
-      (isSynergy && synergyFlags ? defaultSynergyAction(synergyFlags.action) : defaultCombatAction(consumeSlot))
-  );
-  const [skill1Id, setSkill1Id] = useState(() => prefillSkillKey(skillItems, contextActor, prefill?.skill1Id));
-  const [skill2Id, setSkill2Id] = useState<string>("");
-  const [suiteId, setSuiteId] = useState<string>("");
-  const [weaponId, setWeaponId] = useState<string>(weaponItems[0]?.key ?? "");
-  const [calledShot, setCalledShot] = useState<boolean>(false);
-  const initialPenetration = weaponPenetrationOf(weaponItems[0]?.item);
-  const [penetrationActive, setPenetrationActive] = useState(initialPenetration.active);
-  const [penetrationValue, setPenetrationValue] = useState(initialPenetration.value);
-  const [modifier, setModifier] = useState<RollModifierValue>("nominal");
-  const [manualDice, setManualDice] = useState<number>(0);
-  const [manualSuccesses, setManualSuccesses] = useState<number>(0);
-  const livingVessels = livingSwarmCount(contextActor);
-  const isSwarm = isActorOf(contextActor, "swarm");
-  const swarmDiceMax = remainingSwarmDice(livingVessels, combatant?.system.diceUsed ?? 0);
-  const [swarmDice, setSwarmDice] = useState<number>(swarmDiceMax);
-  const [transferred, setTransferred] = useState(() =>
-    synergyFlags ? Math.max(1, Math.floor(synergyFlags.successes / 2)) : 1
-  );
-  const [pending, setPending] = useState(false);
-
-  const skill1 = skillItems.find((skill) => skill.key === skill1Id);
-  const skill2 = skillItems.find((skill) => skill.key === skill2Id);
-  const suite = suiteItems.find((item) => item.key === suiteId);
-  const weapon = weaponItems.find((item) => item.key === weaponId);
-
-  const handleWeaponChange = (nextId: string): void => {
-    setWeaponId(nextId);
-    const next = weaponPenetrationOf(weaponItems.find((item) => item.key === nextId)?.item);
-    setPenetrationActive(next.active);
-    setPenetrationValue(next.value);
-  };
-
-  const combinedDice = Math.min(swarmDice, swarmDiceMax);
-  const diceCount =
-    combinedDice +
-    (skill1?.item.system.value ?? 0) +
-    (skill2?.item.system.value ?? 0) +
-    (suite?.item.system.skill ?? 0) +
-    manualDice;
-
-  const needsWeapon = action === "attack" && !isSwarm;
-  const canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon));
-  const skillPicks = (skill1 ? 1 : 0) + (skill2 ? 1 : 0);
-  const usage: ActionUsage = {
-    dice: isSwarm ? combinedDice : 0,
-    skills: isSwarm && consumeSlot ? 1 : skillPicks,
-    suite: Boolean(suite),
-  };
-  const sourceSuccesses = synergyFlags?.successes ?? 0;
-  const moved = transferred;
-  const remaining = Math.max(0, sourceSuccesses - moved);
-  const canConfirm =
-    isSynergy &&
-    isConflictAction(action) &&
-    action !== synergyFlags?.action &&
-    moved >= 1 &&
-    moved <= sourceSuccesses &&
-    (!needsWeapon || Boolean(weapon));
-  const pushedSynergy = isSynergy && (Boolean(synergyFlags?.pushed) || actionIsPushed(action));
-
-  const handleRoll = async (): Promise<void> => {
-    if (!canRoll || pending) {
-      return;
-    }
-
-    if (action === "initiative" && !combatantOf(contextActor)) {
-      ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.NotInCombat"));
-      return;
-    }
-
-    if (consumeSlot && combatant) {
-      if (!isConflictAction(action)) {
+  const incoming = prefill?.incoming,
+    combatant = combatantFromPrefill(prefill),
+    consumeSlot = Boolean(combatant),
+    synergyFlags = prefill?.synergyMessage ? actionFlagsOf(prefill.synergyMessage) : null,
+    isSynergy = Boolean(synergyFlags),
+    lockedAction = lockedActionOf(prefill, isSynergy),
+    { skills: skillItems, suites: suiteItems, weapons: weaponItems } = items,
+    [action, setAction] = useState<ActionValue>(
+      lockedAction ??
+        (isSynergy && synergyFlags ? defaultSynergyAction(synergyFlags.action) : defaultCombatAction(consumeSlot))
+    ),
+    [skill1Id, setSkill1Id] = useState(() => prefillSkillKey(skillItems, contextActor, prefill?.skill1Id)),
+    [skill2Id, setSkill2Id] = useState<string>(""),
+    [suiteId, setSuiteId] = useState<string>(""),
+    [weaponId, setWeaponId] = useState<string>(weaponItems[0]?.key ?? ""),
+    [calledShot, setCalledShot] = useState<boolean>(false),
+    initialPenetration = weaponPenetrationOf(weaponItems[0]?.item),
+    [penetrationActive, setPenetrationActive] = useState(initialPenetration.active),
+    [penetrationValue, setPenetrationValue] = useState(initialPenetration.value),
+    [modifier, setModifier] = useState<RollModifierValue>("nominal"),
+    [manualDice, setManualDice] = useState<number>(0),
+    [manualSuccesses, setManualSuccesses] = useState<number>(0),
+    livingVessels = livingSwarmCount(contextActor),
+    isSwarm = isActorOf(contextActor, "swarm"),
+    swarmDiceMax = remainingSwarmDice(livingVessels, combatant?.system.diceUsed ?? 0),
+    [swarmDice, setSwarmDice] = useState<number>(swarmDiceMax),
+    [transferred, setTransferred] = useState(() =>
+      synergyFlags ? Math.max(1, Math.floor(synergyFlags.successes / 2)) : 1
+    ),
+    [pending, setPending] = useState(false),
+    skill1 = skillItems.find((skill) => skill.key === skill1Id),
+    skill2 = skillItems.find((skill) => skill.key === skill2Id),
+    suite = suiteItems.find((item) => item.key === suiteId),
+    weapon = weaponItems.find((item) => item.key === weaponId),
+    handleWeaponChange = (nextId: string): void => {
+      setWeaponId(nextId);
+      const next = weaponPenetrationOf(weaponItems.find((item) => item.key === nextId)?.item);
+      setPenetrationActive(next.active);
+      setPenetrationValue(next.value);
+    },
+    combinedDice = Math.min(swarmDice, swarmDiceMax),
+    diceCount =
+      combinedDice +
+      (skill1?.item.system.value ?? 0) +
+      (skill2?.item.system.value ?? 0) +
+      (suite?.item.system.skill ?? 0) +
+      manualDice,
+    needsWeapon = action === "attack" && !isSwarm,
+    canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon)),
+    skillPicks = (skill1 ? 1 : 0) + (skill2 ? 1 : 0),
+    usage: ActionUsage = {
+      dice: isSwarm ? combinedDice : 0,
+      skills: isSwarm && consumeSlot ? 1 : skillPicks,
+      suite: Boolean(suite),
+    },
+    sourceSuccesses = synergyFlags?.successes ?? 0,
+    moved = transferred,
+    remaining = Math.max(0, sourceSuccesses - moved),
+    canConfirm =
+      isSynergy &&
+      isConflictAction(action) &&
+      action !== synergyFlags?.action &&
+      moved >= 1 &&
+      moved <= sourceSuccesses &&
+      (!needsWeapon || Boolean(weapon)),
+    pushedSynergy = isSynergy && (Boolean(synergyFlags?.pushed) || actionIsPushed(action)),
+    handleRoll = async (): Promise<void> => {
+      if (!canRoll || pending) {
         return;
       }
-      if (simpleActionsEnabled() && usage.suite && usage.skills < 1) {
-        ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill"));
-        return;
-      }
-      const errorKey = actionBudgetError(combatant.system, usage, isSwarm);
-      if (errorKey) {
-        ui.notifications.warn(game.i18n.localize(errorKey));
-        return;
-      }
-    }
 
-    setPending(true);
-    try {
-      await executeRoll();
-    } catch (error: unknown) {
+      if (action === "initiative" && !combatantOf(contextActor)) {
+        ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.NotInCombat"));
+        return;
+      }
+
+      if (consumeSlot && combatant) {
+        if (!isConflictAction(action)) {
+          return;
+        }
+        if (simpleActionsEnabled() && usage.suite && usage.skills < 1) {
+          ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.SuiteRequiresSkill"));
+          return;
+        }
+        const errorKey = actionBudgetError(combatant.system, usage, isSwarm);
+        if (errorKey) {
+          ui.notifications.warn(game.i18n.localize(errorKey));
+          return;
+        }
+      }
+
+      setPending(true);
+      try {
+        await executeRoll();
+      } catch (error: unknown) {
+        setPending(false);
+        throw error;
+      }
       setPending(false);
-      throw error;
-    }
-    setPending(false);
-  };
+    },
+    executeRoll = async (): Promise<void> => {
+      const result = await evaluateAd6Roll({ diceCount, modifier }),
+        rolledSuccesses = result.successes,
+        successes = rolledSuccesses + manualSuccesses,
+        pushed = consumeSlot && isConflictAction(action) && actionIsPushed(action);
 
-  const executeRoll = async (): Promise<void> => {
-    const result = await evaluateAd6Roll({ diceCount, modifier });
-    const rolledSuccesses = result.successes;
-    const successes = rolledSuccesses + manualSuccesses;
-    const pushed = consumeSlot && isConflictAction(action) && actionIsPushed(action);
-
-    if (action === "initiative") {
-      const applied = await applyInitiative(contextActor, successes, diceCount);
-      if (!applied) {
-        return;
+      if (action === "initiative") {
+        const applied = await applyInitiative(contextActor, successes, diceCount);
+        if (!applied) {
+          return;
+        }
       }
-    }
 
-    const incomingAttack = incomingAttackOf(action, successes, incoming, weapon?.item, contextActor, calledShot, {
-      active: penetrationActive,
-      value: penetrationValue,
-    });
-
-    await postActionCard({
-      action,
-      actor: contextActor,
-      bonusSuccesses: manualSuccesses,
-      dice: result.dice,
-      diceCount,
-      fromCombat: consumeSlot,
-      incoming: incomingAttack,
-      modifier,
-      pushed,
-      roll: result.roll,
-      rolledSuccesses,
-      skillNames: sourcedMethodNames(skill1, skill2, suite, combinedDice, contextActor),
-      speed: action === "initiative" ? actorSpeed(contextActor) : undefined,
-      successes,
-      title: actionCardTitle(contextActor, action, pushed),
-    });
-
-    if (consumeSlot && combatant && isConflictAction(action)) {
-      await spendRoundUses(combatant, action, usage);
-    }
-
-    onClose();
-  };
-
-  const handleSynergy = async (): Promise<void> => {
-    const message = prefill?.synergyMessage;
-    if (!message || !canConfirm || pending || !isConflictAction(action)) {
-      return;
-    }
-    setPending(true);
-    try {
-      const incomingAttack = incomingAttackOf(action, moved, undefined, weapon?.item, contextActor, calledShot, {
+      const incomingAttack = incomingAttackOf(action, successes, incoming, weapon?.item, contextActor, calledShot, {
         active: penetrationActive,
         value: penetrationValue,
       });
-      const applied = await applySynergy({
+
+      await postActionCard({
         action,
         actor: contextActor,
+        bonusSuccesses: manualSuccesses,
+        dice: result.dice,
+        diceCount,
+        fromCombat: consumeSlot,
         incoming: incomingAttack,
-        message,
-        transferred: moved,
+        modifier,
+        pushed,
+        roll: result.roll,
+        rolledSuccesses,
+        skillNames: sourcedMethodNames(skill1, skill2, suite, combinedDice, contextActor),
+        speed: action === "initiative" ? actorSpeed(contextActor) : undefined,
+        successes,
+        title: actionCardTitle(contextActor, action, pushed),
       });
-      if (applied) {
-        onClose();
+
+      if (consumeSlot && combatant && isConflictAction(action)) {
+        await spendRoundUses(combatant, action, usage);
       }
-    } catch (error: unknown) {
+
+      onClose();
+    },
+    handleSynergy = async (): Promise<void> => {
+      const message = prefill?.synergyMessage;
+      if (!message || !canConfirm || pending || !isConflictAction(action)) {
+        return;
+      }
+      setPending(true);
+      try {
+        const incomingAttack = incomingAttackOf(action, moved, undefined, weapon?.item, contextActor, calledShot, {
+            active: penetrationActive,
+            value: penetrationValue,
+          }),
+          applied = await applySynergy({
+            action,
+            actor: contextActor,
+            incoming: incomingAttack,
+            message,
+            transferred: moved,
+          });
+        if (applied) {
+          onClose();
+        }
+      } catch (error: unknown) {
+        setPending(false);
+        throw error;
+      }
       setPending(false);
-      throw error;
-    }
-    setPending(false);
-  };
+    };
 
   return (
     <Stack pad={4} gap={4}>
@@ -445,13 +436,13 @@ export async function openActionCenter(contextActor: Actor, prefill?: ActionCent
     return;
   }
 
-  const suiteActors = await resolveSuiteActors(contextActor, crew);
-  const weaponActors = await resolveWeaponActors(contextActor);
-  const items: ActionCenterItems = {
-    skills: sourcedOptionsOf(crew, "skill"),
-    suites: sourcedOptionsOf(suiteActors, "equipment_suite"),
-    weapons: sourcedOptionsOf(weaponActors, "weapon"),
-  };
+  const suiteActors = await resolveSuiteActors(contextActor, crew),
+    weaponActors = await resolveWeaponActors(contextActor),
+    items: ActionCenterItems = {
+      skills: sourcedOptionsOf(crew, "skill"),
+      suites: sourcedOptionsOf(suiteActors, "equipment_suite"),
+      weapons: sourcedOptionsOf(weaponActors, "weapon"),
+    };
   if (currentApp) {
     await currentApp.close();
   }

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
+import type { ChangeEvent, FocusEvent, JSX, TextareaHTMLAttributes } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import type { TextSize } from "@/components/ui/typo";
@@ -6,7 +7,7 @@ import { cn } from "@/utils/cn";
 
 export type TextareaSize = TextSize;
 
-export interface TextareaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "className"> {
+export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "className"> {
   size?: TextareaSize;
 }
 
@@ -23,19 +24,11 @@ function formatValue(val: TextareaProps["value"]): string | number {
   return "";
 }
 
-export const Textarea = React.memo(
-  ({
-    value,
-    size = "medium",
-    onChange,
-    onBlur,
-    onFocus,
-    spellCheck = false,
-    ...props
-  }: TextareaProps): React.JSX.Element => {
-    const safeValue = formatValue(value);
-    const [localValue, setLocalValue] = useState<string | number>(safeValue);
-    const isFocusedRef = useRef(false);
+export const Textarea = memo(
+  ({ value, size = "medium", onChange, onBlur, onFocus, spellCheck = false, ...props }: TextareaProps): JSX.Element => {
+    const safeValue = formatValue(value),
+      [localValue, setLocalValue] = useState<string | number>(safeValue),
+      isFocusedRef = useRef(false);
 
     useEffect(() => {
       if (!isFocusedRef.current) {
@@ -43,22 +36,20 @@ export const Textarea = React.memo(
       }
     }, [safeValue]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setLocalValue(e.target.value);
-    };
-
-    const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-      isFocusedRef.current = true;
-      onFocus?.(e);
-    };
-
-    const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-      isFocusedRef.current = false;
-      onBlur?.(e);
-      if (onChange && String(localValue) !== String(safeValue)) {
-        onChange(e);
-      }
-    };
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setLocalValue(e.target.value);
+      },
+      handleFocus = (e: FocusEvent<HTMLTextAreaElement>) => {
+        isFocusedRef.current = true;
+        onFocus?.(e);
+      },
+      handleBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
+        isFocusedRef.current = false;
+        onBlur?.(e);
+        if (onChange && String(localValue) !== String(safeValue)) {
+          onChange(e);
+        }
+      };
 
     return (
       <textarea

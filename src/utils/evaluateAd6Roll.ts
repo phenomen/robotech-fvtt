@@ -54,9 +54,9 @@ export function calcDieSuccess(die: number, modifier: RollModifierValue): number
 }
 
 export async function evaluateAd6Roll(options: RollOptions): Promise<Ad6RollResult> {
-  const count = Math.max(1, options.diceCount);
-  const roll = await new foundry.dice.Roll(`${count}d6`).evaluate();
-  const faces: number[] = roll.dice[0]?.results.map((result) => result.result) ?? [];
+  const count = Math.max(1, options.diceCount),
+    roll = await new foundry.dice.Roll(`${count}d6`).evaluate(),
+    faces: number[] = roll.dice[0]?.results.map((result) => result.result) ?? [];
 
   let successes = 0;
   const dice = faces.map((die) => {

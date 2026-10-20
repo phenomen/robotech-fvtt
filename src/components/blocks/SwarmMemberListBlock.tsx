@@ -34,25 +34,22 @@ function withMemberPatch(member: SwarmMember, updates: Partial<SwarmMember>): Sw
 }
 
 export function SwarmMemberListBlock({ actor }: SwarmMemberListBlockProps): JSX.Element {
-  const members = actor.system.members;
-  const hardened = actor.system.hardened;
-
-  const handleUpdateMember = (id: string, updates: Partial<SwarmMember>) => {
-    const updated = members.map((member) => (member.id === id ? withMemberPatch(member, updates) : member));
-    void actor.update({ "system.members": updated });
-  };
-
-  const handleCountChange = (member: SwarmMember, count: number) => {
-    handleUpdateMember(member.id, {
-      count,
-      maxCount: Math.max(member.maxCount, count),
-    });
-  };
-
-  const handleDeleteMember = (id: string) => {
-    const updated = members.filter((member) => member.id !== id);
-    void actor.update({ "system.members": updated });
-  };
+  const members = actor.system.members,
+    hardened = actor.system.hardened,
+    handleUpdateMember = (id: string, updates: Partial<SwarmMember>) => {
+      const updated = members.map((member) => (member.id === id ? withMemberPatch(member, updates) : member));
+      void actor.update({ "system.members": updated });
+    },
+    handleCountChange = (member: SwarmMember, count: number) => {
+      handleUpdateMember(member.id, {
+        count,
+        maxCount: Math.max(member.maxCount, count),
+      });
+    },
+    handleDeleteMember = (id: string) => {
+      const updated = members.filter((member) => member.id !== id);
+      void actor.update({ "system.members": updated });
+    };
 
   return (
     <Stack gap={1}>
@@ -94,8 +91,8 @@ function SwarmMemberRow({
   onCountChange: (member: SwarmMember, count: number) => void;
   onDelete: (id: string) => void;
 }): JSX.Element {
-  const structure = memberStructureOf(member, hardened);
-  const currentStructure = leadStructureOf(member, hardened);
+  const structure = memberStructureOf(member, hardened),
+    currentStructure = leadStructureOf(member, hardened);
 
   return (
     <Stack gap={2}>
@@ -198,8 +195,8 @@ function SwarmMemberRow({
 }
 
 function MemberCrewList({ actorUuid }: { actorUuid: string }): JSX.Element {
-  const [vesselLink] = useLinkedActors(actorUuid ? [actorUuid] : [], ["vessel"]);
-  const crew = useLinkedActors(vesselLink?.actor?.system.characterUuids ?? NO_UUIDS, ["character"]);
+  const [vesselLink] = useLinkedActors(actorUuid ? [actorUuid] : [], ["vessel"]),
+    crew = useLinkedActors(vesselLink?.actor?.system.characterUuids ?? NO_UUIDS, ["character"]);
 
   return (
     <Stack gap={2}>

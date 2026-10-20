@@ -29,8 +29,8 @@ export function hardwareSlotsSchema(options?: {
 }
 
 export function syncDestroyedSlots(value: number, destroyed: boolean[]): boolean[] {
-  const count = Math.max(0, value);
-  const next = destroyed.slice(0, count).map(Boolean);
+  const count = Math.max(0, value),
+    next = destroyed.slice(0, count).map(Boolean);
   while (next.length < count) {
     next.push(false);
   }
@@ -42,11 +42,11 @@ export function capHardwareDestroyed(hardware: HardwareSlots, changes: object, p
     return;
   }
 
-  const expanded = expandChanges(changes);
-  const nextValue = numberAt(expanded, `${path}.value`) ?? hardware.value;
-  const patchDestroyed = foundry.utils.getProperty(expanded, `${path}.destroyed`);
-  const sourceDestroyed = Array.isArray(patchDestroyed) ? patchDestroyed : hardware.destroyed;
-  const nextDestroyed = syncDestroyedSlots(nextValue, sourceDestroyed);
+  const expanded = expandChanges(changes),
+    nextValue = numberAt(expanded, `${path}.value`) ?? hardware.value,
+    patchDestroyed = foundry.utils.getProperty(expanded, `${path}.destroyed`),
+    sourceDestroyed = Array.isArray(patchDestroyed) ? patchDestroyed : hardware.destroyed,
+    nextDestroyed = syncDestroyedSlots(nextValue, sourceDestroyed);
 
   if (
     destroyedEquals(nextDestroyed, hardware.destroyed) &&

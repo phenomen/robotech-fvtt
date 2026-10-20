@@ -135,10 +135,10 @@ function capAmmunition(ammo: WeaponAmmunition, changes: object): void {
     return;
   }
 
-  const expanded = expandChanges(changes);
-  const patchMax = numberAt(expanded, `${path}.value`);
-  const patchCurrent = numberAt(expanded, `${path}.current`);
-  const nextMax = patchMax ?? ammo.value;
+  const expanded = expandChanges(changes),
+    patchMax = numberAt(expanded, `${path}.value`),
+    patchCurrent = numberAt(expanded, `${path}.current`),
+    nextMax = patchMax ?? ammo.value;
   let nextCurrent = patchCurrent ?? ammo.current;
 
   if (patchMax !== undefined) {

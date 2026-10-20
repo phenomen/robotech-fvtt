@@ -9,7 +9,7 @@ import { Text } from "@/components/ui/Text";
 import { ToggleGroup, ToggleItem } from "@/components/ui/ToggleGroup";
 import { COMBAT_PHASE_OPTIONS } from "@/config/options";
 import type { CombatPhaseValue } from "@/config/options";
-import { changePhase, combatPhaseOf, COMBAT_DOCUMENT_TYPE } from "@/utils/combat";
+import { changePhase, COMBAT_DOCUMENT_TYPE, combatPhaseOf } from "@/utils/combat";
 
 function encounterStatus(combat: Combat | null): string {
   if (!combat) {
@@ -27,15 +27,14 @@ interface CombatTrackerHeaderProps {
 }
 
 export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProps): JSX.Element {
-  const isGM = game.user?.isGM === true;
-  const phase = combat ? combatPhaseOf(combat) : "communication";
-
-  const handlePhase = (value: string) => {
-    if (!combat || !isGM) {
-      return;
-    }
-    void changePhase(combat, value as CombatPhaseValue);
-  };
+  const isGM = game.user?.isGM === true,
+    phase = combat ? combatPhaseOf(combat) : "communication",
+    handlePhase = (value: string) => {
+      if (!combat || !isGM) {
+        return;
+      }
+      void changePhase(combat, value as CombatPhaseValue);
+    };
 
   return (
     <Stack gap={2} pad={2}>
@@ -100,8 +99,8 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
 }
 
 async function createEncounter(): Promise<void> {
-  const created = await foundry.documents.Combat.implementation.create({ type: COMBAT_DOCUMENT_TYPE });
-  const combat = (Array.isArray(created) ? created[0] : created) as foundry.documents.Combat | undefined;
+  const created = await foundry.documents.Combat.implementation.create({ type: COMBAT_DOCUMENT_TYPE }),
+    combat = (Array.isArray(created) ? created[0] : created) as foundry.documents.Combat | undefined;
   if (combat) {
     await combat.activate({ render: false });
   }

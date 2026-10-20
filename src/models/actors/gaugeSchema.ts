@@ -27,10 +27,10 @@ export function clampGauge(gauge: Gauge, changes: object, path: string): void {
   if (!pathTouched(changes, path)) {
     return;
   }
-  const expanded = expandChanges(changes);
-  const nextMax = Math.max(0, numberAt(expanded, `${path}.max`) ?? gauge.max);
-  const requested = numberAt(expanded, `${path}.value`) ?? gauge.value;
-  const nextValue = Math.min(Math.max(0, requested), nextMax);
+  const expanded = expandChanges(changes),
+    nextMax = Math.max(0, numberAt(expanded, `${path}.max`) ?? gauge.max),
+    requested = numberAt(expanded, `${path}.value`) ?? gauge.value,
+    nextValue = Math.min(Math.max(0, requested), nextMax);
   if (nextValue === requested) {
     return;
   }

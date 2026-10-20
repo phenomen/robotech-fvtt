@@ -46,15 +46,15 @@ export function incomingAttackOf(
     return { ...weaponAttackStats(weapon, penetration), attackSuccesses: successes, calledShot };
   }
   if (isActorOf(contextActor, "swarm")) {
-    const damageType = contextActor.system.armorClass;
-    const tags: WeaponTag[] = [
-      {
-        color: "red",
-        id: "damage",
-        label: damageTagLabel(1, damageType),
-        title: game.i18n.localize("ROBOTECH.Item.Property.Damage.name"),
-      },
-    ];
+    const damageType = contextActor.system.armorClass,
+      tags: WeaponTag[] = [
+        {
+          color: "red",
+          id: "damage",
+          label: damageTagLabel(1, damageType),
+          title: game.i18n.localize("ROBOTECH.Item.Property.Damage.name"),
+        },
+      ];
     if (penetration.active) {
       tags.push({
         color: "amber",
@@ -77,9 +77,9 @@ export function incomingAttackOf(
 }
 
 export function weaponAttackStats(weapon: ItemOf<"weapon">, penetration?: WeaponAmount): WeaponAttackStats {
-  const properties = weapon.system.properties;
-  const nextPenetration = penetration ?? properties.penetration;
-  const tagged: WeaponProperties = { ...properties, penetration: nextPenetration };
+  const properties = weapon.system.properties,
+    nextPenetration = penetration ?? properties.penetration,
+    tagged: WeaponProperties = { ...properties, penetration: nextPenetration };
   return {
     armorPenetration: nextPenetration.active ? nextPenetration.value : 0,
     damageType: properties.damage.type,
@@ -119,8 +119,8 @@ function buildWeaponPropertyTags(properties: WeaponProperties): WeaponTag[] {
       continue;
     }
 
-    const title = game.i18n.localize(def.nameKey);
-    const formatted = def.formatTag(properties);
+    const title = game.i18n.localize(def.nameKey),
+      formatted = def.formatTag(properties);
 
     if (Array.isArray(formatted)) {
       for (const [index, label] of formatted.entries()) {

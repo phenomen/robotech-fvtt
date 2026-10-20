@@ -45,8 +45,8 @@ function capUses(uses: SuiteUses, changes: object): void {
     return;
   }
 
-  const expanded = expandChanges(changes);
-  const patchMax = foundry.utils.getProperty(expanded, `${path}.max`);
+  const expanded = expandChanges(changes),
+    patchMax = foundry.utils.getProperty(expanded, `${path}.max`);
   let nextMax = uses.max;
   if (pathTouched(changes, `${path}.max`)) {
     nextMax = typeof patchMax === "number" ? patchMax : null;

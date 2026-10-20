@@ -23,11 +23,10 @@ const SWARM_TABS: TabItem<SwarmTabType>[] = [
 ];
 
 export function SwarmSheetApp({ actor }: SwarmSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<SwarmTabType>("members");
-
-  const handleFieldChange = (path: string, val: unknown) => {
-    void actor.update({ [path]: val });
-  };
+  const [activeTab, setActiveTab] = useState<SwarmTabType>("members"),
+    handleFieldChange = (path: string, val: unknown) => {
+      void actor.update({ [path]: val });
+    };
 
   return (
     <Sheet>

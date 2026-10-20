@@ -24,11 +24,10 @@ const PLOT_EVENT_TABS: TabItem<PlotEventTabType>[] = [
 ];
 
 export function PlotEventSheetApp({ actor }: PlotEventSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<PlotEventTabType>("data");
-
-  const handleFieldChange = (path: string, val: unknown) => {
-    void actor.update({ [path]: val });
-  };
+  const [activeTab, setActiveTab] = useState<PlotEventTabType>("data"),
+    handleFieldChange = (path: string, val: unknown) => {
+      void actor.update({ [path]: val });
+    };
 
   return (
     <Sheet>

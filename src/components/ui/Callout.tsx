@@ -23,18 +23,18 @@ const FRAME_CLASS: Record<CalloutTone, string> = {
 
 export function Callout({ children, icon, tone = "default", onClick, title }: CalloutProps): JSX.Element {
   const frameClass = cn(
-    "flex h-full w-full items-center justify-center border border-dashed",
-    onClick && "cursor-pointer bg-transparent p-0",
-    FRAME_CLASS[tone]
-  );
-  const inner = (
-    <Stack direction="row" gap={2} align="center" justify="center" pad={2}>
-      {icon ? <Icon name={icon} tone={tone === "danger" ? "danger" : "primary"} /> : null}
-      <Text variant="mono" color={tone === "danger" ? "danger" : "muted"} align="center">
-        {children}
-      </Text>
-    </Stack>
-  );
+      "flex h-full w-full items-center justify-center border border-dashed",
+      onClick && "cursor-pointer bg-transparent p-0",
+      FRAME_CLASS[tone]
+    ),
+    inner = (
+      <Stack direction="row" gap={2} align="center" justify="center" pad={2}>
+        {icon ? <Icon name={icon} tone={tone === "danger" ? "danger" : "primary"} /> : null}
+        <Text variant="mono" color={tone === "danger" ? "danger" : "muted"} align="center">
+          {children}
+        </Text>
+      </Stack>
+    );
 
   if (onClick) {
     return (

@@ -1,5 +1,5 @@
 import { WEAPON_DAMAGE_OPTIONS, WEAPON_RANGE_OPTIONS } from "@/config/options";
-import type { Option, DamageTypeValue } from "@/config/options";
+import type { DamageTypeValue, Option } from "@/config/options";
 import type { WeaponProperties } from "@/models";
 import type { TagColor } from "@/types/ui";
 
@@ -163,7 +163,7 @@ export const WEAPON_PROPERTIES: WeaponPropertyDef[] = [
     tagColor: "green",
   },
   {
-    formatTag: ({ hardware }) => {
+    formatTag: ({ hardware }: WeaponProperties): string[] => {
       const slots = Math.max(0, hardware.value);
       return Array.from({ length: slots }, () => game.i18n.localize("ROBOTECH.Item.Property.Hardware.tag"));
     },

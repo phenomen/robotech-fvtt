@@ -7,23 +7,21 @@ export type TableWidth = "grow" | "auto" | "10" | "12" | "16" | "20" | "32";
 export type TableAlign = "start" | "center" | "end";
 export type TableTone = "default" | "danger";
 
-const InHeaderContext = createContext(false);
-
-const WIDTH_CLASS: Record<TableWidth, string> = {
-  "10": "w-10 whitespace-nowrap",
-  "12": "w-12 whitespace-nowrap",
-  "16": "w-16 whitespace-nowrap",
-  "20": "w-20 whitespace-nowrap",
-  "32": "w-32 min-w-32",
-  auto: "w-px whitespace-nowrap",
-  grow: "w-full min-w-0",
-};
-
-const ALIGN_CLASS: Record<TableAlign, string> = {
-  center: "text-center",
-  end: "text-right",
-  start: "text-left",
-};
+const InHeaderContext = createContext(false),
+  WIDTH_CLASS: Record<TableWidth, string> = {
+    "10": "w-10 whitespace-nowrap",
+    "12": "w-12 whitespace-nowrap",
+    "16": "w-16 whitespace-nowrap",
+    "20": "w-20 whitespace-nowrap",
+    "32": "w-32 min-w-32",
+    auto: "w-px whitespace-nowrap",
+    grow: "w-full min-w-0",
+  },
+  ALIGN_CLASS: Record<TableAlign, string> = {
+    center: "text-center",
+    end: "text-right",
+    start: "text-left",
+  };
 
 export interface TableProps {
   children?: ReactNode;
@@ -92,8 +90,8 @@ export interface TableCellProps {
 }
 
 export function TableCell({ width, align = "start", children }: TableCellProps): JSX.Element {
-  const header = useContext(InHeaderContext);
-  const Tag = header ? "th" : "td";
+  const header = useContext(InHeaderContext),
+    Tag = header ? "th" : "td";
 
   return (
     <Tag

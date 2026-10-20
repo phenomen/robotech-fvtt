@@ -30,6 +30,7 @@ export class ActorDataModel extends foundry.abstract.TypeDataModel {
       return false;
     }
     this.applyTokenDefaults(data);
+    return undefined;
   }
 
   private applyTokenDefaults(data: PreCreateData): void {
@@ -37,13 +38,13 @@ export class ActorDataModel extends foundry.abstract.TypeDataModel {
       return;
     }
 
-    const provided = prototypeTokenOf(data);
-    const bars = ACTOR_META[this.parent.type].tokenBars;
-    const patch: {
-      displayBars?: number;
-      bar1?: { attribute: string | null };
-      bar2?: { attribute: string | null };
-    } = {};
+    const provided = prototypeTokenOf(data),
+      bars = ACTOR_META[this.parent.type].tokenBars,
+      patch: {
+        displayBars?: number;
+        bar1?: { attribute: string | null };
+        bar2?: { attribute: string | null };
+      } = {};
 
     if (!("displayBars" in provided)) {
       patch.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;

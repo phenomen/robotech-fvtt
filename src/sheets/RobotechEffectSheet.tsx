@@ -1,4 +1,4 @@
-import type React from "react";
+import type { JSX } from "react";
 
 import { EffectSheetApp } from "@/components/apps/EffectSheetApp";
 import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
@@ -19,7 +19,7 @@ export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV
     return renderReactMount(this.mount, "robotech-effect-container", this.renderSheetApp());
   }
 
-  private renderSheetApp(): React.JSX.Element | null {
+  private renderSheetApp(): JSX.Element | null {
     const effect = this.document;
     if (!(effect instanceof foundry.documents.ActiveEffect)) {
       return null;

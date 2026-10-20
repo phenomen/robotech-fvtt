@@ -122,16 +122,16 @@ function upgradeFields(item: ItemOf<"upgrade">): ChatCardField[] {
 }
 
 function weaponFields(item: ItemOf<"weapon">): ChatCardField[] {
-  const fields: ChatCardField[] = [];
-  const requiredRank = chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank);
+  const fields: ChatCardField[] = [],
+    requiredRank = chatField(game.i18n.localize("ROBOTECH.Item.RequiredRank"), item.system.requiredRank);
   if (requiredRank) {
     fields.push(requiredRank);
   }
   const properties = item.system.properties;
 
   for (const def of WEAPON_PROPERTIES) {
-    const property = properties[def.key];
-    const active = typeof property === "boolean" ? property : property.active;
+    const property = properties[def.key],
+      active = typeof property === "boolean" ? property : property.active;
     if (!active) {
       continue;
     }

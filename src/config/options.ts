@@ -110,8 +110,8 @@ export function modifierLabelOf(modifier: RollModifierValue): string {
   if (!option) {
     return modifier;
   }
-  const name = game.i18n.localize(option.labelKey);
-  const shift = option.shift > 0 ? `+${option.shift}` : String(option.shift);
+  const name = game.i18n.localize(option.labelKey),
+    shift = option.shift > 0 ? `+${option.shift}` : String(option.shift);
   return `${name} (${shift})`;
 }
 

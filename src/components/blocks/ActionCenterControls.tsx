@@ -16,10 +16,10 @@ import {
   ACTION_OPTIONS,
   ACTION_PHASE_OPTIONS,
   CONFLICT_ACTION_OPTIONS,
-  ROLL_MODIFIER_OPTIONS,
   isChoiceValue,
   isConflictAction,
   modifierLabelOf,
+  ROLL_MODIFIER_OPTIONS,
 } from "@/config/options";
 import type { ActionValue, RollModifierValue } from "@/config/options";
 import type { SourcedOption } from "@/utils/actionCenterItems";
@@ -41,10 +41,10 @@ export function ActionSelect({
   onChange: (value: ActionValue) => void;
 }): JSX.Element {
   const options = (conflictOnly ? CONFLICT_ACTION_OPTIONS : ACTION_OPTIONS).filter(
-    (option) => option.value !== exclude
-  );
-  const phases = conflictOnly ? ACTION_PHASE_OPTIONS.filter((phase) => phase.value !== "any") : ACTION_PHASE_OPTIONS;
-  const selected = ACTION_OPTIONS.find((option) => option.value === value) ?? ACTION_OPTIONS[0];
+      (option) => option.value !== exclude
+    ),
+    phases = conflictOnly ? ACTION_PHASE_OPTIONS.filter((phase) => phase.value !== "any") : ACTION_PHASE_OPTIONS,
+    selected = ACTION_OPTIONS.find((option) => option.value === value) ?? ACTION_OPTIONS[0];
   return (
     <Stack gap={1}>
       <Field label={game.i18n.localize("ROBOTECH.Roll.Action")}>

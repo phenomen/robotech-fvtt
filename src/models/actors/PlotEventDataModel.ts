@@ -15,8 +15,8 @@ export class PlotEventDataModel extends ActorDataModel {
   declare conflictUuids: string[];
 
   static override defineSchema() {
-    const fields = foundry.data.fields;
-    const roundField = () => new fields.NumberField({ initial: 0, integer: true, min: 0 });
+    const fields = foundry.data.fields,
+      roundField = () => new fields.NumberField({ initial: 0, integer: true, min: 0 });
     return {
       ...super.defineSchema(),
       activePhase: new fields.StringField({

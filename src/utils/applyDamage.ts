@@ -19,7 +19,7 @@ import { applySwarmDamage, swarmArmorClassOf } from "@/utils/swarmUtils";
 import { countCheckedBoxes } from "@/utils/trackers";
 import { appliedPenetrationOf, calcDamageCascade, effectiveArmorOf } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
-import { flatWoundGroup, filledWoundStates } from "@/utils/woundUtils";
+import { filledWoundStates, flatWoundGroup } from "@/utils/woundUtils";
 
 interface DamageTarget {
   armorClass: ArmorClassValue;
@@ -136,8 +136,8 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
       if (!slots) {
         continue;
       }
-      const destroyed = syncDestroyedSlots(slots.value, slots.destroyed);
-      const capacity = intactSlotsOf(item);
+      const destroyed = syncDestroyedSlots(slots.value, slots.destroyed),
+        capacity = intactSlotsOf(item);
       sinks.push({
         capacity,
         destroyed,
@@ -176,15 +176,15 @@ export function assignToSink(
   if (sink.kind === "hardware") {
     return amounts;
   }
-  const current = amountOf(sink, amounts);
-  const target = Math.max(0, Math.min(sink.maxAssign, requested));
+  const current = amountOf(sink, amounts),
+    target = Math.max(0, Math.min(sink.maxAssign, requested));
   if (target <= current) {
     return writeAmount(amounts, sink, target);
   }
 
   let remaining = target - current;
-  const unassigned = Math.max(0, damage - assignedDamageOf(amounts));
-  const fromPool = Math.min(remaining, unassigned);
+  const unassigned = Math.max(0, damage - assignedDamageOf(amounts)),
+    fromPool = Math.min(remaining, unassigned);
   remaining -= fromPool;
 
   let next = amounts;
@@ -209,8 +209,8 @@ export function toggleHardwareSlot(
     return amounts;
   }
 
-  const selected = amounts.hardware[sink.id] ?? [];
-  const assigned = selected.includes(index);
+  const selected = amounts.hardware[sink.id] ?? [],
+    assigned = selected.includes(index);
   if (checked === assigned) {
     return amounts;
   }
@@ -274,8 +274,8 @@ export function damagePreviewFor(
 }
 
 export async function commitDamage(preview: DamagePreview, amounts: DamageAmounts): Promise<void> {
-  const { actor, cascade } = preview;
-  const distribution = distributionOf(preview, amounts);
+  const { actor, cascade } = preview,
+    distribution = distributionOf(preview, amounts);
 
   if (cascade.damageInflicted > 0) {
     if (isActorOf(actor, "character")) {
@@ -319,8 +319,8 @@ function maxMemberResistance(actor: ActorOf<"swarm">): number {
 }
 
 async function applyVesselDamage(actor: ActorOf<"vessel">, amounts: DamageAmounts): Promise<void> {
-  const structure = Math.max(0, actor.system.structure.value - amounts.structure);
-  const armor = Math.max(0, actor.system.armor.value - amounts.armor);
+  const structure = Math.max(0, actor.system.structure.value - amounts.structure),
+    armor = Math.max(0, actor.system.armor.value - amounts.armor);
   await actor.update({
     "system.armor.value": armor,
     "system.structure.value": structure,
@@ -369,13 +369,13 @@ async function applyCharacterWounds(actor: ActorOf<"character">, damage: number)
     return;
   }
 
-  const { wounds } = actor.system;
-  const next = filledWoundStates(
-    flatWoundGroup(wounds.brawl.max, wounds.critical.max),
-    boxes,
-    wounds.brawl.states,
-    wounds.critical.states
-  );
+  const { wounds } = actor.system,
+    next = filledWoundStates(
+      flatWoundGroup(wounds.brawl.max, wounds.critical.max),
+      boxes,
+      wounds.brawl.states,
+      wounds.critical.states
+    );
 
   await actor.update({
     "system.wounds.brawl.states": next.brawl,

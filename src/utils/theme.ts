@@ -9,9 +9,9 @@ export function isTheme(value: string): value is ThemeValue {
 
 /** Applies a theme to the document root; falls back to the stored setting, then the default. */
 export function applyTheme(theme?: string): void {
-  const stored = game.settings?.get("robotech", "theme");
-  const selectedTheme = theme ?? (typeof stored === "string" ? stored : undefined) ?? DEFAULT_THEME;
-  const root = document.documentElement;
+  const stored = game.settings?.get("robotech", "theme"),
+    selectedTheme = theme ?? (typeof stored === "string" ? stored : undefined) ?? DEFAULT_THEME,
+    root = document.documentElement;
   if (!root) {
     return;
   }

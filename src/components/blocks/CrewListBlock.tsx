@@ -22,17 +22,15 @@ interface CrewListBlockProps {
 }
 
 export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
-  const crew = useLinkedActors(actor.system.characterUuids, ["character"]);
-
-  const handleCapacityChange = (val: number | null) => {
-    void actor.update({ "system.crew": Math.max(0, val ?? 0) });
-  };
-
-  const handleDelete = (uuid: string) => {
-    void actor.update({
-      "system.characterUuids": actor.system.characterUuids.filter((id) => id !== uuid),
-    });
-  };
+  const crew = useLinkedActors(actor.system.characterUuids, ["character"]),
+    handleCapacityChange = (val: number | null) => {
+      void actor.update({ "system.crew": Math.max(0, val ?? 0) });
+    },
+    handleDelete = (uuid: string) => {
+      void actor.update({
+        "system.characterUuids": actor.system.characterUuids.filter((id) => id !== uuid),
+      });
+    };
 
   return (
     <Stack gap={1}>

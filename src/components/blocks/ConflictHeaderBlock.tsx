@@ -14,13 +14,12 @@ interface ConflictHeaderBlockProps {
 
 export function ConflictHeaderBlock({ actor }: ConflictHeaderBlockProps): JSX.Element {
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    void actor.update({ name: event.target.value });
-  };
-
-  const handleTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const value: FieldValue = event.target.value;
-    void actor.update({ "system.conflictType": value });
-  };
+      void actor.update({ name: event.target.value });
+    },
+    handleTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+      const value: FieldValue = event.target.value;
+      void actor.update({ "system.conflictType": value });
+    };
 
   return (
     <Stack direction="row" gap={3} align="end">

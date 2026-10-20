@@ -19,11 +19,10 @@ interface PlotEventConflictListProps {
 }
 
 export function PlotEventConflictList({ actor }: PlotEventConflictListProps): JSX.Element {
-  const conflicts = useLinkedActors(actor.system.conflictUuids, ["conflict"]);
-
-  const handleDelete = (uuid: string) => {
-    void removeEventConflict(actor, uuid);
-  };
+  const conflicts = useLinkedActors(actor.system.conflictUuids, ["conflict"]),
+    handleDelete = (uuid: string) => {
+      void removeEventConflict(actor, uuid);
+    };
 
   return (
     <Stack gap={1}>

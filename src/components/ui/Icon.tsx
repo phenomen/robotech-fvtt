@@ -1,4 +1,5 @@
-import React from "react";
+import { memo } from "react";
+import type { JSX } from "react";
 
 import type { IconTone } from "@/types/ui";
 import { cn } from "@/utils/cn";
@@ -13,24 +14,23 @@ interface IconProps {
 }
 
 const SIZE_CLASS = {
-  large: "size-6",
-  medium: "size-4",
-  small: "size-3",
-} as const;
+    large: "size-6",
+    medium: "size-4",
+    small: "size-3",
+  } as const,
+  TONE_CLASS = {
+    amber: "text-rt-custom-amber",
+    blue: "text-rt-custom-blue",
+    current: "text-current",
+    danger: "text-rt-danger",
+    default: "",
+    green: "text-rt-custom-green",
+    muted: "text-rt-muted",
+    primary: "text-rt-primary",
+    teal: "text-rt-custom-teal",
+  } as const;
 
-const TONE_CLASS = {
-  amber: "text-rt-custom-amber",
-  blue: "text-rt-custom-blue",
-  current: "text-current",
-  danger: "text-rt-danger",
-  default: "",
-  green: "text-rt-custom-green",
-  muted: "text-rt-muted",
-  primary: "text-rt-primary",
-  teal: "text-rt-custom-teal",
-} as const;
-
-export const Icon = React.memo(({ name, size = "medium", tone = "default", title }: IconProps): React.JSX.Element => {
+export const Icon = memo(({ name, size = "medium", tone = "default", title }: IconProps): JSX.Element => {
   const path = `systems/robotech/assets/icons/${name}.svg`;
   return (
     <span

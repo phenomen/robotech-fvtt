@@ -5,24 +5,24 @@
   "type": "module",
   "scripts": {
     "build": "bun run build.ts",
-    "check": "oxlint && oxfmt --check",
-    "fix": "oxlint --fix && oxfmt"
+    "check": "bun lint && bun fmt --check",
+    "fix": "bun lint --fix && bun fmt"
   },
   "dependencies": {
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@foundryvtt/foundryvtt-cli": "^3.0.4",
-    "@types/bun": "latest",
+    "@foundryvtt/foundryvtt-cli": "^3.0.5",
+    "@types/bun": "1.4.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "bun-plugin-tailwind": "^0.1.2",
-    "cn": "^0.3.0",
-    "oxfmt": "^0.68.0",
-    "oxlint": "^1.83.0",
-    "oxlint-tsgolint": "^7.0.2001",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "cn": "^0.5.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "packageManager": "bun@1.4.4-canary.1+ea6a2c7b7",
+  "patchedDependencies": {
+    "bun-plugin-tailwind@0.1.2": "patches/bun-plugin-tailwind@0.1.2.patch"
   }
 }

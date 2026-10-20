@@ -113,10 +113,10 @@ export class RobotechCombat extends foundry.documents.Combat {
       return this;
     }
     await clearRoundUses(this);
-    const nextRound = this.round + 1;
-    const updateData = { round: nextRound, "system.phase": "communication", turn: null };
-    const advanceTime = this.getTimeDelta(this.round, this.turn, nextRound, null);
-    const updateOptions = { direction: 1, worldTime: { delta: advanceTime } };
+    const nextRound = this.round + 1,
+      updateData = { round: nextRound, "system.phase": "communication", turn: null },
+      advanceTime = this.getTimeDelta(this.round, this.turn, nextRound, null),
+      updateOptions = { direction: 1, worldTime: { delta: advanceTime } };
     foundry.helpers.Hooks.callAll("combatRound", this, updateData, updateOptions);
     await this.update(updateData, updateOptions);
     return this;
@@ -127,24 +127,24 @@ export class RobotechCombat extends foundry.documents.Combat {
       return this;
     }
     await clearRoundUses(this);
-    const previousRound = this.round - 1;
-    const updateData = { round: previousRound, "system.phase": "communication", turn: null };
-    const advanceTime = this.getTimeDelta(this.round, this.turn, previousRound, null);
-    const updateOptions = { direction: -1, worldTime: { delta: advanceTime } };
+    const previousRound = this.round - 1,
+      updateData = { round: previousRound, "system.phase": "communication", turn: null },
+      advanceTime = this.getTimeDelta(this.round, this.turn, previousRound, null),
+      updateOptions = { direction: -1, worldTime: { delta: advanceTime } };
     foundry.helpers.Hooks.callAll("combatRound", this, updateData, updateOptions);
     await this.update(updateData, updateOptions);
     return this;
   }
 
   override async rollInitiative(...args: Parameters<RollInitiative>): Promise<this> {
-    const ids = args[0];
-    const list = typeof ids === "string" ? [ids] : ids;
-    const id = list[0];
+    const ids = args[0],
+      list = typeof ids === "string" ? [ids] : ids,
+      id = list[0];
     if (!id) {
       return this;
     }
-    const combatant = this.combatants.get(id);
-    const actor = combatant?.actor;
+    const combatant = this.combatants.get(id),
+      actor = combatant?.actor;
     if (!actor) {
       return this;
     }
@@ -154,9 +154,9 @@ export class RobotechCombat extends foundry.documents.Combat {
 
   async setPhase(phase: CombatPhaseValue): Promise<this> {
     await clearManualSort(this);
-    const turn = phase === "communication" ? null : firstLivingIndex(this);
-    const updateData = { "system.phase": phase, turn };
-    const updateOptions = { direction: 1 };
+    const turn = phase === "communication" ? null : firstLivingIndex(this),
+      updateData = { "system.phase": phase, turn },
+      updateOptions = { direction: 1 };
     foundry.helpers.Hooks.callAll("combatTurn", this, updateData, updateOptions);
     await this.update(updateData, updateOptions);
     return this;
@@ -176,18 +176,18 @@ export class RobotechCombat extends foundry.documents.Combat {
       return await this.previousRound();
     }
     await clearManualSort(this);
-    const turn = previous === "communication" ? null : lastLivingIndex(this);
-    const updateData = { "system.phase": previous, turn };
-    const updateOptions = { direction: -1 };
+    const turn = previous === "communication" ? null : lastLivingIndex(this),
+      updateData = { "system.phase": previous, turn },
+      updateOptions = { direction: -1 };
     foundry.helpers.Hooks.callAll("combatTurn", this, updateData, updateOptions);
     await this.update(updateData, updateOptions);
     return this;
   }
 
   private async setTurn(turn: number, direction: 1 | -1): Promise<this> {
-    const advanceTime = this.getTimeDelta(this.round, this.turn, this.round, turn);
-    const updateData = { round: this.round, turn };
-    const updateOptions = { direction, worldTime: { delta: advanceTime } };
+    const advanceTime = this.getTimeDelta(this.round, this.turn, this.round, turn),
+      updateData = { round: this.round, turn },
+      updateOptions = { direction, worldTime: { delta: advanceTime } };
     foundry.helpers.Hooks.callAll("combatTurn", this, updateData, updateOptions);
     await this.update(updateData, updateOptions);
     return this;
@@ -202,9 +202,9 @@ export class RobotechCombat extends foundry.documents.Combat {
     if (isRewind(options)) {
       return;
     }
-    const phase = foundry.utils.getProperty(changed, "system.phase");
-    const phaseChanged = typeof phase === "string";
-    const roundChanged = "round" in changed && typeof changed.round === "number";
+    const phase = foundry.utils.getProperty(changed, "system.phase"),
+      phaseChanged = typeof phase === "string",
+      roundChanged = "round" in changed && typeof changed.round === "number";
     if (!phaseChanged && !roundChanged) {
       return;
     }

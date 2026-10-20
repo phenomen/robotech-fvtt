@@ -12,11 +12,10 @@ interface CharacterCombatBlockProps {
 }
 
 export function CharacterCombatBlock({ actor }: CharacterCombatBlockProps): JSX.Element {
-  const system = actor.system;
-
-  const handleFieldChange = (path: string, val: FieldValue) => {
-    void actor.update({ [path]: val });
-  };
+  const system = actor.system,
+    handleFieldChange = (path: string, val: FieldValue) => {
+      void actor.update({ [path]: val });
+    };
 
   return (
     <Stack gap={1}>

@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import type { KeyboardEvent } from "react";
+import { memo, useRef } from "react";
+import type { JSX, KeyboardEvent } from "react";
 
 import { typoClass } from "@/components/ui/typo";
 import { cn } from "@/utils/cn";
@@ -15,32 +15,30 @@ interface TabNavProps<T extends string = string> {
   tabs: TabItem<T>[];
 }
 
-function TabNavInner<T extends string = string>({ activeTab, onTabChange, tabs }: TabNavProps<T>): React.JSX.Element {
-  const listRef = useRef<HTMLDivElement>(null);
-
-  const moveFocus = (index: number): void => {
-    const buttons = listRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
-    buttons?.[index]?.focus();
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number): void => {
-    const last = tabs.length - 1;
-    let next: number | undefined;
-    if (event.key === "ArrowRight") {
-      next = index === last ? 0 : index + 1;
-    } else if (event.key === "ArrowLeft") {
-      next = index === 0 ? last : index - 1;
-    } else if (event.key === "Home") {
-      next = 0;
-    } else if (event.key === "End") {
-      next = last;
-    }
-    if (next === undefined) {
-      return;
-    }
-    event.preventDefault();
-    moveFocus(next);
-  };
+function TabNavInner<T extends string = string>({ activeTab, onTabChange, tabs }: TabNavProps<T>): JSX.Element {
+  const listRef = useRef<HTMLDivElement>(null),
+    moveFocus = (index: number): void => {
+      const buttons = listRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+      buttons?.[index]?.focus();
+    },
+    handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number): void => {
+      const last = tabs.length - 1;
+      let next: number | undefined;
+      if (event.key === "ArrowRight") {
+        next = index === last ? 0 : index + 1;
+      } else if (event.key === "ArrowLeft") {
+        next = index === 0 ? last : index - 1;
+      } else if (event.key === "Home") {
+        next = 0;
+      } else if (event.key === "End") {
+        next = last;
+      }
+      if (next === undefined) {
+        return;
+      }
+      event.preventDefault();
+      moveFocus(next);
+    };
 
   return (
     <nav className="border-rt-border w-full shrink-0 border-b">
@@ -84,4 +82,4 @@ function TabNavInner<T extends string = string>({ activeTab, onTabChange, tabs }
   );
 }
 
-export const TabNav = React.memo(TabNavInner) as typeof TabNavInner;
+export const TabNav = memo(TabNavInner) as typeof TabNavInner;

@@ -98,11 +98,11 @@ interface ChangeRowProps {
 }
 
 function ChangeRow({ effect, change, index }: ChangeRowProps): JSX.Element {
-  const attributeId = `${effect.id}-attribute-${index}`;
-  const keyId = `${effect.id}-key-${index}`;
-  const typeId = `${effect.id}-type-${index}`;
-  const valueId = `${effect.id}-value-${index}`;
-  const selectedAttribute = PREMADE_KEYS.has(change.key) ? change.key : "";
+  const attributeId = `${effect.id}-attribute-${index}`,
+    keyId = `${effect.id}-key-${index}`,
+    typeId = `${effect.id}-type-${index}`,
+    valueId = `${effect.id}-value-${index}`,
+    selectedAttribute = PREMADE_KEYS.has(change.key) ? change.key : "";
 
   return (
     <TableRow>

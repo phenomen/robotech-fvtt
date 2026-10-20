@@ -14,14 +14,14 @@ import { applyTheme } from "@/utils/theme";
 
 function registerSystemSheets(): void {
   // Core still ships AppV1 defaults; unregister them before registering ApplicationV2 sheets.
-  // oxlint-disable-next-line typescript/no-deprecated
+  // eslint-disable-next-line typescript/no-deprecated
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("robotech", RobotechActorSheet, {
     label: "ROBOTECH.Sheet.Actor",
     makeDefault: true,
   });
 
-  // oxlint-disable-next-line typescript/no-deprecated
+  // eslint-disable-next-line typescript/no-deprecated
   foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("robotech", RobotechItemSheet, {
     label: "ROBOTECH.Sheet.Item",
@@ -38,9 +38,9 @@ function registerSystemSheets(): void {
 type RegisterableSheet = Parameters<typeof foundry.applications.apps.DocumentSheetConfig.registerSheet>[2];
 
 function registerEffectSheet(): void {
-  const sheetConfig = foundry.applications.apps.DocumentSheetConfig;
-  const coreSheet = foundry.applications.sheets.ActiveEffectConfig as unknown as RegisterableSheet;
-  const systemSheet = RobotechEffectSheet as unknown as RegisterableSheet;
+  const sheetConfig = foundry.applications.apps.DocumentSheetConfig,
+    coreSheet = foundry.applications.sheets.ActiveEffectConfig as unknown as RegisterableSheet,
+    systemSheet = RobotechEffectSheet as unknown as RegisterableSheet;
 
   sheetConfig.unregisterSheet(foundry.documents.ActiveEffect, "core", coreSheet);
   sheetConfig.registerSheet(foundry.documents.ActiveEffect, "robotech", systemSheet, {

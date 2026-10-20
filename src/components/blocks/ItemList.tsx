@@ -26,8 +26,8 @@ import { isFullyDestroyed } from "@/utils/hardwareUtils";
 
 export type { ListedItemType } from "@/components/blocks/ItemListCells";
 
-const HARDWARE_SLOT_TYPES = new Set<ListedItemType>(["weapon", "feature", "equipment_suite"]);
-const USABLE_TYPES = new Set<ListedItemType>(["talent", "equipment_suite"]);
+const HARDWARE_SLOT_TYPES = new Set<ListedItemType>(["weapon", "feature", "equipment_suite"]),
+  USABLE_TYPES = new Set<ListedItemType>(["talent", "equipment_suite"]);
 
 function isUsable(itemType: ListedItemType): boolean {
   return USABLE_TYPES.has(itemType);
@@ -183,16 +183,15 @@ interface ItemListItemProps {
 }
 
 function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Element {
-  const itemType = item.type;
-  const isDestroyed = isFullyDestroyed(item);
-
-  const rollSkill = (skill: ItemOf<"skill">) => {
-    if (onOpenRoll) {
-      onOpenRoll(skill);
-    } else {
-      void openActionCenter(actor, { skill1Id: skill.id ?? undefined });
-    }
-  };
+  const itemType = item.type,
+    isDestroyed = isFullyDestroyed(item),
+    rollSkill = (skill: ItemOf<"skill">) => {
+      if (onOpenRoll) {
+        onOpenRoll(skill);
+      } else {
+        void openActionCenter(actor, { skill1Id: skill.id ?? undefined });
+      }
+    };
 
   return (
     <TableRow tone={isDestroyed ? "danger" : "default"}>
@@ -292,17 +291,16 @@ export function ItemList({
   emptyLabel,
   headerActions,
 }: ItemListProps): JSX.Element {
-  const items = filterItemsOf(actor, itemType);
-
-  const createItem = async () => {
-    const typeLabel = game.i18n.localize(`TYPES.Item.${itemType}`);
-    await actor.createEmbeddedDocuments("Item", [
-      {
-        name: game.i18n.localize("ROBOTECH.List.NewItem", { type: typeLabel }),
-        type: itemType,
-      },
-    ]);
-  };
+  const items = filterItemsOf(actor, itemType),
+    createItem = async () => {
+      const typeLabel = game.i18n.localize(`TYPES.Item.${itemType}`);
+      await actor.createEmbeddedDocuments("Item", [
+        {
+          name: game.i18n.localize("ROBOTECH.List.NewItem", { type: typeLabel }),
+          type: itemType,
+        },
+      ]);
+    };
 
   return (
     <Stack gap={1}>

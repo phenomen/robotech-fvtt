@@ -51,8 +51,8 @@ async function openDamageChat(flags: ActionChatFlags): Promise<void> {
   if (!actor) {
     return;
   }
-  const defendSuccesses = flags.kind === "defend" ? flags.successes : 0;
-  const preview = damagePreviewFor(actor, flags.incoming, defendSuccesses);
+  const defendSuccesses = flags.kind === "defend" ? flags.successes : 0,
+    preview = damagePreviewFor(actor, flags.incoming, defendSuccesses);
   if (!preview) {
     ui.notifications.error(game.i18n.localize("ROBOTECH.Roll.SelectOneToken"));
     return;

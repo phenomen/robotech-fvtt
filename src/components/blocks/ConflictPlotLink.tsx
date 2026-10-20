@@ -12,16 +12,15 @@ interface ConflictPlotLinkProps {
 }
 
 export function ConflictPlotLink({ actor }: ConflictPlotLinkProps): JSX.Element {
-  const uuid = actor.system.plotEventUuid;
-  const [link] = useLinkedActors(uuid ? [uuid] : [], ["plot_event"]);
-  const plotEvent = link?.actor ?? null;
-
-  const linked = Boolean(uuid);
-  const canOpen = linked && plotEvent !== null;
-  const label =
-    linked && plotEvent === null
-      ? game.i18n.localize("ROBOTECH.Conflict.MissingPlotEvent")
-      : (plotEvent?.name ?? game.i18n.localize("ROBOTECH.Conflict.PlotEventEmpty"));
+  const uuid = actor.system.plotEventUuid,
+    [link] = useLinkedActors(uuid ? [uuid] : [], ["plot_event"]),
+    plotEvent = link?.actor ?? null,
+    linked = Boolean(uuid),
+    canOpen = linked && plotEvent !== null,
+    label =
+      linked && plotEvent === null
+        ? game.i18n.localize("ROBOTECH.Conflict.MissingPlotEvent")
+        : (plotEvent?.name ?? game.i18n.localize("ROBOTECH.Conflict.PlotEventEmpty"));
 
   return (
     <Field label={game.i18n.localize("ROBOTECH.Conflict.PlotEvent")}>

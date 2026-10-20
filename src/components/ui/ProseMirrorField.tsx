@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/utils/cn";
@@ -18,7 +19,7 @@ export interface ProseMirrorFieldProps {
   onChange?: (value: string) => void;
 }
 
-export const ProseMirrorField = React.memo(
+export const ProseMirrorField = memo(
   ({
     name = "description",
     value,
@@ -32,22 +33,21 @@ export const ProseMirrorField = React.memo(
     initialToolbarOpen = false,
     spellCheck = false,
     onChange,
-  }: ProseMirrorFieldProps): React.JSX.Element => {
-    const editorRef = useRef<HTMLDivElement>(null);
-    const editorElRef = useRef<HTMLElement | null>(null);
-    const [isToolbarOpen, setIsToolbarOpen] = useState(initialToolbarOpen);
-
-    const onChangeRef = useRef(onChange);
-    const emittedRef = useRef<string>("");
-    const syncingRef = useRef(false);
+  }: ProseMirrorFieldProps): JSX.Element => {
+    const editorRef = useRef<HTMLDivElement>(null),
+      editorElRef = useRef<HTMLElement | null>(null),
+      [isToolbarOpen, setIsToolbarOpen] = useState(initialToolbarOpen),
+      onChangeRef = useRef(onChange),
+      emittedRef = useRef<string>(""),
+      syncingRef = useRef(false);
 
     useEffect(() => {
       onChangeRef.current = onChange;
     });
 
     useEffect(() => {
-      const host = editorRef.current;
-      const ProseElement = foundry.applications?.elements?.HTMLProseMirrorElement;
+      const host = editorRef.current,
+        ProseElement = foundry.applications?.elements?.HTMLProseMirrorElement;
       if (!host || !ProseElement) {
         return () => {
           /* no editor to unmount */
@@ -68,8 +68,8 @@ export const ProseMirrorField = React.memo(
       editorEl.setAttribute("spellcheck", String(spellCheck));
 
       const handleSave = (event: Event) => {
-        const target = event.target as HTMLInputElement;
-        const next = target.value ?? "";
+        const target = event.target as HTMLInputElement,
+          next = target.value ?? "";
         if (syncingRef.current) {
           emittedRef.current = next;
           return;
@@ -95,7 +95,7 @@ export const ProseMirrorField = React.memo(
         editorElRef.current = null;
       };
       // Recreate when editor configuration changes; document value syncs in the effect below.
-      // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [collaborate, disabled, documentUUID, height, name, spellCheck, toggled]);
 
     useEffect(() => {

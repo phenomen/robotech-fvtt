@@ -21,12 +21,11 @@ interface PropertyRowProps {
 }
 
 function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.Element {
-  const value = properties[def.key];
-  const isActive = typeof value === "boolean" ? value : value.active;
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setProp(def.inputType === "none" ? def.key : `${def.key}.active`, checked);
-  };
+  const value = properties[def.key],
+    isActive = typeof value === "boolean" ? value : value.active,
+    handleCheckboxChange = (checked: boolean) => {
+      setProp(def.inputType === "none" ? def.key : `${def.key}.active`, checked);
+    };
 
   return (
     <Stack direction="row" gap={4} align="center" justify="between" minHeight="input">
@@ -98,16 +97,14 @@ function WeaponPropertyRow({ def, properties, setProp }: PropertyRowProps): JSX.
 }
 
 export function WeaponSheetFields({ item, handleFieldChange }: ItemFieldsProps<"weapon">): JSX.Element {
-  const system = item.system;
-  const properties = system.properties;
-
-  const setProp = (path: string, val: FieldValue) => {
-    handleFieldChange(`system.properties.${path}`, val);
-  };
-
-  const midpoint = Math.ceil(WEAPON_PROPERTIES.length / 2);
-  const left = WEAPON_PROPERTIES.slice(0, midpoint);
-  const right = WEAPON_PROPERTIES.slice(midpoint);
+  const system = item.system,
+    properties = system.properties,
+    setProp = (path: string, val: FieldValue) => {
+      handleFieldChange(`system.properties.${path}`, val);
+    },
+    midpoint = Math.ceil(WEAPON_PROPERTIES.length / 2),
+    left = WEAPON_PROPERTIES.slice(0, midpoint),
+    right = WEAPON_PROPERTIES.slice(midpoint);
 
   return (
     <Stack gap={4}>

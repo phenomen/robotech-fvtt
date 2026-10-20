@@ -26,23 +26,21 @@ function clamp(value: number | null, max: number): number {
 }
 
 export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentProps): JSX.Element {
-  const settings = actor.system.vitalsSettings;
-  const baseline = woundBaselines(settings.isTriumvirateWounds);
-
-  const [brawl, setBrawl] = useState<number>(settings.brawl ?? baseline.brawl);
-  const [critical, setCritical] = useState<number>(settings.critical ?? baseline.critical);
-  const [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass);
-  const [isTriumvirateWounds, setIsTriumvirateWounds] = useState<boolean>(settings.isTriumvirateWounds);
-
-  const handleSave = () => {
-    void actor.update({
-      "system.armorClass": armorClass,
-      "system.vitalsSettings.brawl": brawl,
-      "system.vitalsSettings.critical": critical,
-      "system.vitalsSettings.isTriumvirateWounds": isTriumvirateWounds,
-    });
-    onClose();
-  };
+  const settings = actor.system.vitalsSettings,
+    baseline = woundBaselines(settings.isTriumvirateWounds),
+    [brawl, setBrawl] = useState<number>(settings.brawl ?? baseline.brawl),
+    [critical, setCritical] = useState<number>(settings.critical ?? baseline.critical),
+    [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass),
+    [isTriumvirateWounds, setIsTriumvirateWounds] = useState<boolean>(settings.isTriumvirateWounds),
+    handleSave = () => {
+      void actor.update({
+        "system.armorClass": armorClass,
+        "system.vitalsSettings.brawl": brawl,
+        "system.vitalsSettings.critical": critical,
+        "system.vitalsSettings.isTriumvirateWounds": isTriumvirateWounds,
+      });
+      onClose();
+    };
 
   return (
     <Stack pad={4} gap={3}>

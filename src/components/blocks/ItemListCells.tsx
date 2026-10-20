@@ -154,8 +154,8 @@ export function WeaponTagsCell({ item }: { item: ItemOf<"weapon"> }): JSX.Elemen
 }
 
 export function HardwareSlotsCell({ item }: { item: ListedItem }): JSX.Element {
-  const slots = hardwareSlotsOf(item);
-  const destroyed = slots && slots.value > 0 ? syncDestroyedSlots(slots.value, slots.destroyed) : [];
+  const slots = hardwareSlotsOf(item),
+    destroyed = slots && slots.value > 0 ? syncDestroyedSlots(slots.value, slots.destroyed) : [];
 
   return (
     <TableCell width="auto" align="center">

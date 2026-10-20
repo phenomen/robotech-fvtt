@@ -38,23 +38,22 @@ export class SwarmDataModel extends ActorDataModel {
   declare speed: number;
 
   static override defineSchema() {
-    const fields = foundry.data.fields;
-
-    const swarmMemberSchema = () =>
-      new fields.SchemaField({
-        actorUuid: new fields.StringField({ initial: "" }),
-        armor: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-        count: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-        currentStructure: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-        id: new fields.StringField({ initial: "" }),
-        img: new fields.StringField({ initial: "icons/svg/item-bag.svg" }),
-        maxCount: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
-        name: new fields.StringField({ initial: "" }),
-        originalStructure: new fields.NumberField({ initial: 3, integer: true, min: 1 }),
-        reducedStructure: new fields.NumberField({ initial: 1, integer: true, min: 1 }),
-        resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        speed: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      });
+    const fields = foundry.data.fields,
+      swarmMemberSchema = () =>
+        new fields.SchemaField({
+          actorUuid: new fields.StringField({ initial: "" }),
+          armor: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+          count: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+          currentStructure: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+          id: new fields.StringField({ initial: "" }),
+          img: new fields.StringField({ initial: "icons/svg/item-bag.svg" }),
+          maxCount: new fields.NumberField({ initial: 1, integer: true, min: 0 }),
+          name: new fields.StringField({ initial: "" }),
+          originalStructure: new fields.NumberField({ initial: 3, integer: true, min: 1 }),
+          reducedStructure: new fields.NumberField({ initial: 1, integer: true, min: 1 }),
+          resistance: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+          speed: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+        });
 
     return {
       ...super.defineSchema(),
@@ -81,8 +80,8 @@ export class SwarmDataModel extends ActorDataModel {
   }
 
   private computeVessels(): Gauge {
-    let value = 0;
-    let max = 0;
+    let max = 0,
+      value = 0;
     for (const member of this.members) {
       if (isMemberAlive(member)) {
         value += member.count;
@@ -93,8 +92,8 @@ export class SwarmDataModel extends ActorDataModel {
   }
 
   private computeStructure(): Gauge {
-    let value = 0;
-    let max = 0;
+    let max = 0,
+      value = 0;
     for (const member of this.members) {
       const structure = memberStructureOf(member, this.hardened);
       max += structure * member.maxCount;

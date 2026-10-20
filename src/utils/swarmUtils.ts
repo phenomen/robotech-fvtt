@@ -60,8 +60,8 @@ export function applySwarmDamage(
   penetration: number,
   hardened = false
 ): SwarmDamageResult {
-  let remaining = successes;
-  let destroyed = 0;
+  let remaining = successes,
+    destroyed = 0;
   const next = members.map((member) => ({ ...member }));
   let stopped = false;
 
@@ -100,8 +100,8 @@ function resolveVesselHit(member: SwarmMember, remaining: number, penetration: n
     return { destroyed: 0, remaining: 0, stopped: true };
   }
 
-  const currentStructure = leadStructureOf(member, hardened);
-  const structureHits = remaining - armor;
+  const currentStructure = leadStructureOf(member, hardened),
+    structureHits = remaining - armor;
   if (structureHits >= currentStructure) {
     const leftover = structureHits - currentStructure;
     member.count -= 1;

@@ -22,44 +22,41 @@ const ENGINE_STEPS = [
 ];
 
 export function VesselSystemsBlock({ actor, onFieldChange }: VesselSystemsBlockProps): JSX.Element {
-  const systems = actor.system.systems;
+  const systems = actor.system.systems,
+    setSystemLevel = (sysName: VesselSystemName, level: RollModifierValue) => {
+      onFieldChange(`system.systems.${sysName}`, level);
+    },
+    setEngineLevel = (level: number) => {
+      onFieldChange("system.systems.engines", level);
+    },
+    renderSystemRow = (sysName: VesselSystemName, labelKey: string) => {
+      const currentVal = systems[sysName];
 
-  const setSystemLevel = (sysName: VesselSystemName, level: RollModifierValue) => {
-    onFieldChange(`system.systems.${sysName}`, level);
-  };
-
-  const setEngineLevel = (level: number) => {
-    onFieldChange("system.systems.engines", level);
-  };
-
-  const renderSystemRow = (sysName: VesselSystemName, labelKey: string) => {
-    const currentVal = systems[sysName];
-
-    return (
-      <LabelRow key={sysName} label={game.i18n.localize(labelKey)}>
-        <Stack direction="row" gap={1}>
-          {ROLL_MODIFIER_OPTIONS.map((option, index) => {
-            const isActive = currentVal === option.value;
-            return (
-              <Button
-                key={option.value}
-                type="button"
-                size="small"
-                variant={isActive ? "primary" : "secondary"}
-                gradation={GRADATION_KEYS[index] ?? "neutral"}
-                full
-                onClick={() => {
-                  setSystemLevel(sysName, option.value);
-                }}
-              >
-                {game.i18n.localize(option.labelKey)}
-              </Button>
-            );
-          })}
-        </Stack>
-      </LabelRow>
-    );
-  };
+      return (
+        <LabelRow key={sysName} label={game.i18n.localize(labelKey)}>
+          <Stack direction="row" gap={1}>
+            {ROLL_MODIFIER_OPTIONS.map((option, index) => {
+              const isActive = currentVal === option.value;
+              return (
+                <Button
+                  key={option.value}
+                  type="button"
+                  size="small"
+                  variant={isActive ? "primary" : "secondary"}
+                  gradation={GRADATION_KEYS[index] ?? "neutral"}
+                  full
+                  onClick={() => {
+                    setSystemLevel(sysName, option.value);
+                  }}
+                >
+                  {game.i18n.localize(option.labelKey)}
+                </Button>
+              );
+            })}
+          </Stack>
+        </LabelRow>
+      );
+    };
 
   return (
     <Stack gap={1}>

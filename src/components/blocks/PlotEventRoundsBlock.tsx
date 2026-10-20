@@ -49,16 +49,14 @@ function PhaseRow({ phase, label, count, active, onToggle, onCountChange }: Phas
 }
 
 export function PlotEventRoundsBlock({ actor }: PlotEventRoundsBlockProps): JSX.Element {
-  const rounds = actor.system.rounds;
-  const activePhase = actor.system.activePhase;
-
-  const handleRoundChange = (phase: PlotEventPhaseValue, val: number | null) => {
-    void actor.update({ [`system.rounds.${phase}`]: val ?? 0 });
-  };
-
-  const handlePhaseToggle = (phase: PlotEventPhaseValue, checked: boolean) => {
-    void actor.update({ "system.activePhase": checked ? phase : "" });
-  };
+  const rounds = actor.system.rounds,
+    activePhase = actor.system.activePhase,
+    handleRoundChange = (phase: PlotEventPhaseValue, val: number | null) => {
+      void actor.update({ [`system.rounds.${phase}`]: val ?? 0 });
+    },
+    handlePhaseToggle = (phase: PlotEventPhaseValue, checked: boolean) => {
+      void actor.update({ "system.activePhase": checked ? phase : "" });
+    };
 
   return (
     <Stack gap={1}>

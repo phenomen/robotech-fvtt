@@ -16,16 +16,14 @@ interface ConflictFieldsBlockProps {
 }
 
 export function ConflictFieldsBlock({ actor }: ConflictFieldsBlockProps): JSX.Element {
-  const system = actor.system;
-  const poolId = useId();
-
-  const handleFieldChange = (path: string, val: FieldValue) => {
-    void actor.update({ [path]: val });
-  };
-
-  const handleSelect = (path: string) => (event: ChangeEvent<HTMLSelectElement>) => {
-    handleFieldChange(path, event.target.value);
-  };
+  const system = actor.system,
+    poolId = useId(),
+    handleFieldChange = (path: string, val: FieldValue) => {
+      void actor.update({ [path]: val });
+    },
+    handleSelect = (path: string) => (event: ChangeEvent<HTMLSelectElement>) => {
+      handleFieldChange(path, event.target.value);
+    };
 
   return (
     <Stack direction="row" gap={3} align="end">

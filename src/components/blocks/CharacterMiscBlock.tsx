@@ -12,11 +12,10 @@ interface CharacterMiscBlockProps {
 }
 
 export function CharacterMiscBlock({ actor }: CharacterMiscBlockProps): JSX.Element {
-  const system = actor.system;
-
-  const handleFieldChange = (path: string, val: FieldValue) => {
-    void actor.update({ [path]: val });
-  };
+  const system = actor.system,
+    handleFieldChange = (path: string, val: FieldValue) => {
+      void actor.update({ [path]: val });
+    };
 
   return (
     <Stack direction="row" gap={3}>

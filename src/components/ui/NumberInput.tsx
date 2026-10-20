@@ -1,4 +1,5 @@
-import React, { useCallback } from "react";
+import { memo, useCallback } from "react";
+import type { ChangeEvent, JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -23,7 +24,7 @@ export interface NumberInputProps {
   "aria-label"?: string;
 }
 
-export const NumberInput = React.memo(
+export const NumberInput = memo(
   ({
     value,
     defaultValue,
@@ -40,59 +41,55 @@ export const NumberInput = React.memo(
     size = "medium",
     width = "small",
     "aria-label": ariaLabel,
-  }: NumberInputProps): React.JSX.Element => {
-    const currentValue = value ?? defaultValue ?? null;
-
-    const clampValue = useCallback(
-      (val: number | null): number | null => {
-        if (val === null || Number.isNaN(val)) {
-          return null;
-        }
-        let clamped = val;
-        if (min !== undefined && clamped < min) {
-          clamped = min;
-        }
-        if (max !== undefined && clamped > max) {
-          clamped = max;
-        }
-        return clamped;
-      },
-      [min, max]
-    );
-
-    const handleInputChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value;
-        if (raw === "") {
-          onValueChange?.(null);
+  }: NumberInputProps): JSX.Element => {
+    const currentValue = value ?? defaultValue ?? null,
+      clampValue = useCallback(
+        (val: number | null): number | null => {
+          if (val === null || Number.isNaN(val)) {
+            return null;
+          }
+          let clamped = val;
+          if (min !== undefined && clamped < min) {
+            clamped = min;
+          }
+          if (max !== undefined && clamped > max) {
+            clamped = max;
+          }
+          return clamped;
+        },
+        [min, max]
+      ),
+      handleInputChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+          const raw = e.target.value;
+          if (raw === "") {
+            onValueChange?.(null);
+            return;
+          }
+          const parsed = Number(raw),
+            clamped = clampValue(Number.isNaN(parsed) ? null : parsed);
+          onValueChange?.(clamped);
+        },
+        [clampValue, onValueChange]
+      ),
+      handleDecrement = useCallback(() => {
+        if (disabled || readOnly) {
           return;
         }
-        const parsed = Number(raw);
-        const clamped = clampValue(Number.isNaN(parsed) ? null : parsed);
-        onValueChange?.(clamped);
-      },
-      [clampValue, onValueChange]
-    );
-
-    const handleDecrement = useCallback(() => {
-      if (disabled || readOnly) {
-        return;
-      }
-      const stepVal = step ?? 1;
-      const base = currentValue ?? min ?? 0;
-      const next = clampValue(base - stepVal);
-      onValueChange?.(next);
-    }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]);
-
-    const handleIncrement = useCallback(() => {
-      if (disabled || readOnly) {
-        return;
-      }
-      const stepVal = step ?? 1;
-      const base = currentValue ?? min ?? 0;
-      const next = clampValue(base + stepVal);
-      onValueChange?.(next);
-    }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]);
+        const stepVal = step ?? 1,
+          base = currentValue ?? min ?? 0,
+          next = clampValue(base - stepVal);
+        onValueChange?.(next);
+      }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]),
+      handleIncrement = useCallback(() => {
+        if (disabled || readOnly) {
+          return;
+        }
+        const stepVal = step ?? 1,
+          base = currentValue ?? min ?? 0,
+          next = clampValue(base + stepVal);
+        onValueChange?.(next);
+      }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]);
 
     return (
       <div className={cn("inline-flex min-w-0 items-center gap-1", width === "full" && "w-full")}>

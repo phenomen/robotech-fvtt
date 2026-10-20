@@ -18,29 +18,27 @@ interface StressHexBoxProps {
 }
 
 function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxProps): JSX.Element {
-  const color = GRADATION_LEVELS[index]?.color ?? GRADATION.worst.color;
-  const isFilled = Boolean(state);
-
-  const getLabel = (): string => {
-    if (state === "F") {
-      return game.i18n.localize("ROBOTECH.Stress.FatigueAbbr");
-    }
-    if (state === "D") {
-      return game.i18n.localize("ROBOTECH.Stress.DramaAbbr");
-    }
-    return "";
-  };
-
-  const getTitleText = (): string => {
-    let stateLabel = game.i18n.localize("ROBOTECH.Stress.Empty");
-    if (state === "F") {
-      stateLabel = game.i18n.localize("ROBOTECH.Stress.Fatigue");
-    }
-    if (state === "D") {
-      stateLabel = game.i18n.localize("ROBOTECH.Stress.Drama");
-    }
-    return game.i18n.localize("ROBOTECH.Stress.Box", { n: index + 1, state: stateLabel });
-  };
+  const color = GRADATION_LEVELS[index]?.color ?? GRADATION.worst.color,
+    isFilled = Boolean(state),
+    getLabel = (): string => {
+      if (state === "F") {
+        return game.i18n.localize("ROBOTECH.Stress.FatigueAbbr");
+      }
+      if (state === "D") {
+        return game.i18n.localize("ROBOTECH.Stress.DramaAbbr");
+      }
+      return "";
+    },
+    getTitleText = (): string => {
+      let stateLabel = game.i18n.localize("ROBOTECH.Stress.Empty");
+      if (state === "F") {
+        stateLabel = game.i18n.localize("ROBOTECH.Stress.Fatigue");
+      }
+      if (state === "D") {
+        stateLabel = game.i18n.localize("ROBOTECH.Stress.Drama");
+      }
+      return game.i18n.localize("ROBOTECH.Stress.Box", { n: index + 1, state: stateLabel });
+    };
 
   return (
     <TrackerHex
@@ -58,23 +56,20 @@ function StressHexBox({ index, state, onLeftClick, onRightClick }: StressHexBoxP
 }
 
 export function CharacterStressTracker({ actor }: StressTrackerProps): JSX.Element {
-  const boxes = actor.system.stress.boxes;
-  const burnout = actor.system.burnout;
-  const mentalBreak = actor.system.isMentalBreak;
-
-  const setBoxState = (index: number, state: string) => {
-    const newBoxes = [...boxes];
-    newBoxes[index] = state;
-    void actor.update({ "system.stress.boxes": newBoxes });
-  };
-
-  const toggleBoxState = (index: number) => {
-    setBoxState(index, boxes[index] === "F" ? "D" : "F");
-  };
-
-  const updateBurnoutValue = (val: number) => {
-    void actor.update({ "system.burnout": Math.max(1, val) });
-  };
+  const boxes = actor.system.stress.boxes,
+    burnout = actor.system.burnout,
+    mentalBreak = actor.system.isMentalBreak,
+    setBoxState = (index: number, state: string) => {
+      const newBoxes = [...boxes];
+      newBoxes[index] = state;
+      void actor.update({ "system.stress.boxes": newBoxes });
+    },
+    toggleBoxState = (index: number) => {
+      setBoxState(index, boxes[index] === "F" ? "D" : "F");
+    },
+    updateBurnoutValue = (val: number) => {
+      void actor.update({ "system.burnout": Math.max(1, val) });
+    };
 
   return (
     <Card pad={0}>

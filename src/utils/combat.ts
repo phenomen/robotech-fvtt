@@ -128,22 +128,22 @@ export function actionBudgetError(used: RoundUsage, next: ActionUsage, swarm = f
 }
 
 export function compareCombatants(a: Combatant, b: Combatant): number {
-  const sortA = a.system.sort;
-  const sortB = b.system.sort;
+  const sortA = a.system.sort,
+    sortB = b.system.sort;
   if (sortA !== null || sortB !== null) {
     return (sortA ?? 9999) - (sortB ?? 9999) || compareId(a, b);
   }
 
-  const slowedA = isSlowed(a.actor);
-  const slowedB = isSlowed(b.actor);
+  const slowedA = isSlowed(a.actor),
+    slowedB = isSlowed(b.actor);
   if (slowedA !== slowedB) {
     return slowedA ? 1 : -1;
   }
 
-  const initA = a.initiative;
-  const initB = b.initiative;
-  const missingA = !Number.isFinite(initA);
-  const missingB = !Number.isFinite(initB);
+  const initA = a.initiative,
+    initB = b.initiative,
+    missingA = !Number.isFinite(initA),
+    missingB = !Number.isFinite(initB);
   if (missingA !== missingB) {
     return missingA ? 1 : -1;
   }
@@ -164,8 +164,8 @@ export function compareCombatants(a: Combatant, b: Combatant): number {
 }
 
 function compareId(a: Combatant, b: Combatant): number {
-  const idA = a.id ?? "";
-  const idB = b.id ?? "";
+  const idA = a.id ?? "",
+    idB = b.id ?? "";
   if (idA === idB) {
     return 0;
   }
@@ -239,9 +239,9 @@ export async function spendRoundUses(
     return false;
   }
 
-  const used: RoundUsage = combatant.system;
-  const actor = combatant.actor;
-  const errorKey = actionBudgetError(used, usage, !!actor && isActorOf(actor, "swarm"));
+  const used: RoundUsage = combatant.system,
+    actor = combatant.actor,
+    errorKey = actionBudgetError(used, usage, !!actor && isActorOf(actor, "swarm"));
   if (errorKey) {
     ui.notifications.warn(game.i18n.localize(errorKey));
     return false;
@@ -271,7 +271,7 @@ export async function clearRoundUses(combat: Combat): Promise<void> {
     "system.sort": null,
     "system.suiteUsed": false,
   }));
-  if (!updates.length) {
+  if (updates.length === 0) {
     return;
   }
   await combat.updateEmbeddedDocuments("Combatant", updates);
@@ -281,7 +281,7 @@ export async function clearManualSort(combat: Combat): Promise<void> {
   const updates = combat.combatants
     .filter((combatant) => combatant.system.sort !== null)
     .map((combatant) => ({ _id: combatant.id, "system.sort": null }));
-  if (!updates.length) {
+  if (updates.length === 0) {
     return;
   }
   await combat.updateEmbeddedDocuments("Combatant", updates);
@@ -289,7 +289,7 @@ export async function clearManualSort(combat: Combat): Promise<void> {
 
 export async function writeTurnOrder(combat: Combat, orderedIds: string[]): Promise<void> {
   const updates = orderedIds.map((id, index) => ({ _id: id, "system.sort": index }));
-  if (!updates.length) {
+  if (updates.length === 0) {
     return;
   }
   await combat.updateEmbeddedDocuments("Combatant", updates);
@@ -307,9 +307,9 @@ export function phaseLabelOf(phase: CombatPhaseValue | SlotPhaseValue | ""): str
 }
 
 export function takenActionLabel(entry: ActionLogEntry): string {
-  const phase = phaseLabelOf(entry.phase);
-  const action = ACTION_OPTIONS.find((option) => option.value === entry.action)?.labelKey ?? entry.action;
-  const actionLabel = game.i18n.localize(action);
+  const phase = phaseLabelOf(entry.phase),
+    action = ACTION_OPTIONS.find((option) => option.value === entry.action)?.labelKey ?? entry.action,
+    actionLabel = game.i18n.localize(action);
   if (entry.pushed) {
     return game.i18n.localize("ROBOTECH.Combat.TakenPushed", {
       action: actionLabel,

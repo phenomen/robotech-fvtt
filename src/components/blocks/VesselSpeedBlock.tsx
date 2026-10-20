@@ -34,30 +34,28 @@ function engineTone(engines: number): EngineTone {
 }
 
 export function VesselSpeedBlock({ actor }: VesselSpeedBlockProps): JSX.Element {
-  const system = actor.system;
-  const activeMode = system.activeSpeedMode;
-  const isTransformableMecha = activeMode !== "general";
-  const currentSpeed = system.speedModes[activeMode];
-  const selectedUnit = currentSpeed.selected;
-  const engines = system.systems.engines;
-  const tone = engineTone(engines);
-
-  const handleSelectSpeed = (unit: SpeedUnitValue) => {
-    void actor.update({
-      [`system.speedModes.${activeMode}.selected`]: unit,
-      [`system.speedModes.${activeMode}.game`]: calcEngineSpeed(currentSpeed[unit], engines),
-    });
-  };
-
-  const handleSpeedNumberChange = (unit: SpeedUnitValue, val: number) => {
-    const updates: Record<string, FieldValue> = {
-      [`system.speedModes.${activeMode}.${unit}`]: val,
+  const system = actor.system,
+    activeMode = system.activeSpeedMode,
+    isTransformableMecha = activeMode !== "general",
+    currentSpeed = system.speedModes[activeMode],
+    selectedUnit = currentSpeed.selected,
+    engines = system.systems.engines,
+    tone = engineTone(engines),
+    handleSelectSpeed = (unit: SpeedUnitValue) => {
+      void actor.update({
+        [`system.speedModes.${activeMode}.selected`]: unit,
+        [`system.speedModes.${activeMode}.game`]: calcEngineSpeed(currentSpeed[unit], engines),
+      });
+    },
+    handleSpeedNumberChange = (unit: SpeedUnitValue, val: number) => {
+      const updates: Record<string, FieldValue> = {
+        [`system.speedModes.${activeMode}.${unit}`]: val,
+      };
+      if (selectedUnit === unit) {
+        updates[`system.speedModes.${activeMode}.game`] = calcEngineSpeed(val, engines);
+      }
+      void actor.update(updates);
     };
-    if (selectedUnit === unit) {
-      updates[`system.speedModes.${activeMode}.game`] = calcEngineSpeed(val, engines);
-    }
-    void actor.update(updates);
-  };
 
   return (
     <Stack gap={1}>

@@ -37,15 +37,13 @@ const VESSEL_TABS: TabItem<VesselTabType>[] = [
 ];
 
 export function VesselSheetApp({ actor }: VesselSheetAppProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<VesselTabType>("stats");
-
-  const system = actor.system;
-  const isMecha = system.vesselType === "mecha";
-  const statsRows = 1 + (system.isBasic ? 0 : 1) + 1 + (isMecha ? 1 : 0);
-
-  const handleFieldChange = (path: string, val: unknown) => {
-    void actor.update({ [path]: val });
-  };
+  const [activeTab, setActiveTab] = useState<VesselTabType>("stats"),
+    system = actor.system,
+    isMecha = system.vesselType === "mecha",
+    statsRows = 1 + (system.isBasic ? 0 : 1) + 1 + (isMecha ? 1 : 0),
+    handleFieldChange = (path: string, val: unknown) => {
+      void actor.update({ [path]: val });
+    };
 
   return (
     <Sheet>

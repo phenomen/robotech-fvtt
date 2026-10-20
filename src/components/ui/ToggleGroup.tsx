@@ -1,4 +1,5 @@
-import React, { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, memo, useCallback, useContext, useMemo } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Stack } from "@/components/ui/Stack";
@@ -15,19 +16,18 @@ export interface ToggleGroupProps {
   value: string;
   onValueChange?: (value: string) => void;
   disabled?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const ToggleGroup = React.memo(
-  ({ value, onValueChange, disabled = false, children }: ToggleGroupProps): React.JSX.Element => {
+export const ToggleGroup = memo(
+  ({ value, onValueChange, disabled = false, children }: ToggleGroupProps): JSX.Element => {
     const handleSelect = useCallback(
-      (itemValue: string) => {
-        onValueChange?.(itemValue);
-      },
-      [onValueChange]
-    );
-
-    const contextValue = useMemo(() => ({ disabled, onSelect: handleSelect, value }), [value, handleSelect, disabled]);
+        (itemValue: string) => {
+          onValueChange?.(itemValue);
+        },
+        [onValueChange]
+      ),
+      contextValue = useMemo(() => ({ disabled, onSelect: handleSelect, value }), [value, handleSelect, disabled]);
 
     return (
       <ToggleGroupContext.Provider value={contextValue}>
@@ -43,30 +43,27 @@ ToggleGroup.displayName = "ToggleGroup";
 export interface ToggleItemProps {
   value: string;
   disabled?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const ToggleItem = React.memo(
-  ({ value: itemValue, disabled = false, children }: ToggleItemProps): React.JSX.Element => {
-    const ctx = useContext(ToggleGroupContext);
-    const isSelected = ctx?.value === itemValue;
-    const isDisabled = (disabled || ctx?.disabled) ?? false;
-
-    const handleClick = useCallback(() => {
+export const ToggleItem = memo(({ value: itemValue, disabled = false, children }: ToggleItemProps): JSX.Element => {
+  const ctx = useContext(ToggleGroupContext),
+    isSelected = ctx?.value === itemValue,
+    isDisabled = (disabled || ctx?.disabled) ?? false,
+    handleClick = useCallback(() => {
       ctx?.onSelect(itemValue);
     }, [ctx, itemValue]);
 
-    return (
-      <Button
-        type="button"
-        size="small"
-        variant={isSelected ? "primary" : "secondary"}
-        disabled={isDisabled}
-        onClick={handleClick}
-      >
-        {children}
-      </Button>
-    );
-  }
-);
+  return (
+    <Button
+      type="button"
+      size="small"
+      variant={isSelected ? "primary" : "secondary"}
+      disabled={isDisabled}
+      onClick={handleClick}
+    >
+      {children}
+    </Button>
+  );
+});
 ToggleItem.displayName = "ToggleItem";

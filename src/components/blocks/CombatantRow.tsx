@@ -40,67 +40,61 @@ interface CombatantRowProps {
 }
 
 export function CombatantRow({ combat, combatant, index }: CombatantRowProps): JSX.Element {
-  const isGM = game.user?.isGM === true;
-  const canEdit = isGM || combatant.isOwner;
-  const phase = combatPhaseOf(combat);
-  const inComms = phase === "communication";
-  const active = combat.started && !inComms && combat.turn === index;
-  const actor = combatant.actor;
-  const usage = combatant.system;
-  const skillsLeft = remainingSkills(usage);
-  const suiteLeft = remainingSuites(usage);
-  const slowed = isSlowed(actor);
-  const mentalBreak = isMentalBreak(actor);
-  const portrait = combatant.img ?? actor?.img ?? CONST.DEFAULT_TOKEN;
-  const rolled = Number.isFinite(combatant.initiative);
-  const canAct = canEdit && !!actor && (skillsLeft > 0 || !usage.suiteUsed) && !inComms && !combatant.isDefeated;
-
-  const handleInitiative = (value: number | null) => {
-    if (!isGM) {
-      return;
-    }
-    void combatant.update({ initiative: value });
-  };
-
-  const handleRoll = () => {
-    if (!actor) {
-      return;
-    }
-    void openActionCenter(actor, { action: "initiative" });
-  };
-
-  const handleAct = () => {
-    if (!actor || !canAct) {
-      return;
-    }
-    void openActionCenter(actor, { combatantId: combatant.id ?? undefined });
-  };
-
-  const handleDragStart = (event: DragEvent<HTMLElement>) => {
-    event.dataTransfer.setData(DRAG_TYPE, combatant.id ?? "");
-    event.dataTransfer.effectAllowed = "move";
-  };
-
-  const handleDragOver = (event: DragEvent<HTMLElement>) => {
-    if (!isGM) {
-      return;
-    }
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  };
-
-  const handleDrop = (event: DragEvent<HTMLElement>) => {
-    if (!isGM) {
-      return;
-    }
-    event.preventDefault();
-    const draggedId = event.dataTransfer.getData(DRAG_TYPE);
-    const targetId = combatant.id;
-    if (!draggedId || !targetId || draggedId === targetId) {
-      return;
-    }
-    void reorderTurns(combat, draggedId, targetId);
-  };
+  const isGM = game.user?.isGM === true,
+    canEdit = isGM || combatant.isOwner,
+    phase = combatPhaseOf(combat),
+    inComms = phase === "communication",
+    active = combat.started && !inComms && combat.turn === index,
+    actor = combatant.actor,
+    usage = combatant.system,
+    skillsLeft = remainingSkills(usage),
+    suiteLeft = remainingSuites(usage),
+    slowed = isSlowed(actor),
+    mentalBreak = isMentalBreak(actor),
+    portrait = combatant.img ?? actor?.img ?? CONST.DEFAULT_TOKEN,
+    rolled = Number.isFinite(combatant.initiative),
+    canAct = canEdit && !!actor && (skillsLeft > 0 || !usage.suiteUsed) && !inComms && !combatant.isDefeated,
+    handleInitiative = (value: number | null) => {
+      if (!isGM) {
+        return;
+      }
+      void combatant.update({ initiative: value });
+    },
+    handleRoll = () => {
+      if (!actor) {
+        return;
+      }
+      void openActionCenter(actor, { action: "initiative" });
+    },
+    handleAct = () => {
+      if (!actor || !canAct) {
+        return;
+      }
+      void openActionCenter(actor, { combatantId: combatant.id ?? undefined });
+    },
+    handleDragStart = (event: DragEvent<HTMLElement>) => {
+      event.dataTransfer.setData(DRAG_TYPE, combatant.id ?? "");
+      event.dataTransfer.effectAllowed = "move";
+    },
+    handleDragOver = (event: DragEvent<HTMLElement>) => {
+      if (!isGM) {
+        return;
+      }
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+    },
+    handleDrop = (event: DragEvent<HTMLElement>) => {
+      if (!isGM) {
+        return;
+      }
+      event.preventDefault();
+      const draggedId = event.dataTransfer.getData(DRAG_TYPE),
+        targetId = combatant.id;
+      if (!draggedId || !targetId || draggedId === targetId) {
+        return;
+      }
+      void reorderTurns(combat, draggedId, targetId);
+    };
 
   return (
     <CombatantFrame
@@ -178,14 +172,14 @@ export function CombatantRow({ combat, combatant, index }: CombatantRowProps): J
 }
 
 async function reorderTurns(combat: Combat, draggedId: string, targetId: string): Promise<void> {
-  const ids = combat.turns.map((entry) => entry.id).filter((id): id is string => Boolean(id));
-  const from = ids.indexOf(draggedId);
-  const to = ids.indexOf(targetId);
+  const ids = combat.turns.map((entry) => entry.id).filter((id): id is string => Boolean(id)),
+    from = ids.indexOf(draggedId),
+    to = ids.indexOf(targetId);
   if (from === -1 || to === -1) {
     return;
   }
-  const next = [...ids];
-  const [moved] = next.splice(from, 1);
+  const next = [...ids],
+    [moved] = next.splice(from, 1);
   if (!moved) {
     return;
   }

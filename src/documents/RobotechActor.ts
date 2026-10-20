@@ -24,16 +24,16 @@ async function applyCharacterBar(
   isDelta: boolean
 ): Promise<boolean> {
   if (attribute === "vitals.wounds") {
-    const current = actor.system.vitals.wounds.value;
-    const next = isDelta ? current + value : value;
-    const remaining = Math.clamp(next, 0, actor.system.vitals.wounds.max);
+    const current = actor.system.vitals.wounds.value,
+      next = isDelta ? current + value : value,
+      remaining = Math.clamp(next, 0, actor.system.vitals.wounds.max);
     await actor.update(woundUpdatesForBar(actor, remaining));
     return true;
   }
   if (attribute === "vitals.stress") {
-    const current = actor.system.vitals.stress.value;
-    const next = isDelta ? current + value : value;
-    const filled = Math.clamp(next, 0, actor.system.vitals.stress.max);
+    const current = actor.system.vitals.stress.value,
+      next = isDelta ? current + value : value,
+      filled = Math.clamp(next, 0, actor.system.vitals.stress.max);
     await actor.update(stressUpdatesForBar(actor, filled));
     return true;
   }

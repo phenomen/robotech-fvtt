@@ -92,24 +92,22 @@ export function canSynergize(flags: ActionChatFlags): boolean {
 }
 
 export function actionCardTitle(actor: Actor, action: ActionValue, pushed: boolean, synergy = false): string {
-  const fallbackKey = ACTION_OPTIONS[0]?.labelKey ?? "";
-  const actionLabel = game.i18n.localize(
-    ACTION_OPTIONS.find((option) => option.value === action)?.labelKey ?? fallbackKey
-  );
-  const key = titleKeyOf(pushed, synergy);
+  const fallbackKey = ACTION_OPTIONS[0]?.labelKey ?? "",
+    actionLabel = game.i18n.localize(ACTION_OPTIONS.find((option) => option.value === action)?.labelKey ?? fallbackKey),
+    key = titleKeyOf(pushed, synergy);
   return game.i18n.localize(key, { action: actionLabel, name: actor.name });
 }
 
 export async function postActionCard(input: ActionCardInput): Promise<foundry.documents.ChatMessage | undefined> {
-  const flags = flagsFromInput(input);
-  const created = await foundry.documents.ChatMessage.create({
-    content: cardHtmlOf(flags),
-    flags: { robotech: { action: flags } },
-    ...(input.roll ? { rolls: [input.roll] } : {}),
-    speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
-    style: CONST.CHAT_MESSAGE_STYLES.OTHER,
-    user: game.user?.id,
-  });
+  const flags = flagsFromInput(input),
+    created = await foundry.documents.ChatMessage.create({
+      content: cardHtmlOf(flags),
+      flags: { robotech: { action: flags } },
+      ...(input.roll ? { rolls: [input.roll] } : {}),
+      speaker: foundry.documents.ChatMessage.getSpeaker({ actor: input.actor }),
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+      user: game.user?.id,
+    });
   if (created instanceof foundry.documents.ChatMessage) {
     return created;
   }
@@ -289,9 +287,9 @@ function cardKindOf(action: ActionValue, incoming?: IncomingAttack): ActionChatK
 }
 
 function actionCardHtml(flags: ActionChatFlags, snapshot: ActionChatSnapshot): string {
-  const isChild = flags.synergy?.role === "child";
-  const skills = snapshot.skillNames.map((name) => `<div class="rt-chat-skill">${escapeHtml(name)}</div>`).join("");
-  const headerClass = flags.pushed ? "rt-chat-header rt-chat-header--danger" : "rt-chat-header";
+  const isChild = flags.synergy?.role === "child",
+    skills = snapshot.skillNames.map((name) => `<div class="rt-chat-skill">${escapeHtml(name)}</div>`).join(""),
+    headerClass = flags.pushed ? "rt-chat-header rt-chat-header--danger" : "rt-chat-header";
 
   return `
     <div class="rt-chat-card">
@@ -309,8 +307,8 @@ function actionCardHtml(flags: ActionChatFlags, snapshot: ActionChatSnapshot): s
 }
 
 function metaBlockHtml(action: ActionValue, snapshot: ActionChatSnapshot): string {
-  const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier");
-  const dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
+  const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier"),
+    dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
   return `<div class="rt-chat-meta">
         <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierLabelOf(snapshot.modifier)}</strong></span>
         <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${snapshot.diceCount}d6</strong></span>
@@ -337,15 +335,15 @@ function initiativeSpeedHtml(action: ActionValue, speed: number | undefined): st
 }
 
 function poolCardHtml(input: PoolCardInput): string {
-  const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier");
-  const dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
-  const modifierName = modifierLabelOf(input.modifier);
-  const diceHtml = input.dice
-    .map((result) => {
-      const variant = dieSuccessGradation(result.successes).dieClass;
-      return `<span class="rt-die-box ${variant}">${result.die}</span>`;
-    })
-    .join("");
+  const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier"),
+    dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool"),
+    modifierName = modifierLabelOf(input.modifier),
+    diceHtml = input.dice
+      .map((result) => {
+        const variant = dieSuccessGradation(result.successes).dieClass;
+        return `<span class="rt-die-box ${variant}">${result.die}</span>`;
+      })
+      .join("");
 
   return `
     <div class="rt-chat-card">
@@ -364,17 +362,17 @@ function bonusChipHtml(bonus: number): string {
   if (bonus === 0) {
     return "";
   }
-  const signed = bonus > 0 ? `+${bonus}` : String(bonus);
-  const label = game.i18n.localize("ROBOTECH.Roll.ManualSuccesses");
-  const tone = bonus > 0 ? "rt-success-bonus--gain" : "rt-success-bonus--loss";
+  const signed = bonus > 0 ? `+${bonus}` : String(bonus),
+    label = game.i18n.localize("ROBOTECH.Roll.ManualSuccesses"),
+    tone = bonus > 0 ? "rt-success-bonus--gain" : "rt-success-bonus--loss";
   return `<span class="rt-success-bonus ${tone}" title="${label}">${signed}</span>`;
 }
 
 function successFooterHtml(total: number, rolled: number, bonus: number, hideDetail = false): string {
-  const successClass = total > 0 ? "rt-chat-total-value--success" : "rt-chat-total-value--failure";
-  const totalLabel = game.i18n.localize("ROBOTECH.Roll.TotalSuccesses");
-  const showDetail = !hideDetail && bonus !== 0;
-  const detail = showDetail ? `<span class="rt-chat-total-detail">${successDetailHtml(rolled, bonus)}</span>` : "";
+  const successClass = total > 0 ? "rt-chat-total-value--success" : "rt-chat-total-value--failure",
+    totalLabel = game.i18n.localize("ROBOTECH.Roll.TotalSuccesses"),
+    showDetail = !hideDetail && bonus !== 0,
+    detail = showDetail ? `<span class="rt-chat-total-detail">${successDetailHtml(rolled, bonus)}</span>` : "";
   return `<div class="rt-chat-footer">
     <span class="rt-chat-total-copy">
       <span class="rt-chat-total-label">${totalLabel}:</span>
@@ -385,9 +383,9 @@ function successFooterHtml(total: number, rolled: number, bonus: number, hideDet
 }
 
 function successDetailHtml(rolled: number, bonus: number): string {
-  const rolledLabel = game.i18n.localize("ROBOTECH.Roll.Rolled");
-  const bonusLabel = game.i18n.localize("ROBOTECH.Roll.Added");
-  const bonusValue = bonus > 0 ? `+${bonus}` : String(bonus);
+  const rolledLabel = game.i18n.localize("ROBOTECH.Roll.Rolled"),
+    bonusLabel = game.i18n.localize("ROBOTECH.Roll.Added"),
+    bonusValue = bonus > 0 ? `+${bonus}` : String(bonus);
   return `${successPartHtml(rolledLabel, String(rolled))}<span class="rt-chat-total-sep">·</span>${successPartHtml(bonusLabel, bonusValue)}`;
 }
 
@@ -415,8 +413,8 @@ function weaponTagsHtml(tags: WeaponTag[] | undefined): string {
   }
   const chips = tags
     .map((tag) => {
-      const colorClass = CHAT_TAG_CLASS[tag.color] ?? CHAT_TAG_CLASS.default;
-      const title = tag.title ? ` title="${tag.title}"` : "";
+      const colorClass = CHAT_TAG_CLASS[tag.color] ?? CHAT_TAG_CLASS.default,
+        title = tag.title ? ` title="${tag.title}"` : "";
       return `<span class="rt-chat-tag ${colorClass}"${title}>${tag.label}</span>`;
     })
     .join("");
@@ -424,13 +422,13 @@ function weaponTagsHtml(tags: WeaponTag[] | undefined): string {
 }
 
 function damageCardHtml(breakdown: DamageBreakdown): string {
-  const typeLabel = game.i18n.localize(`ROBOTECH.Damage.DamageClass.${breakdown.damageType}`);
-  const summary = game.i18n.localize(breakdown.summaryKey, {
-    damage: breakdown.damageInflicted,
-    name: breakdown.targetName,
-    type: typeLabel,
-  });
-  const summaryClass = breakdown.isOverkill ? "rt-chat-summary rt-chat-summary--danger" : "rt-chat-summary";
+  const typeLabel = game.i18n.localize(`ROBOTECH.Damage.DamageClass.${breakdown.damageType}`),
+    summary = game.i18n.localize(breakdown.summaryKey, {
+      damage: breakdown.damageInflicted,
+      name: breakdown.targetName,
+      type: typeLabel,
+    }),
+    summaryClass = breakdown.isOverkill ? "rt-chat-summary rt-chat-summary--danger" : "rt-chat-summary";
   return `<div class="rt-chat-card">
     <div class="rt-chat-header">${game.i18n.localize("ROBOTECH.Damage.Title")}</div>
     <div class="rt-chat-target">${escapeHtml(breakdown.targetName)}</div>
@@ -592,8 +590,8 @@ function distributionHtml(distribution: DamageDistribution | undefined): string 
 }
 
 function assignedRow(key: string, amount: number, data?: { name?: string; suffixKey?: string }): string {
-  const interpolated = data?.name ? escapeHtml(game.i18n.localize(key, { name: data.name })) : game.i18n.localize(key);
-  const suffix = data?.suffixKey ? ` ${game.i18n.localize(data.suffixKey)}` : "";
+  const interpolated = data?.name ? escapeHtml(game.i18n.localize(key, { name: data.name })) : game.i18n.localize(key),
+    suffix = data?.suffixKey ? ` ${game.i18n.localize(data.suffixKey)}` : "";
   return `<div class="rt-chat-breakdown-row">${interpolated} ${signedDamage(amount)}${suffix}</div>`;
 }
 

@@ -29,34 +29,30 @@ interface DamageDialogContentProps {
 }
 
 export function DamageDialogContent({ preview, onClose }: DamageDialogContentProps): JSX.Element {
-  const damage = preview.cascade.damageInflicted;
-  const { sinks } = preview;
-  const [amounts, setAmounts] = useState<DamageAmounts>(initialAmountsOf);
-
-  const incoming = preview.breakdown.multipliedHits;
-  const assigned = assignedDamageOf(amounts);
-  const remaining = Math.max(0, damage - assigned);
-  const soaked = Math.max(0, incoming - preview.cascade.hitsOverArmor);
-  const canApply = canApplyDamage(amounts, damage);
-  const framework = sinks.filter((sink) => sink.kind !== "hardware");
-  const hardware = sinks.filter((sink) => sink.kind === "hardware");
-  const typeLabel = game.i18n.localize(`ROBOTECH.Damage.DamageClass.${preview.breakdown.damageType}`);
-
-  const handleChange = (sink: DamageSink, value: number | null): void => {
-    setAmounts((current) => assignToSink(current, sink, value ?? 0, damage));
-  };
-
-  const handleHardware = (sink: DamageSink, index: number, checked: boolean): void => {
-    setAmounts((current) => toggleHardwareSlot(current, sink, index, checked, damage));
-  };
-
-  const handleApply = async (): Promise<void> => {
-    if (!canApply) {
-      return;
-    }
-    await commitDamage(preview, amounts);
-    onClose();
-  };
+  const damage = preview.cascade.damageInflicted,
+    { sinks } = preview,
+    [amounts, setAmounts] = useState<DamageAmounts>(initialAmountsOf),
+    incoming = preview.breakdown.multipliedHits,
+    assigned = assignedDamageOf(amounts),
+    remaining = Math.max(0, damage - assigned),
+    soaked = Math.max(0, incoming - preview.cascade.hitsOverArmor),
+    canApply = canApplyDamage(amounts, damage),
+    framework = sinks.filter((sink) => sink.kind !== "hardware"),
+    hardware = sinks.filter((sink) => sink.kind === "hardware"),
+    typeLabel = game.i18n.localize(`ROBOTECH.Damage.DamageClass.${preview.breakdown.damageType}`),
+    handleChange = (sink: DamageSink, value: number | null): void => {
+      setAmounts((current) => assignToSink(current, sink, value ?? 0, damage));
+    },
+    handleHardware = (sink: DamageSink, index: number, checked: boolean): void => {
+      setAmounts((current) => toggleHardwareSlot(current, sink, index, checked, damage));
+    },
+    handleApply = async (): Promise<void> => {
+      if (!canApply) {
+        return;
+      }
+      await commitDamage(preview, amounts);
+      onClose();
+    };
 
   return (
     <Stack pad={4} gap={4}>
@@ -120,8 +116,8 @@ interface SinkRowProps {
 }
 
 function SinkRow({ sink, amounts, onChange }: SinkRowProps): JSX.Element {
-  const label = sink.name ?? game.i18n.localize(sink.labelKey);
-  const value = amountOf(sink, amounts);
+  const label = sink.name ?? game.i18n.localize(sink.labelKey),
+    value = amountOf(sink, amounts);
 
   return (
     <Field
@@ -158,11 +154,11 @@ interface HardwareRowProps {
 }
 
 function HardwareRow({ sink, amounts, remaining, onToggle }: HardwareRowProps): JSX.Element {
-  const slots = sink.destroyed ?? [];
-  const selected = selectedSlotsOf(sink, amounts);
-  const selectedSet = new Set(selected);
-  const canSpend = remaining > 0 || amounts.structure > 0;
-  const label = sink.name ?? game.i18n.localize(sink.labelKey);
+  const slots = sink.destroyed ?? [],
+    selected = selectedSlotsOf(sink, amounts),
+    selectedSet = new Set(selected),
+    canSpend = remaining > 0 || amounts.structure > 0,
+    label = sink.name ?? game.i18n.localize(sink.labelKey);
 
   return (
     <Stack direction="row" gap={2} align="start" justify="between">

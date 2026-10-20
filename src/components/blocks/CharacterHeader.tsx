@@ -31,10 +31,10 @@ function fameTagLabel(fame: number, title: string): string | null {
 }
 
 function CharacterTags({ actor }: HeaderProps): JSX.Element | null {
-  const race = findItemOf(actor, "race");
-  const career = findItemOf(actor, "career");
-  const elements = filterItemsOf(actor, "element");
-  const fameLabel = fameTagLabel(actor.system.fame, actor.system.fameTitle);
+  const race = findItemOf(actor, "race"),
+    career = findItemOf(actor, "career"),
+    elements = filterItemsOf(actor, "element"),
+    fameLabel = fameTagLabel(actor.system.fame, actor.system.fameTitle);
 
   if (!(race || career || elements.length > 0 || fameLabel)) {
     return null;

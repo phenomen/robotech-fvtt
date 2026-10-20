@@ -17,11 +17,10 @@ interface VesselHeaderBlockProps {
 }
 
 export function VesselHeaderBlock({ actor, onFieldChange }: VesselHeaderBlockProps): JSX.Element {
-  const system = actor.system;
-
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    void actor.update({ name: e.target.value });
-  };
+  const system = actor.system,
+    handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+      void actor.update({ name: e.target.value });
+    };
 
   return (
     <Stack direction="row" gap={4} align="center">

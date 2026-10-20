@@ -18,16 +18,14 @@ interface SwarmHeaderBlockProps {
 }
 
 export function SwarmHeaderBlock({ actor }: SwarmHeaderBlockProps): JSX.Element {
-  const system = actor.system;
-
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    void actor.update({ name: e.target.value });
-  };
-
-  const speedDisplay =
-    system.minSpeed === system.maxSpeed
-      ? `${system.minSpeed}`
-      : `${system.minSpeed} - ${system.maxSpeed} (${system.averageSpeed})`;
+  const system = actor.system,
+    handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+      void actor.update({ name: e.target.value });
+    },
+    speedDisplay =
+      system.minSpeed === system.maxSpeed
+        ? `${system.minSpeed}`
+        : `${system.minSpeed} - ${system.maxSpeed} (${system.averageSpeed})`;
 
   return (
     <Stack direction="row" gap={4} align="center">

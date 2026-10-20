@@ -14,9 +14,9 @@ interface CombatTrackerAppProps {
 }
 
 export function CombatTrackerApp({ combat }: CombatTrackerAppProps): JSX.Element {
-  const combats = game.combats?.combats ?? [];
-  const turns = combat?.turns.filter((combatant) => combatant.visible) ?? [];
-  const turnIndexes = new Map((combat?.turns ?? []).map((combatant, index) => [combatant.id, index]));
+  const combats = game.combats?.combats ?? [],
+    turns = combat?.turns.filter((combatant) => combatant.visible) ?? [],
+    turnIndexes = new Map((combat?.turns ?? []).map((combatant, index) => [combatant.id, index]));
 
   return (
     <Sheet>

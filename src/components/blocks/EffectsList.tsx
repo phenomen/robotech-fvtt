@@ -18,8 +18,8 @@ interface EffectsListProps {
 }
 
 export function EffectsList({ parent }: EffectsListProps): JSX.Element {
-  const isActor = parent instanceof foundry.documents.Actor;
-  const effects = isActor ? actorEffects(parent) : [...parent.effects];
+  const isActor = parent instanceof foundry.documents.Actor,
+    effects = isActor ? actorEffects(parent) : [...parent.effects];
 
   return (
     <Stack gap={1}>
@@ -85,8 +85,8 @@ function EffectRow({
   showSource: boolean;
   showEnabled: boolean;
 }): JSX.Element {
-  const own = isOwnEffect(effect);
-  const canDelete = showSource ? own : true;
+  const own = isOwnEffect(effect),
+    canDelete = showSource ? own : true;
 
   return (
     <TableRow>

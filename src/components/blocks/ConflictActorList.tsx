@@ -18,13 +18,12 @@ interface ConflictActorListProps {
 }
 
 export function ConflictActorList({ actor }: ConflictActorListProps): JSX.Element {
-  const actors = useLinkedActors(actor.system.actorUuids, SCENE_ACTOR_TYPES);
-
-  const handleDelete = (uuid: string) => {
-    void actor.update({
-      "system.actorUuids": actor.system.actorUuids.filter((id) => id !== uuid),
-    });
-  };
+  const actors = useLinkedActors(actor.system.actorUuids, SCENE_ACTOR_TYPES),
+    handleDelete = (uuid: string) => {
+      void actor.update({
+        "system.actorUuids": actor.system.actorUuids.filter((id) => id !== uuid),
+      });
+    };
 
   return (
     <Stack gap={1}>

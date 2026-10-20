@@ -20,20 +20,19 @@ interface FrameworkSettingsContentProps {
 }
 
 export function FrameworkSettingsContent({ actor, onClose }: FrameworkSettingsContentProps): JSX.Element {
-  const [isBasic, setIsBasic] = useState<boolean>(actor.system.isBasic);
-  const [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass);
-  const [armorMax, setArmorMax] = useState<number>(actor.system.armor.max);
-  const [structureMax, setStructureMax] = useState<number>(actor.system.structure.max);
-
-  const handleSave = () => {
-    void actor.update({
-      "system.armor.max": armorMax,
-      "system.armorClass": armorClass,
-      "system.isBasic": isBasic,
-      "system.structure.max": structureMax,
-    });
-    onClose();
-  };
+  const [isBasic, setIsBasic] = useState<boolean>(actor.system.isBasic),
+    [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass),
+    [armorMax, setArmorMax] = useState<number>(actor.system.armor.max),
+    [structureMax, setStructureMax] = useState<number>(actor.system.structure.max),
+    handleSave = () => {
+      void actor.update({
+        "system.armor.max": armorMax,
+        "system.armorClass": armorClass,
+        "system.isBasic": isBasic,
+        "system.structure.max": structureMax,
+      });
+      onClose();
+    };
 
   return (
     <Stack pad={4} gap={3}>

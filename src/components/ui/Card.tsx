@@ -1,4 +1,5 @@
-import React from "react";
+import { memo } from "react";
+import type { JSX, ReactNode } from "react";
 
 import { SPACE_GAP, SPACE_PAD } from "@/components/ui/space";
 import type { Space } from "@/components/ui/space";
@@ -19,7 +20,7 @@ const TONE_FILL: Record<CardTone, string> = {
 };
 
 export interface CardProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   pad?: Space;
   gap?: Space;
   direction?: CardDirection;
@@ -29,7 +30,7 @@ export interface CardProps {
   tone?: CardTone;
 }
 
-export const Card = React.memo(
+export const Card = memo(
   ({
     children,
     pad = 3,
@@ -39,7 +40,7 @@ export const Card = React.memo(
     bordered = false,
     grow = false,
     tone = "default",
-  }: CardProps): React.JSX.Element => (
+  }: CardProps): JSX.Element => (
     <div
       className={cn(
         "relative flex border border-transparent",
@@ -59,12 +60,12 @@ export const Card = React.memo(
 );
 Card.displayName = "Card";
 
-export const CardHeader = React.memo(({ children }: { children?: React.ReactNode }): React.JSX.Element => (
+export const CardHeader = memo(({ children }: { children?: ReactNode }): JSX.Element => (
   <div className="flex h-9 min-w-0 shrink-0 items-center justify-between gap-2 overflow-hidden">{children}</div>
 ));
 CardHeader.displayName = "CardHeader";
 
-export const CardTitle = React.memo(({ children }: { children?: React.ReactNode }): React.JSX.Element => (
+export const CardTitle = memo(({ children }: { children?: ReactNode }): JSX.Element => (
   <h3
     className={cn(
       typoClass("mono"),

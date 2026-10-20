@@ -8,16 +8,7 @@ import { cn } from "@/utils/cn";
 export type { TextSize, TextVariant } from "@/components/ui/typo";
 
 export type TextColor =
-  | "foreground"
-  | "muted"
-  | "primary"
-  | "secondary"
-  | "danger"
-  | "green"
-  | "amber"
-  | "teal"
-  | "blue"
-  | "inherit";
+  "foreground" | "muted" | "primary" | "secondary" | "danger" | "green" | "amber" | "teal" | "blue" | "inherit";
 
 export type TextAlign = "start" | "center" | "end";
 export type TextWidth = "num" | "full";
@@ -25,28 +16,26 @@ export type TextWidth = "num" | "full";
 type TextTag = "p" | "span" | "div" | "h1" | "h2" | "h3" | "h4" | "label" | "strong" | "subtle";
 
 const COLOR_CLASS: Record<TextColor, string> = {
-  amber: "text-rt-custom-amber",
-  blue: "text-rt-custom-blue",
-  danger: "text-rt-danger",
-  foreground: "text-rt-foreground",
-  green: "text-rt-custom-green",
-  inherit: "text-inherit",
-  muted: "text-rt-muted",
-  primary: "text-rt-primary",
-  secondary: "text-rt-secondary-foreground",
-  teal: "text-rt-custom-teal",
-};
-
-const ALIGN_CLASS: Record<TextAlign, string> = {
-  center: "text-center",
-  end: "text-right",
-  start: "text-left",
-};
-
-const WIDTH_CLASS: Record<TextWidth, string> = {
-  full: "block w-full",
-  num: "inline-block w-12",
-};
+    amber: "text-rt-custom-amber",
+    blue: "text-rt-custom-blue",
+    danger: "text-rt-danger",
+    foreground: "text-rt-foreground",
+    green: "text-rt-custom-green",
+    inherit: "text-inherit",
+    muted: "text-rt-muted",
+    primary: "text-rt-primary",
+    secondary: "text-rt-secondary-foreground",
+    teal: "text-rt-custom-teal",
+  },
+  ALIGN_CLASS: Record<TextAlign, string> = {
+    center: "text-center",
+    end: "text-right",
+    start: "text-left",
+  },
+  WIDTH_CLASS: Record<TextWidth, string> = {
+    full: "block w-full",
+    num: "inline-block w-12",
+  };
 
 function defaultTag(variant: TextVariant): TextTag {
   if (variant === "title") {

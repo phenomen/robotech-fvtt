@@ -1,4 +1,4 @@
-import { rm, mkdir, copyFile, readdir } from "node:fs/promises";
+import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 
 import tailwind from "bun-plugin-tailwind";
@@ -41,8 +41,8 @@ async function copyDir(src: string, dest: string) {
   await mkdir(dest, { recursive: true });
   const entries = await readdir(src, { withFileTypes: true });
   for (const entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
+    const srcPath = path.join(src, entry.name),
+      destPath = path.join(dest, entry.name);
     if (entry.isDirectory()) {
       await copyDir(srcPath, destPath);
     } else {

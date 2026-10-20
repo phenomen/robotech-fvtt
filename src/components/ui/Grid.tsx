@@ -54,7 +54,7 @@ const GridLinesContext = createContext<GridLines>({
 
 /** Computed style values such as `"12.5px"`. `Number("12.5px")` is NaN. */
 function cssPx(value: string): number {
-  // oxlint-disable-next-line unicorn/prefer-number-coercion
+  // eslint-disable-next-line unicorn/prefer-number-coercion
   return Number.parseFloat(value);
 }
 
@@ -83,13 +83,13 @@ function trackStops(sizes: number[], start: number, gap: number): number[] {
 }
 
 function readLines(el: HTMLElement): GridLines {
-  const style = getComputedStyle(el);
-  const padLeft = cssPx(style.paddingLeft) || 0;
-  const padTop = cssPx(style.paddingTop) || 0;
-  const colGap = cssPx(style.columnGap) || 0;
-  const rowGap = cssPx(style.rowGap) || 0;
-  const vertical = parseTrackSizes(style.gridTemplateColumns);
-  const horizontal = parseTrackSizes(style.gridTemplateRows);
+  const style = getComputedStyle(el),
+    padLeft = cssPx(style.paddingLeft) || 0,
+    padTop = cssPx(style.paddingTop) || 0,
+    colGap = cssPx(style.columnGap) || 0,
+    rowGap = cssPx(style.rowGap) || 0,
+    vertical = parseTrackSizes(style.gridTemplateColumns),
+    horizontal = parseTrackSizes(style.gridTemplateRows);
   return {
     height: el.offsetHeight,
     horizontal: horizontal.length > 0 ? trackStops(horizontal, padTop, rowGap) : [0, el.offsetHeight],
@@ -106,8 +106,8 @@ interface CellBox {
 }
 
 function cellBox(grid: HTMLElement, cell: Element): CellBox {
-  const gridRect = grid.getBoundingClientRect();
-  const rect = cell.getBoundingClientRect();
+  const gridRect = grid.getBoundingClientRect(),
+    rect = cell.getBoundingClientRect();
   return {
     bottom: rect.bottom - gridRect.top,
     left: rect.left - gridRect.left,
@@ -125,8 +125,8 @@ function spansAcross(boxes: CellBox[], x: number, y: number): boolean {
 }
 
 function findCrosses(grid: HTMLElement, lines: GridLines): { x: number; y: number }[] {
-  const xs = lines.vertical.slice(1, -1);
-  const ys = lines.horizontal.slice(1, -1);
+  const xs = lines.vertical.slice(1, -1),
+    ys = lines.horizontal.slice(1, -1);
   if (xs.length === 0 || ys.length === 0) {
     return [];
   }
@@ -171,16 +171,16 @@ export interface GridProps {
 }
 
 export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.Element {
-  const { guideWidth, dashedGuides, debug } = useContext(GridSystemContext);
-  const ref = useRef<HTMLDivElement>(null);
-  const [lines, setLines] = useState<GridLines>({
-    height: 0,
-    horizontal: [],
-    vertical: [],
-    width: 0,
-  });
-  const [crosses, setCrosses] = useState<{ x: number; y: number }[]>([]);
-  const linesRef = useRef<GridLines>({ height: 0, horizontal: [], vertical: [], width: 0 });
+  const { guideWidth, dashedGuides, debug } = useContext(GridSystemContext),
+    ref = useRef<HTMLDivElement>(null),
+    [lines, setLines] = useState<GridLines>({
+      height: 0,
+      horizontal: [],
+      vertical: [],
+      width: 0,
+    }),
+    [crosses, setCrosses] = useState<{ x: number; y: number }[]>([]),
+    linesRef = useRef<GridLines>({ height: 0, horizontal: [], vertical: [], width: 0 });
 
   useEffect(() => {
     const el = ref.current;
@@ -216,7 +216,7 @@ export function Grid({ columns, rows, hideGuides, children }: GridProps): JSX.El
       observer.disconnect();
     };
     // columns/rows change track counts without always resizing the grid element.
-    // oxlint-disable-next-line react/exhaustive-effect-dependencies
+    // eslint-disable-next-line react/exhaustive-effect-dependencies
   }, [columns, hideGuides, rows]);
 
   const style: CSSProperties = {
@@ -262,8 +262,8 @@ interface GuideOverlayProps {
 }
 
 function GuideOverlay({ lines, hideGuides, guideWidth, dashed, debug }: GuideOverlayProps): JSX.Element {
-  const stroke = dashed ? "dashed" : "solid";
-  const color = debug ? "var(--rt-primary)" : "var(--rt-border)";
+  const stroke = dashed ? "dashed" : "solid",
+    color = debug ? "var(--rt-primary)" : "var(--rt-border)";
   return (
     <div
       aria-hidden="true"
@@ -388,10 +388,10 @@ function CrossMark({ x, y, guideWidth }: CrossMarkProps): JSX.Element {
 }
 
 export function GridCross({ column, row }: GridCrossProps): JSX.Element | null {
-  const { guideWidth } = useContext(GridSystemContext);
-  const lines = useContext(GridLinesContext);
-  const x = lines.vertical[column - 1];
-  const y = lines.horizontal[row - 1];
+  const { guideWidth } = useContext(GridSystemContext),
+    lines = useContext(GridLinesContext),
+    x = lines.vertical[column - 1],
+    y = lines.horizontal[row - 1];
   if (x === undefined || y === undefined) {
     return null;
   }

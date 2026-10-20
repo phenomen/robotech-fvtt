@@ -11,21 +11,19 @@ interface CharacterDramaTrackerProps {
 }
 
 export function CharacterDramaTracker({ actor }: CharacterDramaTrackerProps): JSX.Element {
-  const dramas = actor.system.stress.dramas;
-
-  const updateDramaText = (index: number, text: string) => {
-    const next = [...dramas];
-    next[index] = text;
-    void actor.update({ "system.stress.dramas": next });
-  };
-
-  const sendDrama = (index: number, text: string) => {
-    void sendToChat({
-      actor,
-      description: text,
-      name: game.i18n.localize("ROBOTECH.Stress.DramaN", { n: index + 1 }),
-    });
-  };
+  const dramas = actor.system.stress.dramas,
+    updateDramaText = (index: number, text: string) => {
+      const next = [...dramas];
+      next[index] = text;
+      void actor.update({ "system.stress.dramas": next });
+    },
+    sendDrama = (index: number, text: string) => {
+      void sendToChat({
+        actor,
+        description: text,
+        name: game.i18n.localize("ROBOTECH.Stress.DramaN", { n: index + 1 }),
+      });
+    };
 
   return (
     <LabelGrid>

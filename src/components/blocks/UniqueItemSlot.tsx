@@ -22,14 +22,14 @@ interface UniqueItemSlotProps {
 }
 
 async function createSlotItem(actor: ActorOf<"character">, itemType: UniqueSlotType): Promise<void> {
-  const typeLabel = game.i18n.localize(`TYPES.Item.${itemType}`);
-  const created = await actor.createEmbeddedDocuments("Item", [
-    {
-      name: game.i18n.localize("ROBOTECH.List.NewItem", { type: typeLabel }),
-      type: itemType,
-    },
-  ]);
-  const item = created[0];
+  const typeLabel = game.i18n.localize(`TYPES.Item.${itemType}`),
+    created = await actor.createEmbeddedDocuments("Item", [
+      {
+        name: game.i18n.localize("ROBOTECH.List.NewItem", { type: typeLabel }),
+        type: itemType,
+      },
+    ]),
+    item = created[0];
   if (item instanceof foundry.documents.Item) {
     void item.sheet?.render(true);
   }
@@ -104,9 +104,9 @@ function FilledSlot({ item }: { item: ItemOf<"career"> | ItemOf<"race"> }): JSX.
 }
 
 export function UniqueItemSlot({ actor, itemType }: UniqueItemSlotProps): JSX.Element {
-  const item = itemType === "career" ? findItemOf(actor, "career") : findItemOf(actor, "race");
-  const addKey = itemType === "career" ? "ROBOTECH.Character.AddCareer" : "ROBOTECH.Character.AddRace";
-  const hintKey = itemType === "career" ? "ROBOTECH.Character.DragDropCareer" : "ROBOTECH.Character.DragDropRace";
+  const item = itemType === "career" ? findItemOf(actor, "career") : findItemOf(actor, "race"),
+    addKey = itemType === "career" ? "ROBOTECH.Character.AddCareer" : "ROBOTECH.Character.AddRace",
+    hintKey = itemType === "career" ? "ROBOTECH.Character.DragDropCareer" : "ROBOTECH.Character.DragDropRace";
 
   return (
     <Stack gap={1} grow>

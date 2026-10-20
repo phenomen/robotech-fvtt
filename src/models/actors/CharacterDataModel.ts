@@ -195,18 +195,18 @@ export class CharacterDataModel extends ActorDataModel {
   }
 
   private prepareWounds() {
-    const settings = this.vitalsSettings;
-    const wounds = this.wounds;
-    const baseline = woundBaselines(settings.isTriumvirateWounds);
+    const settings = this.vitalsSettings,
+      wounds = this.wounds,
+      baseline = woundBaselines(settings.isTriumvirateWounds);
 
     syncWoundCategory(wounds.brawl, clampMax(settings.brawl ?? baseline.brawl, MAX_BRAWL_WOUNDS));
     syncWoundCategory(wounds.critical, clampMax(settings.critical ?? baseline.critical, MAX_CRITICAL_WOUNDS));
   }
 
   private prepareVitals() {
-    const { vitals, wounds, stress } = this;
-    const maxWounds = wounds.brawl.max + wounds.critical.max;
-    const checkedWounds = wounds.brawl.value + wounds.critical.value;
+    const { vitals, wounds, stress } = this,
+      maxWounds = wounds.brawl.max + wounds.critical.max,
+      checkedWounds = wounds.brawl.value + wounds.critical.value;
     vitals.wounds.max = maxWounds;
     vitals.wounds.value = Math.max(0, maxWounds - checkedWounds);
     vitals.stress.max = STRESS_BOX_COUNT;
@@ -294,7 +294,7 @@ function syncArmorValue(armor: Gauge, changes: object): void {
   if (!pathTouched(changes, "system.armor")) {
     return;
   }
-  const expanded = expandChanges(changes);
-  const nextMax = numberAt(expanded, "system.armor.max") ?? armor.max;
+  const expanded = expandChanges(changes),
+    nextMax = numberAt(expanded, "system.armor.max") ?? armor.max;
   foundry.utils.setProperty(changes, "system.armor.value", Math.max(0, nextMax));
 }

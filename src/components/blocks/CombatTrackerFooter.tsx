@@ -13,9 +13,9 @@ export function CombatTrackerFooter({ combat }: CombatTrackerFooterProps): JSX.E
     return null;
   }
 
-  const isGM = game.user?.isGM === true;
-  const currentOwner = !!combat.combatant?.isOwner;
-  const canStep = isGM || currentOwner;
+  const isGM = game.user?.isGM === true,
+    currentOwner = !!combat.combatant?.isOwner,
+    canStep = isGM || currentOwner;
 
   if (!combat.started) {
     if (!isGM) {

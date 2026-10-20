@@ -23,27 +23,24 @@ export interface StackProps {
 }
 
 const MIN_HEIGHT_CLASS: Record<StackMinHeight, string> = {
-  input: "min-h-8",
-};
-
-const DIRECTION_CLASS: Record<StackDirection, string> = {
-  column: "flex-col",
-  row: "flex-row",
-};
-
-const ALIGN_CLASS: Record<StackAlign, string> = {
-  center: "items-center",
-  end: "items-end",
-  start: "items-start",
-  stretch: "items-stretch",
-};
-
-const JUSTIFY_CLASS: Record<StackJustify, string> = {
-  between: "justify-between",
-  center: "justify-center",
-  end: "justify-end",
-  start: "justify-start",
-};
+    input: "min-h-8",
+  },
+  DIRECTION_CLASS: Record<StackDirection, string> = {
+    column: "flex-col",
+    row: "flex-row",
+  },
+  ALIGN_CLASS: Record<StackAlign, string> = {
+    center: "items-center",
+    end: "items-end",
+    start: "items-start",
+    stretch: "items-stretch",
+  },
+  JUSTIFY_CLASS: Record<StackJustify, string> = {
+    between: "justify-between",
+    center: "justify-center",
+    end: "justify-end",
+    start: "justify-start",
+  };
 
 export function Stack({
   direction = "column",

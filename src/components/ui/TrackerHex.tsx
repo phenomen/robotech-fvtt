@@ -1,4 +1,5 @@
-import React, { useCallback } from "react";
+import { memo, useCallback } from "react";
+import type { JSX, MouseEvent, MouseEventHandler } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Label } from "@/components/ui/Label";
@@ -9,12 +10,12 @@ interface TrackerHexProps {
   isFilled: boolean;
   label: string;
   onClick: () => void;
-  onContextMenu?: React.MouseEventHandler<HTMLButtonElement>;
+  onContextMenu?: MouseEventHandler<HTMLButtonElement>;
   title: string;
 }
 
-export const TrackerHex = React.memo(
-  ({ color, isFilled, label, onClick, onContextMenu, title }: TrackerHexProps): React.JSX.Element => {
+export const TrackerHex = memo(
+  ({ color, isFilled, label, onClick, onContextMenu, title }: TrackerHexProps): JSX.Element => {
     const fill = isFilled ? `color-mix(in srgb, ${color} 50%, transparent)` : "var(--rt-input)";
 
     return (
@@ -64,35 +65,32 @@ export interface HexInputProps {
   min?: number;
 }
 
-export const HexInput = React.memo(
-  ({ color, label, icon, value, onValueChange, min = 1 }: HexInputProps): React.JSX.Element => {
-    const handleClick = useCallback(() => {
+export const HexInput = memo(({ color, label, icon, value, onValueChange, min = 1 }: HexInputProps): JSX.Element => {
+  const handleClick = useCallback(() => {
       onValueChange(value + 1);
-    }, [onValueChange, value]);
-
-    const handleContextMenu = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
+    }, [onValueChange, value]),
+    handleContextMenu = useCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         onValueChange(Math.max(min, value - 1));
       },
       [min, onValueChange, value]
     );
 
-    return (
-      <Stack direction="row" gap={2} align="center">
-        <Label icon={icon} iconTone="danger">
-          {label}
-        </Label>
-        <TrackerHex
-          color={color}
-          isFilled={false}
-          label={String(value)}
-          onClick={handleClick}
-          onContextMenu={handleContextMenu}
-          title={label}
-        />
-      </Stack>
-    );
-  }
-);
+  return (
+    <Stack direction="row" gap={2} align="center">
+      <Label icon={icon} iconTone="danger">
+        {label}
+      </Label>
+      <TrackerHex
+        color={color}
+        isFilled={false}
+        label={String(value)}
+        onClick={handleClick}
+        onContextMenu={handleContextMenu}
+        title={label}
+      />
+    </Stack>
+  );
+});
 HexInput.displayName = "HexInput";

@@ -40,13 +40,13 @@ export async function createLieutenant(input: CreateLieutenantInput): Promise<Ac
 
   try {
     const documents = await foundry.documents.Actor.createDocuments([
-      {
-        items: lieutenantItemsOf(input),
-        name: customNameOf(input),
-        type: "character",
-      },
-    ]);
-    const created = documents[0];
+        {
+          items: lieutenantItemsOf(input),
+          name: customNameOf(input),
+          type: "character",
+        },
+      ]),
+      created = documents[0];
     if (!(created instanceof foundry.documents.Actor) || !isActorOf(created, "character")) {
       ui.notifications.error(game.i18n.localize("ROBOTECH.Lieutenant.CreateFailed"));
       return null;
@@ -75,8 +75,8 @@ function customNameOf(input: CreateLieutenantInput): string {
 }
 
 export function lieutenantNameOf(input: CreateLieutenantInput): string {
-  const typeOption = LIEUTENANT_TYPE_OPTIONS.find((option) => option.value === input.type);
-  const parts = [typeOption ? game.i18n.localize(typeOption.labelKey) : input.type];
+  const typeOption = LIEUTENANT_TYPE_OPTIONS.find((option) => option.value === input.type),
+    parts = [typeOption ? game.i18n.localize(typeOption.labelKey) : input.type];
   if (input.veteran) {
     parts.push(game.i18n.localize("ROBOTECH.Lieutenant.Veteran"));
   }
@@ -91,12 +91,12 @@ export function lieutenantSkillsOf(
   type: LieutenantTypeValue,
   element: LieutenantElementValue
 ): LieutenantSkillPreview[] {
-  const row = LIEUTENANT_SKILL_ROWS[lieutenantElementOf(element).skillRow];
-  const index = LIEUTENANT_TYPE_INDEX[type];
-  const skills: LieutenantSkillPreview[] = [];
+  const row = LIEUTENANT_SKILL_ROWS[lieutenantElementOf(element).skillRow],
+    index = LIEUTENANT_TYPE_INDEX[type],
+    skills: LieutenantSkillPreview[] = [];
   for (const action of LIEUTENANT_SKILL_ACTIONS) {
-    const option = ACTION_OPTIONS.find((entry) => entry.value === action);
-    const value = row[action][index];
+    const option = ACTION_OPTIONS.find((entry) => entry.value === action),
+      value = row[action][index];
     if (!option || value === undefined) {
       continue;
     }

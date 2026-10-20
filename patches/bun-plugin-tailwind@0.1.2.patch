@@ -1,0 +1,15 @@
+diff --git a/package.json b/package.json
+index bc425427d0a30e5ec29e24030f9f5abea3068f04..db30c69c2f7bbdc47c5c7439aa27275dad71e2c7 100644
+--- a/package.json
++++ b/package.json
+@@ -37,5 +37,10 @@
+   "dependencies": {},
+   "peerDependencies": {
+     "bun": ">=1.0.0"
++  },
++  "peerDependenciesMeta": {
++    "bun": {
++      "optional": true
++    }
+   }
+ }

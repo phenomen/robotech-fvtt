@@ -5,7 +5,7 @@ import {
   SwarmDataModel,
   VesselDataModel,
 } from "@/models/actors";
-import { CombatDataModel, CombatantDataModel } from "@/models/combat";
+import { CombatantDataModel, CombatDataModel } from "@/models/combat";
 import type { ActorType, ItemType } from "@/models/documents";
 import {
   CareerDataModel,

@@ -26,7 +26,7 @@ Build the system into `dist/`:
 bun run build
 ```
 
-Lint and format (type-aware Oxlint + Oxfmt):
+Lint and format:
 
 ```bash
 bun run check

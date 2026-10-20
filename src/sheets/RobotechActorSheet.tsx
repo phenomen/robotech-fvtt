@@ -2,7 +2,7 @@ import type Actor from "@client/documents/actor.mjs";
 import type Item from "@client/documents/item.mjs";
 
 import { renderActorSheet } from "@/components/apps/actorSheets";
-import { UNIQUE_ITEM_TYPES, itemAllowedOn } from "@/config/documentMeta";
+import { itemAllowedOn, UNIQUE_ITEM_TYPES } from "@/config/documentMeta";
 import type { ActorOf, SwarmMember } from "@/models";
 import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
 import type { ReactMount } from "@/sheets/reactMount";
@@ -166,8 +166,8 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
 }
 
 function buildSwarmMember(droppedActor: ActorOf<"vessel">, actorUuid: string): SwarmMember {
-  const originalStructure = droppedActor.system.structure.max;
-  const reducedStructure = calcReducedStructure(originalStructure);
+  const originalStructure = droppedActor.system.structure.max,
+    reducedStructure = calcReducedStructure(originalStructure);
 
   return {
     actorUuid,
