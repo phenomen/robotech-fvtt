@@ -712,6 +712,7 @@
       "Round": "Round {n}",
       "EmptyTurns": "Add tokens to this encounter.",
       "Start": "Start Encounter",
+      "End": "End Encounter",
       "PreviousTurn": "Previous Turn",
       "NextTurn": "Next Turn",
       "PreviousRound": "Previous Round",

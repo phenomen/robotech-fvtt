@@ -57,6 +57,11 @@ export function CombatTrackerFooter({ combat }: CombatTrackerFooterProps): JSX.E
           </Button>
         </Stack>
       ) : null}
+      {isGM ? (
+        <Button type="button" size="small" variant="danger" full onClick={() => void combat.endCombat()}>
+          {game.i18n.localize("ROBOTECH.Combat.End")}
+        </Button>
+      ) : null}
     </Stack>
   );
 }
