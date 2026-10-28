@@ -7,8 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import { ToggleGroup, ToggleItem } from "@/components/ui/ToggleGroup";
-import { COMBAT_PHASE_OPTIONS } from "@/config/options";
-import type { CombatPhaseValue } from "@/config/options";
+import { COMBAT_PHASE_OPTIONS, isChoiceValue } from "@/config/options";
 import { changePhase, COMBAT_DOCUMENT_TYPE, combatPhaseOf } from "@/utils/combat";
 
 function encounterStatus(combat: Combat | null): string {
@@ -30,10 +29,10 @@ export function CombatTrackerHeader({ combat, combats }: CombatTrackerHeaderProp
   const isGM = game.user?.isGM === true,
     phase = combat ? combatPhaseOf(combat) : "communication",
     handlePhase = (value: string) => {
-      if (!combat || !isGM) {
+      if (!combat || !isGM || !isChoiceValue(COMBAT_PHASE_OPTIONS, value)) {
         return;
       }
-      void changePhase(combat, value as CombatPhaseValue);
+      void changePhase(combat, value);
     };
 
   return (

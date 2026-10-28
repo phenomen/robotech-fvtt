@@ -9,17 +9,14 @@ import {
   woundBaselines,
 } from "@/config/wounds";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
-import { gaugeSchema, woundCategorySchema } from "@/models/actors/gaugeSchema";
+import { gaugeSchema } from "@/models/actors/gaugeSchema";
 import type { Gauge } from "@/models/actors/gaugeSchema";
 import { expandChanges, numberAt, pathTouched } from "@/models/changePatch";
 import { findItemOf } from "@/utils/documents";
 import { syncBoxTracker } from "@/utils/trackers";
+import type { BoxTracker } from "@/utils/trackers";
 
-export interface WoundCategory {
-  value: number;
-  max: number;
-  states: boolean[];
-}
+export type WoundCategory = BoxTracker;
 
 export interface VitalsSettings {
   brawl: number | null;
@@ -75,6 +72,8 @@ export class CharacterDataModel extends ActorDataModel {
   declare stress: StressData;
   declare heroicMove: HeroicMove;
   declare proficiencies: string[];
+  /** Which wound counts came from the baseline rather than an explicit override. */
+  declare woundDefaults: { baseline: { brawl: number; critical: number }; brawl: boolean; critical: boolean };
 
   declare rank: number;
   declare rankTitle: string;
@@ -115,30 +114,8 @@ export class CharacterDataModel extends ActorDataModel {
       speed: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
       stress: new fields.SchemaField({
         boxes: new fields.ArrayField(new fields.StringField({ initial: "" })),
-        drama: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
         dramas: new fields.ArrayField(new fields.StringField({ initial: "" }), {
           initial: () => Array.from({ length: STRESS_BOX_COUNT }, () => ""),
-        }),
-        fatigue: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        value: new fields.NumberField({
-          initial: 0,
-          integer: true,
-          max: STRESS_BOX_COUNT,
-          min: 0,
-        }),
-      }),
-      vitals: new fields.SchemaField({
-        stress: new fields.SchemaField({
-          max: new fields.NumberField({
-            initial: STRESS_BOX_COUNT,
-            integer: true,
-            min: 0,
-          }),
-          value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-        }),
-        wounds: new fields.SchemaField({
-          max: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
-          value: new fields.NumberField({ initial: 3, integer: true, min: 0 }),
         }),
       }),
       vitalsSettings: new fields.SchemaField({
@@ -162,10 +139,27 @@ export class CharacterDataModel extends ActorDataModel {
         initial: WEALTH_VALUES[1],
       }),
       wounds: new fields.SchemaField({
-        brawl: woundCategorySchema(2),
-        critical: woundCategorySchema(1),
+        brawl: woundStatesSchema(),
+        critical: woundStatesSchema(),
       }),
     };
+  }
+
+  /**
+   * Resolves unset wound counts to the baseline before Active Effects run, so an "add" change raises
+   * the baseline instead of replacing a null.
+   */
+  override prepareBaseData(): void {
+    super.prepareBaseData();
+    const settings = this.vitalsSettings,
+      baseline = woundBaselines(settings.isTriumvirateWounds);
+    this.woundDefaults = {
+      baseline,
+      brawl: settings.brawl === null,
+      critical: settings.critical === null,
+    };
+    settings.brawl ??= baseline.brawl;
+    settings.critical ??= baseline.critical;
   }
 
   override prepareDerivedData() {
@@ -196,26 +190,31 @@ export class CharacterDataModel extends ActorDataModel {
 
   private prepareWounds() {
     const settings = this.vitalsSettings,
-      wounds = this.wounds,
-      baseline = woundBaselines(settings.isTriumvirateWounds);
+      { wounds, woundDefaults } = this,
+      // An effect may toggle Triumvirate after the baseline was resolved; move defaulted counts with it.
+      baseline = woundBaselines(settings.isTriumvirateWounds),
+      brawlShift = woundDefaults.brawl ? baseline.brawl - woundDefaults.baseline.brawl : 0,
+      criticalShift = woundDefaults.critical ? baseline.critical - woundDefaults.baseline.critical : 0,
+      brawl = (settings.brawl ?? 0) + brawlShift,
+      critical = (settings.critical ?? 0) + criticalShift;
 
-    syncWoundCategory(wounds.brawl, clampMax(settings.brawl ?? baseline.brawl, MAX_BRAWL_WOUNDS));
-    syncWoundCategory(wounds.critical, clampMax(settings.critical ?? baseline.critical, MAX_CRITICAL_WOUNDS));
+    syncBoxTracker(Object.assign(wounds.brawl, { max: clampMax(brawl, MAX_BRAWL_WOUNDS) }));
+    syncBoxTracker(Object.assign(wounds.critical, { max: clampMax(critical, MAX_CRITICAL_WOUNDS) }));
   }
 
   private prepareVitals() {
-    const { vitals, wounds, stress } = this,
+    const { wounds, stress } = this,
       maxWounds = wounds.brawl.max + wounds.critical.max,
       checkedWounds = wounds.brawl.value + wounds.critical.value;
-    vitals.wounds.max = maxWounds;
-    vitals.wounds.value = Math.max(0, maxWounds - checkedWounds);
-    vitals.stress.max = STRESS_BOX_COUNT;
-    vitals.stress.value = stress.value;
+    this.vitals = {
+      stress: { max: STRESS_BOX_COUNT, value: stress.value },
+      wounds: { max: maxWounds, value: Math.max(0, maxWounds - checkedWounds) },
+    };
   }
 
   private prepareStress() {
     const stress = this.stress;
-    stress.boxes = syncStressBoxes(stress.boxes, stress.value);
+    stress.boxes = syncStressBoxes(stress.boxes);
     stress.dramas = syncDramaLines(stress.dramas);
     stress.fatigue = stress.boxes.filter((box) => box === "F").length;
     stress.drama = stress.boxes.filter((box) => box === "D").length;
@@ -239,28 +238,23 @@ export class CharacterDataModel extends ActorDataModel {
   }
 }
 
+/** Only the box states persist; `max` and `value` are derived in `prepareWounds`. */
+function woundStatesSchema(): foundry.data.fields.SchemaField {
+  const fields = foundry.data.fields;
+  return new fields.SchemaField({
+    states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
+  });
+}
+
 function clampMax(value: number, ceiling: number): number {
   return Math.min(ceiling, Math.max(0, value));
 }
 
-function syncWoundCategory(category: WoundCategory, max: number) {
-  category.max = max;
-  if (category.states.length === 0 && category.value > 0) {
-    category.states = Array.from({ length: max }, (_unused, index) => index < category.value);
-  }
-  syncBoxTracker(category);
-}
-
-function syncStressBoxes(boxes: string[], value: number): string[] {
+function syncStressBoxes(boxes: string[]): string[] {
   if (boxes.length === STRESS_BOX_COUNT) {
     return boxes;
   }
-  return Array.from({ length: STRESS_BOX_COUNT }, (_unused, index) => {
-    if (index < boxes.length) {
-      return boxes[index] ?? "";
-    }
-    return boxes.length === 0 && index < value ? "F" : "";
-  });
+  return Array.from({ length: STRESS_BOX_COUNT }, (_unused, index) => boxes[index] ?? "");
 }
 
 function syncDramaLines(dramas: string[]): string[] {

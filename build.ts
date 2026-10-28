@@ -3,6 +3,31 @@ import path from "node:path";
 
 import tailwind from "bun-plugin-tailwind";
 
+import { ACTOR_META, COMBAT_TYPES, COMBATANT_TYPES, ITEM_META } from "./src/config/documentMeta";
+
+// The manifest's documentTypes must declare exactly the subtypes the system registers data models for.
+const manifest = (await Bun.file("public/system.json").json()) as {
+    documentTypes: Record<string, Record<string, unknown>>;
+  },
+  expectedTypes: Record<string, readonly string[]> = {
+    Actor: Object.keys(ACTOR_META),
+    Combat: COMBAT_TYPES,
+    Combatant: COMBATANT_TYPES,
+    Item: Object.keys(ITEM_META),
+  },
+  typeErrors = Object.entries(expectedTypes).flatMap(([documentName, expected]) => {
+    const declared = Object.keys(manifest.documentTypes[documentName] ?? {}).toSorted(),
+      wanted = [...expected].toSorted();
+    return declared.join(",") === wanted.join(",")
+      ? []
+      : [`${documentName}: system.json has [${declared.join(", ")}], config has [${wanted.join(", ")}]`];
+  });
+
+if (typeErrors.length > 0) {
+  console.error("system.json documentTypes do not match src/config/documentMeta.ts:", typeErrors);
+  process.exit(1);
+}
+
 const outdir = path.join(process.cwd(), "dist");
 await rm(outdir, { force: true, recursive: true });
 await mkdir(outdir, { recursive: true });

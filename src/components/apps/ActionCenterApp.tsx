@@ -49,6 +49,7 @@ import {
 } from "@/utils/combat";
 import { isActorOf, resolveLinkedCharacters } from "@/utils/documents";
 import { evaluateAd6Roll } from "@/utils/evaluateAd6Roll";
+import { reportFailure } from "@/utils/reportFailure";
 import { remainingSwarmDice } from "@/utils/swarmUtils";
 import { applySynergy } from "@/utils/synergy";
 import { incomingAttackOf } from "@/utils/weaponUtils";
@@ -164,8 +165,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
       try {
         await executeRoll();
       } catch (error: unknown) {
-        setPending(false);
-        throw error;
+        reportFailure(error);
       }
       setPending(false);
     },
@@ -233,8 +233,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
           onClose();
         }
       } catch (error: unknown) {
-        setPending(false);
-        throw error;
+        reportFailure(error);
       }
       setPending(false);
     };
@@ -392,12 +391,10 @@ export class ActionCenterApp extends ReactDialog {
   }
 
   static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "dialog", "action-center"],
     id: "robotech-action-center",
     position: { height: "auto", width: 480 },
     window: {
-      ...super.DEFAULT_OPTIONS.window,
       resizable: false,
       title: "ROBOTECH.Roll.Title",
     },

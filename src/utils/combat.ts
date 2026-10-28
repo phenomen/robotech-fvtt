@@ -218,8 +218,25 @@ export async function applyInitiative(actor: Actor, successes: number, pool: num
     ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.NotInCombat"));
     return false;
   }
+  const combat = combatant.combat,
+    activeId = combat?.combatant?.id;
   await combatant.update({ initiative: successes, "system.pool": pool });
+  if (combat && activeId) {
+    await keepActiveCombatant(combat, activeId);
+  }
   return true;
+}
+
+/**
+ * Core keeps the turn index, not the combatant, when the order is re-sorted. After a mid-phase
+ * initiative change, point the turn back at whoever was acting.
+ */
+async function keepActiveCombatant(combat: Combat, activeId: string): Promise<void> {
+  const index = combat.turns.findIndex((entry) => entry.id === activeId);
+  if (index === -1 || index === combat.turn) {
+    return;
+  }
+  await combat.update({ turn: index }, { turnEvents: false });
 }
 
 /** Spend skill and equipment-suite uses for this round on a combatant, logging the taken action. */
@@ -256,10 +273,23 @@ export async function spendRoundUses(
   return true;
 }
 
+/**
+ * Moves the combat to another phase of the current round. Moving forward starts at the first living
+ * combatant, moving back resumes at the last one; Communication has no active turn.
+ */
 export async function changePhase(combat: Combat, phase: CombatPhaseValue): Promise<void> {
+  const current = combatPhaseOf(combat);
+  if (phase === current) {
+    return;
+  }
   await clearManualSort(combat);
-  const turn = phase === "communication" ? null : firstLivingIndex(combat);
-  await combat.update({ "system.phase": phase, turn });
+  const direction = phaseIndex(phase) < phaseIndex(current) ? -1 : 1,
+    living = direction === 1 ? firstLivingIndex(combat) : lastLivingIndex(combat),
+    turn = phase === "communication" ? null : living,
+    updateData = { "system.phase": phase, turn },
+    updateOptions = { direction };
+  foundry.helpers.Hooks.callAll("combatTurn", combat, updateData, updateOptions);
+  await combat.update(updateData, updateOptions);
 }
 
 export async function clearRoundUses(combat: Combat): Promise<void> {
@@ -292,7 +322,11 @@ export async function writeTurnOrder(combat: Combat, orderedIds: string[]): Prom
   if (updates.length === 0) {
     return;
   }
-  await combat.updateEmbeddedDocuments("Combatant", updates);
+  // Keep the active combatant active rather than whoever lands on its old index.
+  const activeId = combat.combatant?.id,
+    activeIndex = activeId ? orderedIds.indexOf(activeId) : -1,
+    combatTurn = activeIndex === -1 ? undefined : activeIndex;
+  await combat.updateEmbeddedDocuments("Combatant", updates, { combatTurn });
 }
 
 export function phaseLabelOf(phase: CombatPhaseValue | SlotPhaseValue | ""): string {

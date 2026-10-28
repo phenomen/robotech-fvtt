@@ -116,6 +116,7 @@ export function AttackOptions({
           label={game.i18n.localize("ROBOTECH.Roll.ArmorPenetration")}
         />
         <NumberInput
+          commit="change"
           min={0}
           value={penetrationValue}
           disabled={!penetrationActive}
@@ -313,6 +314,7 @@ export function BonusRow({
     <Card direction="row" align="center" tone="secondary" bordered>
       <Field label={game.i18n.localize("ROBOTECH.Roll.ManualDice")} orientation="horizontal" grow>
         <NumberInput
+          commit="change"
           min={-5}
           controls
           value={dice}
@@ -324,6 +326,7 @@ export function BonusRow({
       <Divider orientation="vertical" />
       <Field label={game.i18n.localize("ROBOTECH.Roll.ManualSuccesses")} orientation="horizontal" grow>
         <NumberInput
+          commit="change"
           min={-5}
           controls
           value={successes}
@@ -353,6 +356,7 @@ export function SwarmDiceRow({
         orientation="horizontal"
       >
         <NumberInput
+          commit="change"
           min={1}
           max={max}
           controls
@@ -389,6 +393,7 @@ export function SynergyFooter({
     <Stack gap={3}>
       <Field label={game.i18n.localize("ROBOTECH.Roll.SynergyMove")} orientation="horizontal">
         <NumberInput
+          commit="change"
           min={1}
           max={sourceSuccesses}
           controls

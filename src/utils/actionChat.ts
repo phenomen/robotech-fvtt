@@ -295,10 +295,10 @@ function actionCardHtml(flags: ActionChatFlags, snapshot: ActionChatSnapshot): s
     <div class="rt-chat-card">
       <div class="${headerClass}">${escapeHtml(snapshot.title)}</div>
       ${skills ? `<div class="rt-chat-skills">${skills}</div>` : ""}
-      ${isChild ? "" : metaBlockHtml(flags.action, snapshot)}
+      ${isChild ? "" : metaBlockHtml(snapshot, initiativeSpeedHtml(flags.action, snapshot.speed))}
       ${weaponBlockHtml(flags.incoming)}
       ${opposedBlockHtml(flags)}
-      ${isChild ? "" : diceBlockHtml(snapshot)}
+      ${isChild ? "" : diceBlockHtml(snapshot.dice, snapshot.bonusSuccesses)}
       ${successFooterHtml(flags.successes, snapshot.rolledSuccesses, snapshot.bonusSuccesses, Boolean(flags.synergy?.partnerId))}
       ${fatigueNoticeHtml(flags)}
       ${actionButtonsHtml(flags)}
@@ -306,24 +306,24 @@ function actionCardHtml(flags: ActionChatFlags, snapshot: ActionChatSnapshot): s
   `;
 }
 
-function metaBlockHtml(action: ActionValue, snapshot: ActionChatSnapshot): string {
+function metaBlockHtml(pool: { modifier: RollModifierValue; diceCount: number }, extra = ""): string {
   const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier"),
     dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool");
   return `<div class="rt-chat-meta">
-        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierLabelOf(snapshot.modifier)}</strong></span>
-        <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${snapshot.diceCount}d6</strong></span>
-        ${initiativeSpeedHtml(action, snapshot.speed)}
+        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierLabelOf(pool.modifier)}</strong></span>
+        <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${pool.diceCount}d6</strong></span>
+        ${extra}
       </div>`;
 }
 
-function diceBlockHtml(snapshot: ActionChatSnapshot): string {
-  const diceHtml = snapshot.dice
+function diceBlockHtml(dice: readonly Ad6DieResult[], bonus = 0): string {
+  const diceHtml = dice
     .map((result) => {
       const variant = dieSuccessGradation(result.successes).dieClass;
       return `<span class="rt-die-box ${variant}">${result.die}</span>`;
     })
     .join("");
-  return `<div class="rt-dice-grid">${diceHtml}${bonusChipHtml(snapshot.bonusSuccesses)}</div>`;
+  return `<div class="rt-dice-grid">${diceHtml}${bonusChipHtml(bonus)}</div>`;
 }
 
 function initiativeSpeedHtml(action: ActionValue, speed: number | undefined): string {
@@ -335,24 +335,11 @@ function initiativeSpeedHtml(action: ActionValue, speed: number | undefined): st
 }
 
 function poolCardHtml(input: PoolCardInput): string {
-  const modifierLabel = game.i18n.localize("ROBOTECH.Roll.Modifier"),
-    dicePoolLabel = game.i18n.localize("ROBOTECH.Roll.DicePool"),
-    modifierName = modifierLabelOf(input.modifier),
-    diceHtml = input.dice
-      .map((result) => {
-        const variant = dieSuccessGradation(result.successes).dieClass;
-        return `<span class="rt-die-box ${variant}">${result.die}</span>`;
-      })
-      .join("");
-
   return `
     <div class="rt-chat-card">
       <div class="rt-chat-header">${escapeHtml(input.title)}</div>
-      <div class="rt-chat-meta">
-        <span>${modifierLabel}: <strong class="rt-chat-meta-value">${modifierName}</strong></span>
-        <span>${dicePoolLabel}: <strong class="rt-chat-meta-value">${input.diceCount}d6</strong></span>
-      </div>
-      <div class="rt-dice-grid">${diceHtml}</div>
+      ${metaBlockHtml(input)}
+      ${diceBlockHtml(input.dice)}
       ${successFooterHtml(input.successes, input.successes, 0)}
     </div>
   `;
@@ -414,7 +401,7 @@ function weaponTagsHtml(tags: WeaponTag[] | undefined): string {
   const chips = tags
     .map((tag) => {
       const colorClass = CHAT_TAG_CLASS[tag.color] ?? CHAT_TAG_CLASS.default,
-        title = tag.title ? ` title="${tag.title}"` : "";
+        title = tag.title ? ` title="${escapeHtml(tag.title)}"` : "";
       return `<span class="rt-chat-tag ${colorClass}"${title}>${tag.label}</span>`;
     })
     .join("");

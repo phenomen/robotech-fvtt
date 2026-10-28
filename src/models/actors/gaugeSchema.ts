@@ -13,15 +13,6 @@ export function gaugeSchema(initial = 0): foundry.data.fields.SchemaField {
   });
 }
 
-export function woundCategorySchema(initialMax: number): foundry.data.fields.SchemaField {
-  const fields = foundry.data.fields;
-  return new fields.SchemaField({
-    max: new fields.NumberField({ initial: initialMax, integer: true, min: 0 }),
-    states: new fields.ArrayField(new fields.BooleanField({ initial: false })),
-    value: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-  });
-}
-
 /** Clamps `path.value` to `[0, path.max]` when either gauge field is in the patch. */
 export function clampGauge(gauge: Gauge, changes: object, path: string): void {
   if (!pathTouched(changes, path)) {

@@ -9,7 +9,7 @@ export * from "./effects";
 export * from "./hardwareUtils";
 export * from "./html";
 export * from "./itemChat";
-export * from "./sheetContainer";
+export * from "./reportFailure";
 export * from "./swarmUtils";
 export * from "./synergy";
 export * from "./trackers";

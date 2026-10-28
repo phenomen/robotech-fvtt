@@ -59,38 +59,42 @@ TrackerHex.displayName = "TrackerHex";
 export interface HexInputProps {
   color: string;
   label: string;
+  /** Tooltip on the hex; should say that right-click lowers the value. */
+  hint?: string;
   icon?: string;
   value: number;
   onValueChange: (val: number) => void;
   min?: number;
 }
 
-export const HexInput = memo(({ color, label, icon, value, onValueChange, min = 1 }: HexInputProps): JSX.Element => {
-  const handleClick = useCallback(() => {
-      onValueChange(value + 1);
-    }, [onValueChange, value]),
-    handleContextMenu = useCallback(
-      (event: MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        onValueChange(Math.max(min, value - 1));
-      },
-      [min, onValueChange, value]
-    );
+export const HexInput = memo(
+  ({ color, label, hint, icon, value, onValueChange, min = 1 }: HexInputProps): JSX.Element => {
+    const handleClick = useCallback(() => {
+        onValueChange(value + 1);
+      }, [onValueChange, value]),
+      handleContextMenu = useCallback(
+        (event: MouseEvent<HTMLButtonElement>) => {
+          event.preventDefault();
+          onValueChange(Math.max(min, value - 1));
+        },
+        [min, onValueChange, value]
+      );
 
-  return (
-    <Stack direction="row" gap={2} align="center">
-      <Label icon={icon} iconTone="danger">
-        {label}
-      </Label>
-      <TrackerHex
-        color={color}
-        isFilled={false}
-        label={String(value)}
-        onClick={handleClick}
-        onContextMenu={handleContextMenu}
-        title={label}
-      />
-    </Stack>
-  );
-});
+    return (
+      <Stack direction="row" gap={2} align="center">
+        <Label icon={icon} iconTone="danger">
+          {label}
+        </Label>
+        <TrackerHex
+          color={color}
+          isFilled={false}
+          label={String(value)}
+          onClick={handleClick}
+          onContextMenu={handleContextMenu}
+          title={hint ?? label}
+        />
+      </Stack>
+    );
+  }
+);
 HexInput.displayName = "HexInput";

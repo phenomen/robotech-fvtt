@@ -16,10 +16,9 @@ import {
   markDestroyedSlots,
 } from "@/utils/hardwareUtils";
 import { applySwarmDamage, swarmArmorClassOf } from "@/utils/swarmUtils";
-import { countCheckedBoxes } from "@/utils/trackers";
 import { appliedPenetrationOf, calcDamageCascade, effectiveArmorOf } from "@/utils/vesselUtils";
 import type { CascadeResult } from "@/utils/vesselUtils";
-import { filledWoundStates, flatWoundGroup } from "@/utils/woundUtils";
+import { emptyWoundBoxes, filledWoundStates, woundGroupOf, woundStatesUpdate } from "@/utils/woundUtils";
 
 interface DamageTarget {
   armorClass: ArmorClassValue;
@@ -155,8 +154,14 @@ export function damageSinksOf(actor: Actor, damage: number): DamageSink[] {
   return [];
 }
 
-export function initialAmountsOf(): DamageAmounts {
-  return emptyDamageAmounts();
+/** Starts with all damage on the primary sink (wounds or structure); other sinks draw from it. */
+export function initialAmountsOf(sinks: readonly DamageSink[], damage: number): DamageAmounts {
+  const amounts = emptyDamageAmounts(),
+    primary = sinks[0];
+  if (!primary || primary.kind === "hardware") {
+    return amounts;
+  }
+  return writeAmount(amounts, primary, Math.min(damage, primary.maxAssign));
 }
 
 function writeAmount(amounts: DamageAmounts, sink: DamageSink, value: number): DamageAmounts {
@@ -364,32 +369,12 @@ function appliedPenetration(preview: DamagePreview): number {
 }
 
 async function applyCharacterWounds(actor: ActorOf<"character">, damage: number): Promise<void> {
-  const boxes = actor.system.vitalsSettings.isTriumvirateWounds ? Math.floor(damage / 5) : damage;
-  if (boxes <= 0) {
+  if (damage <= 0) {
     return;
   }
-
-  const { wounds } = actor.system,
-    next = filledWoundStates(
-      flatWoundGroup(wounds.brawl.max, wounds.critical.max),
-      boxes,
-      wounds.brawl.states,
-      wounds.critical.states
-    );
-
-  await actor.update({
-    "system.wounds.brawl.states": next.brawl,
-    "system.wounds.brawl.value": countCheckedBoxes(next.brawl),
-    "system.wounds.critical.states": next.critical,
-    "system.wounds.critical.value": countCheckedBoxes(next.critical),
-  });
-}
-
-function emptyWoundBoxes(actor: ActorOf<"character">): number {
-  const { brawl, critical } = actor.system.wounds;
-  return (
-    brawl.states.length + critical.states.length - countCheckedBoxes(brawl.states) - countCheckedBoxes(critical.states)
-  );
+  const { brawl, critical } = actor.system.wounds,
+    next = filledWoundStates(woundGroupOf(actor), damage, brawl.states, critical.states);
+  await actor.update(woundStatesUpdate(next));
 }
 
 function distributionOf(preview: DamagePreview, amounts: DamageAmounts): DamageDistribution {

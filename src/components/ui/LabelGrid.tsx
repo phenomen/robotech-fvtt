@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { JSX, ReactNode } from "react";
 
 import { Divider } from "@/components/ui/Divider";
@@ -22,10 +23,12 @@ export interface LabelRowProps {
   children?: ReactNode;
 }
 
+/** The row's controls form a group named by its label, so each control is announced with it. */
 export function LabelRow({ label, children }: LabelRowProps): JSX.Element {
+  const labelId = useId();
   return (
     <>
-      <div className="min-w-0">
+      <div id={labelId} className="min-w-0">
         {typeof label === "string" ? (
           <Text variant="label" truncate>
             {label}
@@ -34,7 +37,11 @@ export function LabelRow({ label, children }: LabelRowProps): JSX.Element {
           label
         )}
       </div>
-      <div className="w-full min-w-0">{children}</div>
+      {/* Foundry's core CSS restyles every <fieldset> (border, legend, padding), so a div carries the role. */}
+      {/* eslint-disable-next-line jsx-a11y/prefer-tag-over-role */}
+      <div role="group" aria-labelledby={labelId} className="w-full min-w-0">
+        {children}
+      </div>
     </>
   );
 }

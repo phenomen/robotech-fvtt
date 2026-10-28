@@ -15,6 +15,7 @@ import { ARMOR_CLASS_OPTIONS, isChoiceValue } from "@/config/options";
 import type { ArmorClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import type { AppOptions } from "@/types/application";
+import { sourceValueOf } from "@/utils/documents";
 
 interface VitalsSettingsContentProps {
   actor: ActorOf<"character">;
@@ -25,18 +26,34 @@ function clamp(value: number | null, max: number): number {
   return Math.min(max, Math.max(0, value ?? 0));
 }
 
+/** A count equal to the baseline is stored as null so it follows the baseline when Triumvirate changes. */
+function overrideOf(value: number, baseline: number): number | null {
+  return value === baseline ? null : value;
+}
+
+function sourceCountOf(actor: ActorOf<"character">, path: string): number | null {
+  const value = sourceValueOf(actor, path);
+  return typeof value === "number" ? value : null;
+}
+
 export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentProps): JSX.Element {
-  const settings = actor.system.vitalsSettings,
-    baseline = woundBaselines(settings.isTriumvirateWounds),
-    [brawl, setBrawl] = useState<number>(settings.brawl ?? baseline.brawl),
-    [critical, setCritical] = useState<number>(settings.critical ?? baseline.critical),
-    [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass),
-    [isTriumvirateWounds, setIsTriumvirateWounds] = useState<boolean>(settings.isTriumvirateWounds),
+  const sourceArmorClass = String(sourceValueOf(actor, "system.armorClass")),
+    [brawlOverride, setBrawlOverride] = useState(() => sourceCountOf(actor, "system.vitalsSettings.brawl")),
+    [criticalOverride, setCriticalOverride] = useState(() => sourceCountOf(actor, "system.vitalsSettings.critical")),
+    [armorClass, setArmorClass] = useState<ArmorClassValue>(
+      isChoiceValue(ARMOR_CLASS_OPTIONS, sourceArmorClass) ? sourceArmorClass : actor.system.armorClass
+    ),
+    [isTriumvirateWounds, setIsTriumvirateWounds] = useState(
+      () => sourceValueOf(actor, "system.vitalsSettings.isTriumvirateWounds") === true
+    ),
+    baseline = woundBaselines(isTriumvirateWounds),
+    brawl = brawlOverride ?? baseline.brawl,
+    critical = criticalOverride ?? baseline.critical,
     handleSave = () => {
       void actor.update({
         "system.armorClass": armorClass,
-        "system.vitalsSettings.brawl": brawl,
-        "system.vitalsSettings.critical": critical,
+        "system.vitalsSettings.brawl": brawlOverride,
+        "system.vitalsSettings.critical": criticalOverride,
         "system.vitalsSettings.isTriumvirateWounds": isTriumvirateWounds,
       });
       onClose();
@@ -56,11 +73,12 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
         }
       >
         <NumberInput
+          commit="change"
           min={0}
           max={MAX_BRAWL_WOUNDS}
           value={brawl}
           onValueChange={(val) => {
-            setBrawl(clamp(val, MAX_BRAWL_WOUNDS));
+            setBrawlOverride(overrideOf(clamp(val, MAX_BRAWL_WOUNDS), baseline.brawl));
           }}
         />
       </Field>
@@ -77,11 +95,12 @@ export function VitalsSettingsContent({ actor, onClose }: VitalsSettingsContentP
         }
       >
         <NumberInput
+          commit="change"
           min={0}
           max={MAX_CRITICAL_WOUNDS}
           value={critical}
           onValueChange={(val) => {
-            setCritical(clamp(val, MAX_CRITICAL_WOUNDS));
+            setCriticalOverride(overrideOf(clamp(val, MAX_CRITICAL_WOUNDS), baseline.critical));
           }}
         />
       </Field>

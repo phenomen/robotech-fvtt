@@ -4,12 +4,10 @@ import {
   announceCombatEnd,
   announceRoundPhase,
   applyCombatType,
-  clearManualSort,
+  changePhase,
   clearRoundUses,
   combatPhaseOf,
   compareCombatants,
-  firstLivingIndex,
-  lastLivingIndex,
   nextLivingIndex,
   nextPhaseOf,
   previousLivingIndex,
@@ -32,15 +30,12 @@ export class RobotechCombat extends foundry.documents.Combat {
     return super._initializeSource(...args);
   }
 
-  _canChangeRound(user: { isGM: boolean }): boolean {
-    return user.isGM;
-  }
-
-  _canChangeTurn(user: { isGM: boolean }): boolean {
-    if (user.isGM) {
-      return true;
-    }
-    return this.combatant?.isOwner ?? false;
+  /**
+   * The server only runs core's permissive `_canChangeTurn`, so this is a client-side courtesy check:
+   * a player may end the turn of a combatant they own, not someone else's.
+   */
+  private canChangeTurn(): boolean {
+    return game.user?.isGM === true || (this.combatant?.isOwner ?? false);
   }
 
   override _sortCombatants(a: CombatantBase, b: CombatantBase): number {
@@ -153,12 +148,7 @@ export class RobotechCombat extends foundry.documents.Combat {
   }
 
   async setPhase(phase: CombatPhaseValue): Promise<this> {
-    await clearManualSort(this);
-    const turn = phase === "communication" ? null : firstLivingIndex(this),
-      updateData = { "system.phase": phase, turn },
-      updateOptions = { direction: 1 };
-    foundry.helpers.Hooks.callAll("combatTurn", this, updateData, updateOptions);
-    await this.update(updateData, updateOptions);
+    await changePhase(this, phase);
     return this;
   }
 
@@ -175,16 +165,14 @@ export class RobotechCombat extends foundry.documents.Combat {
     if (!previous) {
       return await this.previousRound();
     }
-    await clearManualSort(this);
-    const turn = previous === "communication" ? null : lastLivingIndex(this),
-      updateData = { "system.phase": previous, turn },
-      updateOptions = { direction: -1 };
-    foundry.helpers.Hooks.callAll("combatTurn", this, updateData, updateOptions);
-    await this.update(updateData, updateOptions);
-    return this;
+    return await this.setPhase(previous);
   }
 
   private async setTurn(turn: number, direction: 1 | -1): Promise<this> {
+    if (!this.canChangeTurn()) {
+      ui.notifications.warn(game.i18n.localize("ROBOTECH.Combat.NotYourTurn"));
+      return this;
+    }
     const advanceTime = this.getTimeDelta(this.round, this.turn, this.round, turn),
       updateData = { round: this.round, turn },
       updateOptions = { direction, worldTime: { delta: advanceTime } };
@@ -193,8 +181,61 @@ export class RobotechCombat extends foundry.documents.Combat {
     return this;
   }
 
+  /** Set by `_onUpdate` while core runs turn events for an update that changed the phase. */
+  private phaseShift: -1 | 0 | 1 = 0;
+
+  /**
+   * Core detects turn progress by comparing round and turn indexes. A phase change restarts the turn
+   * order within the same round, which core reads as a rewind (forward) or a run of skipped turns
+   * (backward), so phase changes dispatch their own events: the previous combatant's turn ends and the
+   * new one's starts, clearing movement history for the TokenRuler.
+   */
+  override async _manageTurnEvents(): Promise<void> {
+    const direction = this.phaseShift;
+    this.phaseShift = 0;
+    if (direction === 0 || !this.started || this.current.round !== this.previous.round) {
+      await super._manageTurnEvents();
+      return;
+    }
+    if (game.user?.isActiveGM) {
+      await this.dispatchPhaseShift(direction);
+    }
+    foundry.helpers.Hooks.callAll("combatTurnChange", this, this.previous, this.current);
+  }
+
+  private async dispatchPhaseShift(direction: -1 | 1): Promise<void> {
+    const { current, previous } = this,
+      registry = foundry.documents.ActiveEffect.registry;
+    if (direction === -1) {
+      await registry.refresh("combatRewind", {
+        actors: new Set(this.combatants.map((combatant) => combatant.actor).filter((actor) => actor !== null)),
+        combat: this,
+      });
+      return;
+    }
+    const prior = previous.combatantId ? this.combatants.get(previous.combatantId) : undefined,
+      next = this.combatant;
+    if (prior && previous.turn !== null) {
+      const context = { round: previous.round, skipped: false, turn: previous.turn };
+      await this._onEndTurn(prior, context);
+      await registry.refresh("turnEnd", { ...context, combat: this });
+    }
+    if (next && current.turn !== null) {
+      const context = { round: current.round, skipped: false, turn: current.turn };
+      await this._onStartTurn(next, context);
+      await this._clearMovementHistoryOnStartTurn(next, context);
+      await registry.refresh("turnStart", { ...context, combat: this });
+    }
+  }
+
   override _onUpdate(...args: Parameters<OnUpdate>): void {
+    const [changedBefore, optionsBefore] = args;
+    if (typeof foundry.utils.getProperty(changedBefore, "system.phase") === "string") {
+      this.phaseShift = isRewind(optionsBefore) ? -1 : 1;
+    }
     super._onUpdate(...args);
+    // Core skips `_manageTurnEvents` when the turn and combatant stay the same; don't leak the flag.
+    this.phaseShift = 0;
     if (!this.started) {
       return;
     }

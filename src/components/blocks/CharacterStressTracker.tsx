@@ -101,6 +101,7 @@ export function CharacterStressTracker({ actor }: StressTrackerProps): JSX.Eleme
           <HexInput
             color="var(--rt-danger)"
             label={game.i18n.localize("ROBOTECH.Stress.Burnout")}
+            hint={game.i18n.localize("ROBOTECH.Stress.BurnoutHint", { value: burnout })}
             icon="burnout"
             value={burnout}
             onValueChange={updateBurnoutValue}

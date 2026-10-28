@@ -125,7 +125,7 @@ function EffectRow({
           <Button
             size="icon"
             variant="danger"
-            onClick={() => void effect.delete()}
+            onClick={() => void effect.deleteDialog()}
             title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
           >
             <Icon name="x" />

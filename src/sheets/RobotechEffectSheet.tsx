@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 
 import { EffectSheetApp } from "@/components/apps/EffectSheetApp";
+import { ownOptions } from "@/sheets/ownOptions";
 import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
 import type { ReactMount } from "@/sheets/reactMount";
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
@@ -8,12 +9,11 @@ import type { CloseOptions, RenderContext, RenderOptions } from "@/types/applica
 export class RobotechEffectSheet extends foundry.applications.api.DocumentSheetV2 {
   private readonly mount: ReactMount = createReactMount();
 
-  static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
+  static override DEFAULT_OPTIONS = ownOptions<typeof foundry.applications.api.DocumentSheetV2.DEFAULT_OPTIONS>({
     classes: ["robotech", "sheet", "effect"],
     position: { height: "auto", width: 650 },
-    window: { ...super.DEFAULT_OPTIONS.window, resizable: true },
-  };
+    window: { resizable: true },
+  });
 
   override async _renderHTML(_context: RenderContext, _options: RenderOptions): Promise<HTMLElement> {
     return renderReactMount(this.mount, "robotech-effect-container", this.renderSheetApp());

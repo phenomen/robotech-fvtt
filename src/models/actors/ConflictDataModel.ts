@@ -2,12 +2,9 @@ import { CONFLICT_RECOGNITION_VALUES, CONFLICT_THREAT_VALUES, CONFLICT_TYPE_VALU
 import type { ConflictRecognitionValue, ConflictThreatValue, ConflictTypeValue } from "@/config/options";
 import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { syncBoxTracker } from "@/utils/trackers";
+import type { BoxTracker } from "@/utils/trackers";
 
-export interface ConflictTracker {
-  max: number;
-  value: number;
-  states: boolean[];
-}
+export type ConflictTracker = BoxTracker;
 
 export class ConflictDataModel extends ActorDataModel {
   declare plotEventUuid: string;

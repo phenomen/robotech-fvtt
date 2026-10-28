@@ -3,7 +3,7 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import type { Root } from "react-dom/client";
 
-import { createSheetContainer } from "@/utils/sheetContainer";
+import { createSheetContainer } from "@/components/ui/sheetContainer";
 
 export interface ReactMount {
   container: HTMLElement | null;

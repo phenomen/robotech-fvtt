@@ -9,6 +9,7 @@ import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf, FieldValue } from "@/models";
+import { isOverridden, overrideHint } from "@/utils/documents";
 
 interface VesselFrameworkBlockProps {
   actor: ActorOf<"vessel">;
@@ -44,7 +45,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
         </Stack>
       </CardHeader>
       <Stack direction="row" gap={2} align="center" justify="between">
-        <Label icon="structure" iconTone="green">
+        <Label icon="structure" iconTone="green" htmlFor={`${actor.id}-structure`}>
           {game.i18n.localize("ROBOTECH.Vessel.Structure")}
         </Label>
         <Stack direction="row" gap={1} shrink align="center">
@@ -52,6 +53,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
             {structure.max}
           </Text>
           <NumberInput
+            id={`${actor.id}-structure`}
             min={0}
             max={structure.max}
             value={structure.value}
@@ -63,7 +65,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
       </Stack>
 
       <Stack direction="row" gap={2} align="center" justify="between">
-        <Label icon="armor" iconTone="teal">
+        <Label icon="armor" iconTone="teal" htmlFor={`${actor.id}-armor`}>
           {game.i18n.localize("ROBOTECH.Vessel.Armor")}
           {` [${game.i18n.localize(`ROBOTECH.ArmorClass.${armorClass}`)}]`}
         </Label>
@@ -72,6 +74,7 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
             {armor.max}
           </Text>
           <NumberInput
+            id={`${actor.id}-armor`}
             min={0}
             max={armor.max}
             value={armor.value}
@@ -83,13 +86,16 @@ export function VesselFrameworkBlock({ actor, onFieldChange }: VesselFrameworkBl
       </Stack>
 
       <Stack direction="row" gap={2} align="center" justify="between">
-        <Label icon="resistance" iconTone="teal">
+        <Label icon="resistance" iconTone="teal" htmlFor={`${actor.id}-resistance`}>
           {game.i18n.localize("ROBOTECH.Vessel.Resistance")}
         </Label>
         <Stack direction="row" gap={2} shrink>
           <NumberInput
+            id={`${actor.id}-resistance`}
             min={0}
             value={resistance}
+            disabled={isOverridden(actor, "system.resistance")}
+            title={overrideHint(actor, "system.resistance")}
             onValueChange={(val) => {
               onFieldChange("system.resistance", Math.max(0, val ?? 0));
             }}

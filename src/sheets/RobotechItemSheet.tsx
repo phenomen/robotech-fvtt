@@ -8,7 +8,6 @@ export class RobotechItemSheet extends foundry.applications.sheets.ItemSheetV2 {
   private readonly mount: ReactMount = createReactMount();
 
   static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
     actions: {
       sendToChat: onSendChat,
     },

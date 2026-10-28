@@ -9,6 +9,7 @@ type TrackerBase = foundry.applications.sidebar.tabs.CombatTracker;
 export class RobotechCombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
   private readonly mount: ReactMount = createReactMount();
   private scrollFrame = 0;
+  private lastTurnKey = "";
 
   static override DEFAULT_OPTIONS = {
     classes: ["robotech"],
@@ -34,6 +35,13 @@ export class RobotechCombatTracker extends foundry.applications.sidebar.tabs.Com
 
   protected override async _onRender(...args: Parameters<TrackerBase["_onRender"]>): Promise<void> {
     await foundry.applications.sidebar.AbstractSidebarTab.prototype._onRender.call(this, ...args);
+    // Follow the active combatant only when the turn moves, as core does, so a reader isn't pulled back.
+    const turnKey = `${this.viewed?.id ?? ""}:${this.viewed?.round ?? 0}:${this.viewed?.turn ?? ""}`;
+    if (turnKey === this.lastTurnKey) {
+      return;
+    }
+    this.lastTurnKey = turnKey;
+    cancelAnimationFrame(this.scrollFrame);
     this.scrollFrame = requestAnimationFrame(() => {
       this.element.querySelector(".combatant.active")?.scrollIntoView({ block: "nearest" });
     });

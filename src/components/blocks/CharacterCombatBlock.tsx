@@ -6,6 +6,7 @@ import { Field } from "@/components/ui/Field";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
 import type { ActorOf, FieldValue } from "@/models";
+import { isOverridden, overrideHint } from "@/utils/documents";
 
 interface CharacterCombatBlockProps {
   actor: ActorOf<"character">;
@@ -26,12 +27,10 @@ export function CharacterCombatBlock({ actor }: CharacterCombatBlockProps): JSX.
         <Field icon="armor" iconTone="teal" label={game.i18n.localize("ROBOTECH.Character.Armor")}>
           <NumberInput
             value={system.armor.max}
+            disabled={isOverridden(actor, "system.armor.max")}
+            title={overrideHint(actor, "system.armor.max")}
             onValueChange={(val) => {
-              const rating = Math.max(0, val ?? 0);
-              void actor.update({
-                "system.armor.max": rating,
-                "system.armor.value": rating,
-              });
+              handleFieldChange("system.armor.max", Math.max(0, val ?? 0));
             }}
             min={0}
           />
@@ -39,6 +38,8 @@ export function CharacterCombatBlock({ actor }: CharacterCombatBlockProps): JSX.
         <Field icon="resistance" iconTone="teal" label={game.i18n.localize("ROBOTECH.Character.Resistance")}>
           <NumberInput
             value={system.resistance}
+            disabled={isOverridden(actor, "system.resistance")}
+            title={overrideHint(actor, "system.resistance")}
             onValueChange={(val) => {
               handleFieldChange("system.resistance", val ?? 0);
             }}
@@ -48,6 +49,8 @@ export function CharacterCombatBlock({ actor }: CharacterCombatBlockProps): JSX.
         <Field icon="speed" iconTone="blue" label={game.i18n.localize("ROBOTECH.Character.Speed")}>
           <NumberInput
             value={system.speed}
+            disabled={isOverridden(actor, "system.speed")}
+            title={overrideHint(actor, "system.speed")}
             onValueChange={(val) => {
               handleFieldChange("system.speed", val ?? 0);
             }}

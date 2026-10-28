@@ -13,17 +13,29 @@ import { ARMOR_CLASS_OPTIONS, isChoiceValue } from "@/config/options";
 import type { ArmorClassValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import type { AppOptions } from "@/types/application";
+import { sourceValueOf } from "@/utils/documents";
 
 interface FrameworkSettingsContentProps {
   actor: ActorOf<"vessel">;
   onClose: () => void;
 }
 
+function sourceCountOf(actor: ActorOf<"vessel">, path: string, fallback: number): number {
+  const value = sourceValueOf(actor, path);
+  return typeof value === "number" ? value : fallback;
+}
+
+/** Edits persisted values: the derived ones already include Active Effects, which must not be saved back. */
 export function FrameworkSettingsContent({ actor, onClose }: FrameworkSettingsContentProps): JSX.Element {
-  const [isBasic, setIsBasic] = useState<boolean>(actor.system.isBasic),
-    [armorClass, setArmorClass] = useState<ArmorClassValue>(actor.system.armorClass),
-    [armorMax, setArmorMax] = useState<number>(actor.system.armor.max),
-    [structureMax, setStructureMax] = useState<number>(actor.system.structure.max),
+  const sourceArmorClass = String(sourceValueOf(actor, "system.armorClass")),
+    [isBasic, setIsBasic] = useState(() => sourceValueOf(actor, "system.isBasic") === true),
+    [armorClass, setArmorClass] = useState<ArmorClassValue>(
+      isChoiceValue(ARMOR_CLASS_OPTIONS, sourceArmorClass) ? sourceArmorClass : actor.system.armorClass
+    ),
+    [armorMax, setArmorMax] = useState(() => sourceCountOf(actor, "system.armor.max", actor.system.armor.max)),
+    [structureMax, setStructureMax] = useState(() =>
+      sourceCountOf(actor, "system.structure.max", actor.system.structure.max)
+    ),
     handleSave = () => {
       void actor.update({
         "system.armor.max": armorMax,
@@ -65,6 +77,7 @@ export function FrameworkSettingsContent({ actor, onClose }: FrameworkSettingsCo
 
       <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Vessel.TotalStructure")}>
         <NumberInput
+          commit="change"
           min={0}
           value={structureMax}
           onValueChange={(val) => {
@@ -75,6 +88,7 @@ export function FrameworkSettingsContent({ actor, onClose }: FrameworkSettingsCo
 
       <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Vessel.TotalArmor")}>
         <NumberInput
+          commit="change"
           min={0}
           value={armorMax}
           onValueChange={(val) => {

@@ -13,7 +13,7 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf, SwarmMember } from "@/models";
-import { leadStructureOf, memberArmorOf, memberStructureOf, openActorSheet } from "@/utils";
+import { leadStructureOf, memberArmorOf, memberStructureOf, openActorSheet, patchSwarmMember } from "@/utils";
 
 interface SwarmMemberListBlockProps {
   actor: ActorOf<"swarm">;
@@ -21,30 +21,15 @@ interface SwarmMemberListBlockProps {
 
 const NO_UUIDS: readonly string[] = [];
 
-/** A stack keeps structure on its lead vessel while any vessel is left, and none once emptied. */
-function withMemberPatch(member: SwarmMember, updates: Partial<SwarmMember>): SwarmMember {
-  const next = { ...member, ...updates };
-  if (next.count <= 0) {
-    return { ...next, currentStructure: 0 };
-  }
-  if (next.currentStructure <= 0) {
-    return { ...next, currentStructure: next.reducedStructure };
-  }
-  return next;
-}
-
 export function SwarmMemberListBlock({ actor }: SwarmMemberListBlockProps): JSX.Element {
   const members = actor.system.members,
     hardened = actor.system.hardened,
     handleUpdateMember = (id: string, updates: Partial<SwarmMember>) => {
-      const updated = members.map((member) => (member.id === id ? withMemberPatch(member, updates) : member));
+      const updated = members.map((member) => (member.id === id ? patchSwarmMember(member, updates) : member));
       void actor.update({ "system.members": updated });
     },
     handleCountChange = (member: SwarmMember, count: number) => {
-      handleUpdateMember(member.id, {
-        count,
-        maxCount: Math.max(member.maxCount, count),
-      });
+      handleUpdateMember(member.id, { count });
     },
     handleDeleteMember = (id: string) => {
       const updated = members.filter((member) => member.id !== id);
