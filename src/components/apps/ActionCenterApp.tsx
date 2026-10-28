@@ -122,7 +122,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     needsWeapon = action === "attack" && !isSwarm,
     canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon)),
     skillPicks = (skill1 ? 1 : 0) + (skill2 ? 1 : 0),
-    overages = burnoutOverages([skill1, skill2]),
+    overages = burnoutOverages([skill1, skill2], manualDice, contextActor),
     usage: ActionUsage = {
       dice: isSwarm ? combinedDice : 0,
       skills: isSwarm && consumeSlot ? 1 : skillPicks,

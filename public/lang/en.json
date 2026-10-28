@@ -589,8 +589,8 @@
       "OptionNameWithSource": "{name} ({source})",
       "SelectOneToken": "Select exactly one token you control.",
       "NoPermission": "You do not have permission to apply damage to that actor.",
-      "BurnoutWarning": "{name}: {dice} Skill dice over Burnout {burnout} — {fatigue} Fatigue",
-      "BurnoutHint": "Each Skill die rolled over Burnout costs 1 Fatigue in stressful situations. Lower a Skill to stay under it. Equipment Suite dice don't count, and a Mental Break stops Fatigue from accruing."
+      "BurnoutWarning": "{name}: {dice} dice with Burnout {burnout} -> {fatigue} Fatigue",
+      "BurnoutHint": "Each die rolled over Burnout costs 1 Fatigue in stressful situations. Lower a Skill or remove bonus dice to stay under it. Equipment Suite dice don't count, and a Mental Break stops Fatigue from accruing."
     },
     "Wealth": {
       "Low": "Low",
