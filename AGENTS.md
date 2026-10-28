@@ -18,7 +18,7 @@ Document subtypes are declared in `public/system.json` (`documentTypes`) and bou
 
 Game logic (damage cascade, wound/stress prep, hardware slots, swarm members) belongs in data models and `src/utils`, not in React. React reads live Foundry documents and writes through `document.update()`.
 
-The project is in an early phase: **breaking changes to schema, data, and identifiers are allowed.** Do not add `migrateData`, compatibility shims, or fallbacks for renamed fields unless explicitly asked.
+The system is published and worlds depend on it: **every change to persisted data ships with a migration** (see "Data migrations" below). Schema and field names may still change, but existing actors, items, and compendium entries must load correctly afterwards.
 
 ## 2. Tech Stack
 
@@ -56,6 +56,7 @@ src/
     actors/                   TypeDataModels for Actor subtypes
     combat/                   TypeDataModels for Combat and Combatant
     items/                    TypeDataModels for Item subtypes
+    migrations/               Source migrations that `migrateData` runs on old data
     documents.ts              ActorOf / ItemOf maps and document unions
     effects.ts                Active Effect helpers
   registry/                   Subtype → data model binding, settings/optional-rule wiring
@@ -105,7 +106,7 @@ Use https://foundryvtt.com/api/ only as a fallback when the local sources do not
 - Derived combat/sheet numbers belong in `prepareDerivedData()` or getters on the data model. `prepareDerivedData` may write derived fields; UI must not invent a second source of truth. Do not persist what is derived: a derived field is `declare`d on the class but left out of `defineSchema` (character `vitals`, wound `max`/`value`, stress counts). Token bars find derived attributes through `CONFIG.Actor.trackableAttributes`, and `RobotechActor.modifyTokenAttribute` maps bar edits back onto persisted data.
 - Active Effects apply between `prepareBaseData` and `prepareDerivedData`. Resolve nullable "override or default" fields to their default in `prepareBaseData` so an `add` change adds to the default instead of replacing `null`.
 - Never write an effect-modified value back into the source. Sheet inputs for fields an effect can change are disabled when `isOverridden(actor, path)` (with `overrideHint` as the tooltip); dialogs that save several fields at once start from `sourceValueOf(actor, path)`.
-- Change schema and field names in place. Do not add `migrateData`, dual-read of old keys, or defaulting logic that exists only to support previous shapes unless explicitly asked.
+- Change schema and field names in place, and convert old data with a migration. Do not dual-read old keys or add fallbacks in `prepareDerivedData`, utils, or React; the migration is the only place that knows an old shape.
 - User-visible failures go through `ui.notifications` and localized strings. Check `document.isOwner` / `game.user.isGM` before privileged writes.
 - Settings, chat, and sockets use the system id `"robotech"`. Localization keys use the `ROBOTECH.*` namespace (Foundry type names live under `TYPES`).
 
@@ -128,6 +129,16 @@ static override defineSchema() {
 - Narrow documents with `isActorOf` / `isItemOf` and the `ActorOf<"character">` / `ItemOf<"weapon">` types. Do not cast `actor.system` to a subtype.
 - Put shared slot/field shapes in helpers (see `hardwareSlots.ts`) instead of duplicating `SchemaField` trees.
 - Clamp interdependent values in `_preUpdate` (ammunition vs max, destroyed hardware vs slots).
+
+### Data migrations
+
+Old data is converted by the data model's `static migrateData(source)`. Foundry runs it every time a document's source is cleaned: on load (world documents and compendium entries) and on update payloads. That makes it the one place that reads an old shape.
+
+- **Where steps live:** in `src/models/migrations/` (`characterMigrations.ts`, …). The model's `migrateData` calls them, then `super.migrateData`. Each step's comment names the last release that wrote the old shape.
+- **Partial payloads:** `source` may be a partial update payload. A step fires only when the old shape is actually present (an old key exists, the new key is missing), and running it twice changes nothing.
+- **Narrowing:** steps take `object`, narrow with `foundry.utils.isPlainObject`, and mutate `source` in place.
+- **Removing a field:** needs no step when its data is simply dropped, because cleaning strips unknown keys. Add a step when the data must move into another field or rebuild one (for example, old wound counts becoming box states).
+- **Not migrations:** derived data. Recompute it in `prepareDerivedData`.
 
 ### ApplicationV2 and React roots
 
@@ -221,6 +232,6 @@ game.i18n.localize("ROBOTECH.Wounds.Max", { max });
 ### When changing behavior
 
 1. Check types and JSDoc in `foundry/` (website API docs only if that is not enough). Decide whether the change belongs on the data model, a util, or the sheet.
-2. Update `defineSchema` / `documentTypes` / `htmlFields` together when the persisted shape changes. Replace old fields; do not keep a compatibility path unless explicitly asked.
+2. Update `defineSchema` / `documentTypes` / `htmlFields` together when the persisted shape changes. Replace old fields and add a migration step for any data that must carry over.
 3. Add or reuse `en.json` keys before wiring UI.
 4. Run `bun run check; bun run build` to type-check, lint, and assert the manifest.

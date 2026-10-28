@@ -12,6 +12,7 @@ import { ActorDataModel } from "@/models/actors/ActorDataModel";
 import { gaugeSchema } from "@/models/actors/gaugeSchema";
 import type { Gauge } from "@/models/actors/gaugeSchema";
 import { expandChanges, numberAt, pathTouched } from "@/models/changePatch";
+import { migrateCharacterSource } from "@/models/migrations/characterMigrations";
 import { findItemOf } from "@/utils/documents";
 import { syncBoxTracker } from "@/utils/trackers";
 import type { BoxTracker } from "@/utils/trackers";
@@ -143,6 +144,14 @@ export class CharacterDataModel extends ActorDataModel {
         critical: woundStatesSchema(),
       }),
     };
+  }
+
+  static override migrateData(
+    source: Parameters<typeof foundry.abstract.TypeDataModel.migrateData>[0],
+    options?: Parameters<typeof foundry.abstract.TypeDataModel.migrateData>[1]
+  ): ReturnType<typeof foundry.abstract.TypeDataModel.migrateData> {
+    migrateCharacterSource(source);
+    return super.migrateData(source, options);
   }
 
   /**
