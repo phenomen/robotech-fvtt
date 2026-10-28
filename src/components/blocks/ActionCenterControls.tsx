@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { Callout } from "@/components/ui/Callout";
 import { Card } from "@/components/ui/Card";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Divider } from "@/components/ui/Divider";
@@ -25,6 +26,7 @@ import type { ActionValue, RollModifierValue } from "@/config/options";
 import type { SourcedOption } from "@/utils/actionCenterItems";
 import { optionLabel } from "@/utils/actionCenterItems";
 import type { IncomingAttack } from "@/utils/actionChat";
+import type { BurnoutOverage } from "@/utils/burnout";
 import { calcDieSuccess } from "@/utils/evaluateAd6Roll";
 
 export function ActionSelect({
@@ -336,6 +338,32 @@ export function BonusRow({
         />
       </Field>
     </Card>
+  );
+}
+
+/** Warns before rolling that Skill dice over a character's Burnout will cost Fatigue. */
+export function BurnoutWarning({ overages }: { overages: readonly BurnoutOverage[] }): JSX.Element | null {
+  if (overages.length === 0) {
+    return null;
+  }
+  return (
+    <Stack gap={1}>
+      {overages.map((overage) => (
+        <Callout
+          key={overage.uuid}
+          icon="burnout"
+          tone="danger"
+          title={game.i18n.localize("ROBOTECH.Roll.BurnoutHint")}
+        >
+          {game.i18n.localize("ROBOTECH.Roll.BurnoutWarning", {
+            burnout: overage.burnout,
+            dice: overage.dice,
+            fatigue: overage.fatigue,
+            name: overage.name,
+          })}
+        </Callout>
+      ))}
+    </Stack>
   );
 }
 

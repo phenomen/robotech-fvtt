@@ -8,6 +8,7 @@ import {
   ActionSelect,
   AttackOptions,
   BonusRow,
+  BurnoutWarning,
   IncomingSummary,
   ModifierRow,
   SkillSelect,
@@ -37,6 +38,7 @@ import {
 import type { ActionCenterItems } from "@/utils/actionCenterItems";
 import { actionCardTitle, actionFlagsOf, postActionCard } from "@/utils/actionChat";
 import type { IncomingAttack } from "@/utils/actionChat";
+import { burnoutOverages } from "@/utils/burnout";
 import {
   actionBudgetError,
   actionIsPushed,
@@ -120,6 +122,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
     needsWeapon = action === "attack" && !isSwarm,
     canRoll = diceCount >= 1 && (!needsWeapon || Boolean(weapon)),
     skillPicks = (skill1 ? 1 : 0) + (skill2 ? 1 : 0),
+    overages = burnoutOverages([skill1, skill2]),
     usage: ActionUsage = {
       dice: isSwarm ? combinedDice : 0,
       skills: isSwarm && consumeSlot ? 1 : skillPicks,
@@ -314,6 +317,7 @@ export function ActionCenterContent({ contextActor, items, prefill, onClose }: A
             onDiceChange={setManualDice}
             onSuccessesChange={setManualSuccesses}
           />
+          <BurnoutWarning overages={overages} />
 
           <Card direction="row" align="between" tone="primary">
             <Text variant="label" color="secondary">
