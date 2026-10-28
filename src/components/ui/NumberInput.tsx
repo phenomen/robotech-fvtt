@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useRef } from "react";
 import type { ChangeEvent, JSX } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -22,6 +22,15 @@ export interface NumberInputProps {
   size?: InputSize;
   width?: InputWidth;
   "aria-label"?: string;
+  title?: string;
+  /** See `Input`'s `commit`. Use `change` when the value lives in React state rather than a document. */
+  commit?: "blur" | "change";
+}
+
+/** A value this input committed that its `value` prop has not caught up with yet. */
+interface PendingValue {
+  from: number | null;
+  to: number | null;
 }
 
 export const NumberInput = memo(
@@ -41,8 +50,25 @@ export const NumberInput = memo(
     size = "medium",
     width = "small",
     "aria-label": ariaLabel,
+    title,
+    commit,
   }: NumberInputProps): JSX.Element => {
     const currentValue = value ?? defaultValue ?? null,
+      // Document updates land asynchronously. A typed value committed on blur (the blur a +/- click
+      // causes) or a quick second click must step from what was committed, not the stale prop.
+      pending = useRef<PendingValue | null>(null),
+      commitValue = useCallback(
+        (next: number | null, from: number | null) => {
+          pending.current = { from, to: next };
+          onValueChange?.(next);
+        },
+        [onValueChange]
+      ),
+      steppedBase = (): number => {
+        const latest = pending.current,
+          base = latest && latest.from === currentValue ? latest.to : currentValue;
+        return base ?? min ?? 0;
+      },
       clampValue = useCallback(
         (val: number | null): number | null => {
           if (val === null || Number.isNaN(val)) {
@@ -63,33 +89,20 @@ export const NumberInput = memo(
         (e: ChangeEvent<HTMLInputElement>) => {
           const raw = e.target.value;
           if (raw === "") {
-            onValueChange?.(null);
+            commitValue(null, currentValue);
             return;
           }
-          const parsed = Number(raw),
-            clamped = clampValue(Number.isNaN(parsed) ? null : parsed);
-          onValueChange?.(clamped);
+          const parsed = Number(raw);
+          commitValue(clampValue(Number.isNaN(parsed) ? null : parsed), currentValue);
         },
-        [clampValue, onValueChange]
+        [clampValue, commitValue, currentValue]
       ),
-      handleDecrement = useCallback(() => {
+      stepBy = (direction: 1 | -1): void => {
         if (disabled || readOnly) {
           return;
         }
-        const stepVal = step ?? 1,
-          base = currentValue ?? min ?? 0,
-          next = clampValue(base - stepVal);
-        onValueChange?.(next);
-      }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]),
-      handleIncrement = useCallback(() => {
-        if (disabled || readOnly) {
-          return;
-        }
-        const stepVal = step ?? 1,
-          base = currentValue ?? min ?? 0,
-          next = clampValue(base + stepVal);
-        onValueChange?.(next);
-      }, [disabled, readOnly, step, currentValue, min, clampValue, onValueChange]);
+        commitValue(clampValue(steppedBase() + direction * (step ?? 1)), currentValue);
+      };
 
     return (
       <div className={cn("inline-flex min-w-0 items-center gap-1", width === "full" && "w-full")}>
@@ -99,7 +112,9 @@ export const NumberInput = memo(
             size="icon"
             variant="secondary"
             disabled={disabled ?? readOnly}
-            onClick={handleDecrement}
+            onClick={() => {
+              stepBy(-1);
+            }}
             title={game.i18n.localize("ROBOTECH.Buttons.Decrement")}
           >
             -
@@ -118,6 +133,8 @@ export const NumberInput = memo(
           readOnly={readOnly}
           placeholder={placeholder}
           aria-label={ariaLabel}
+          title={title}
+          commit={commit}
           size={size}
           width={width}
         />
@@ -127,7 +144,9 @@ export const NumberInput = memo(
             size="icon"
             variant="secondary"
             disabled={disabled ?? readOnly}
-            onClick={handleIncrement}
+            onClick={() => {
+              stepBy(1);
+            }}
             title={game.i18n.localize("ROBOTECH.Buttons.Increment")}
           >
             +

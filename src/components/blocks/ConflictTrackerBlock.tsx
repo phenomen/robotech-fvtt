@@ -6,7 +6,7 @@ import { Field } from "@/components/ui/Field";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
 import type { ActorOf } from "@/models";
-import { countCheckedBoxes, resizeBoxStates } from "@/utils/trackers";
+import { resizeBoxStates } from "@/utils/trackers";
 
 interface ConflictTrackerBlockProps {
   actor: ActorOf<"conflict">;
@@ -18,18 +18,11 @@ export function ConflictTrackerBlock({ actor }: ConflictTrackerBlockProps): JSX.
     handleMaxChange = (val: number | null) => {
       const max = Math.max(0, val ?? 0),
         next = resizeBoxStates(states, max);
-      void actor.update({
-        "system.tracker.max": max,
-        "system.tracker.states": next,
-        "system.tracker.value": countCheckedBoxes(next),
-      });
+      void actor.update({ "system.tracker.max": max, "system.tracker.states": next });
     },
     handleToggle = (index: number, checked: boolean) => {
       const next = states.map((state, i) => (i === index ? checked : state));
-      void actor.update({
-        "system.tracker.states": next,
-        "system.tracker.value": countCheckedBoxes(next),
-      });
+      void actor.update({ "system.tracker.states": next });
     };
 
   return (

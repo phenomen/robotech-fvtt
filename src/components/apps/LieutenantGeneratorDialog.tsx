@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { JSX } from "react";
 
 import { ReactDialog } from "@/components/apps/ReactDialog";
@@ -16,6 +16,7 @@ import type { ActorOf } from "@/models";
 import type { AppOptions, CloseOptions } from "@/types/application";
 import { createLieutenant, lieutenantNameOf, lieutenantSkillsOf } from "@/utils/createLieutenant";
 import type { LieutenantSkillPreview } from "@/utils/createLieutenant";
+import { reportFailure } from "@/utils/reportFailure";
 
 interface LieutenantGeneratorContentProps {
   onClose: () => void;
@@ -28,25 +29,27 @@ export function LieutenantGeneratorContent({ onClose, vessel }: LieutenantGenera
     [veteran, setVeteran] = useState(false),
     [name, setName] = useState(""),
     [creating, setCreating] = useState(false),
-    nameRef = useRef<HTMLInputElement>(null),
     generatedName = lieutenantNameOf({ element, type, veteran }),
     handleCreate = async (): Promise<void> => {
       if (creating) {
         return;
       }
       setCreating(true);
-      const typed = (nameRef.current?.value ?? name).trim(),
-        actor = await createLieutenant({
-          element,
-          name: typed === "" ? generatedName : typed,
-          openSheet: !vessel,
-          type,
-          vessel,
-          veteran,
-        });
-      if (actor) {
-        onClose();
-        return;
+      try {
+        const typed = name.trim(),
+          actor = await createLieutenant({
+            element,
+            name: typed === "" ? generatedName : typed,
+            openSheet: !vessel,
+            type,
+            vessel,
+            veteran,
+          });
+        if (actor) {
+          onClose();
+        }
+      } catch (error: unknown) {
+        reportFailure(error);
       }
       setCreating(false);
     };
@@ -99,7 +102,7 @@ export function LieutenantGeneratorContent({ onClose, vessel }: LieutenantGenera
 
       <Field label={game.i18n.localize("ROBOTECH.Sheet.Name")}>
         <Input
-          ref={nameRef}
+          commit="change"
           width="full"
           value={name}
           placeholder={generatedName}
@@ -168,12 +171,10 @@ export class LieutenantGeneratorApp extends ReactDialog {
   }
 
   static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "dialog", "lieutenant-generator"],
     id: "robotech-lieutenant-generator",
     position: { height: "auto", width: 470 },
     window: {
-      ...super.DEFAULT_OPTIONS.window,
       resizable: false,
       title: "ROBOTECH.Lieutenant.Title",
     },

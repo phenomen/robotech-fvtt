@@ -141,8 +141,9 @@ function capAmmunition(ammo: WeaponAmmunition, changes: object): void {
     nextMax = patchMax ?? ammo.value;
   let nextCurrent = patchCurrent ?? ammo.current;
 
-  if (patchMax !== undefined) {
-    nextCurrent = ammo.current >= ammo.value ? nextMax : Math.min(nextCurrent, nextMax);
+  // A full magazine stays full when its capacity changes, unless the patch sets the count itself.
+  if (patchMax !== undefined && patchCurrent === undefined && ammo.current >= ammo.value) {
+    nextCurrent = nextMax;
   }
 
   nextCurrent = Math.min(Math.max(0, nextCurrent), nextMax);

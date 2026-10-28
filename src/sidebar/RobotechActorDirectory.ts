@@ -1,17 +1,19 @@
 import { openLieutenantGenerator } from "@/components/apps/LieutenantGeneratorDialog";
+import { ownOptions } from "@/sheets/ownOptions";
 import { canCreateActor } from "@/utils/createLieutenant";
 
 type DirectoryBase = foundry.applications.sidebar.tabs.ActorDirectory;
 
 export class RobotechActorDirectory extends foundry.applications.sidebar.tabs.ActorDirectory {
-  static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
-    actions: {
-      createLieutenant: () => {
-        openLieutenantGenerator();
+  static override DEFAULT_OPTIONS = ownOptions<typeof foundry.applications.sidebar.tabs.ActorDirectory.DEFAULT_OPTIONS>(
+    {
+      actions: {
+        createLieutenant: () => {
+          openLieutenantGenerator();
+        },
       },
-    },
-  } as typeof foundry.applications.sidebar.tabs.ActorDirectory.DEFAULT_OPTIONS;
+    }
+  );
 
   override async _onRender(...args: Parameters<DirectoryBase["_onRender"]>): Promise<void> {
     await super._onRender(...args);

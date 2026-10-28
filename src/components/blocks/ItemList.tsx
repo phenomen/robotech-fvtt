@@ -263,7 +263,7 @@ function ItemListItem({ actor, item, onOpenRoll }: ItemListItemProps): JSX.Eleme
             variant="danger"
             title={game.i18n.localize("ROBOTECH.Buttons.Delete")}
             onClick={() => {
-              void item.delete();
+              void item.deleteDialog();
             }}
           >
             <Icon name="x" />

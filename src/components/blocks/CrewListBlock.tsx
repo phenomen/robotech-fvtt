@@ -15,7 +15,7 @@ import { Stack } from "@/components/ui/Stack";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/Table";
 import { Text } from "@/components/ui/Text";
 import type { ActorOf } from "@/models";
-import { canCreateActor, openActorSheet } from "@/utils";
+import { canCreateActor, isOverridden, openActorSheet, overrideHint } from "@/utils";
 
 interface CrewListBlockProps {
   actor: ActorOf<"vessel">;
@@ -51,7 +51,13 @@ export function CrewListBlock({ actor }: CrewListBlockProps): JSX.Element {
             </>
           )}
           <Field orientation="horizontal" label={game.i18n.localize("ROBOTECH.Vessel.Capacity")}>
-            <NumberInput value={actor.system.crew} min={0} onValueChange={handleCapacityChange} />
+            <NumberInput
+              value={actor.system.crew}
+              min={0}
+              disabled={isOverridden(actor, "system.crew")}
+              title={overrideHint(actor, "system.crew")}
+              onValueChange={handleCapacityChange}
+            />
           </Field>
         </Stack>
       </CardHeader>

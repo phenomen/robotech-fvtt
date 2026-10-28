@@ -36,7 +36,8 @@
       "Open": "Open sheet",
       "Redacted": "[ REDACTED ]",
       "NoPermission": "You do not have permission to update that actor.",
-      "MissingActor": "No actor found for {uuid}"
+      "MissingActor": "No actor found for {uuid}",
+      "ActionFailed": "That action failed. See the console (F12) for details."
     },
     "Editor": {
       "ShowToolbar": "Show formatting toolbar",
@@ -85,7 +86,8 @@
       "Attribute": {
         "Header": "Attribute",
         "Custom": "Custom"
-      }
+      },
+      "Overridden": "Set by an Active Effect"
     },
     "Character": {
       "ChangePortrait": "Change portrait",
@@ -151,10 +153,11 @@
       "DramaAbbr": "D",
       "DramaN": "Drama {n}",
       "DramaPlaceholder": "Drama description...",
-      "Box": "Stress {n}: {state}",
+      "Box": "Stress {n}: {state}. Click to switch between Fatigue and Drama; right-click to clear.",
       "Fatigue": "Fatigue",
       "FatigueAbbr": "F",
-      "Empty": "Empty"
+      "Empty": "Empty",
+      "BurnoutHint": "Burnout {value}. Click to raise; right-click to lower."
     },
     "HeroicMove": {
       "Title": "Heroic Move",
@@ -282,7 +285,6 @@
       "HardwarePoints": "Hardware Points",
       "Category": "Category",
       "Prerequisites": "Prerequisites",
-      "Element": "Element",
       "ElementPl": "Elements",
       "ElementTalent": "Element Talent",
       "ElementTalentPlaceholder": "Element talent...",
@@ -295,7 +297,6 @@
       "PrerequisitePlaceholder": "",
       "Benefit": "Benefit",
       "Cost": "Cost",
-      "Properties": "Weapon Properties",
       "Ranges": {
         "Me": "Melee",
         "S": "Short",
@@ -642,7 +643,8 @@
         "Structure": "Structure",
         "Speed": "Speed",
         "ReducedStructureHint": "For every 3 Structure a vessel has, it instead has 1 while in a Swarm. Structure-Class does not change unless Hardened. Example: 3 becomes 1, and 4 becomes 2."
-      }
+      },
+      "BarReadOnly": "Swarm Structure and Vessels add up the member stacks. Change them on the swarm sheet."
     },
     "Conflict": {
       "Type": "Type",
@@ -735,7 +737,8 @@
         "Support": "Support",
         "Ops": "Ops",
         "Cinematic": "Cinematic"
-      }
+      },
+      "NotYourTurn": "Only the GM or this combatant's owner can end its turn."
     },
     "Settings": {
       "SimpleActions": {

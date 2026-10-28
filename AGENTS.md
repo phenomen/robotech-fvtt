@@ -60,6 +60,7 @@ src/
     effects.ts                Active Effect helpers
   registry/                   Subtype → data model binding, settings/optional-rule wiring
   sheets/                     ActorSheetV2 / ItemSheetV2 / Effect sheet adapters and the shared React mount
+  sidebar/                    Sidebar tab overrides (`RobotechActorDirectory`)
   styles/                     Tailwind entry (`robotech.css`), type tokens (`typography.css`), chat, ProseMirror extras
   types/                      Foundry module augmentations (`foundry.d.ts`, `vendor.d.ts`), `application.ts`, and shared UI unions (`ui.ts`)
   utils/                      Game rules, document helpers, chat, rolls — no React (`synergy.ts`, `evaluateAd6Roll.ts`, …)
@@ -68,7 +69,7 @@ public/
   lang/en.json                All user-facing strings
   assets/                     Icons and art
 foundry/                      Copied Foundry `client/` + `common/` (gitignored). Real API types.
-build.ts                      Bun build + copy `public/` → `dist/`
+build.ts                      Manifest documentTypes check, Bun build, copy `public/` → `dist/`
 ```
 
 Folder roles:
@@ -77,7 +78,7 @@ Folder roles:
 - **`models/`** — schema, derived data, `_preUpdate` clamps. Source of truth for `actor.system` / `item.system`.
 - **`documents/`** — Foundry document class overrides (`RobotechActor` for token-bar writes).
 - **`config/`** — pure, runtime-free `as const` data: option lists (`labelKey` pointing at `en.json`), per-subtype metadata (`documentMeta.ts`), layout, theme. No hardcoded labels, no data-model classes.
-- **`registry/`** — binds subtype keys to data models (`documentTypes.ts`) and registers settings/optional rules (`settings.ts`). `build.ts` validates `public/system.json` against it; add a subtype here, in `config/documentMeta.ts`, and in the manifest.
+- **`registry/`** — binds subtype keys to data models (`documentTypes.ts`) and registers settings/optional rules (`settings.ts`). `build.ts` validates `public/system.json` `documentTypes` against the runtime-free key lists in `config/documentMeta.ts` (`registry/` pulls in Foundry globals, so the build cannot import it; `satisfies Record<ActorType, …>` keeps the registry in step at type-check time). Add a subtype here, in `config/documentMeta.ts`, and in the manifest.
 - **`utils/`** — pure or Foundry-document operations (rolls, damage, crew, HTML enrich). Keep UI out; only `@/types/ui` unions may describe presentation. Document I/O lives in `utils/documents.ts`.
 - **`components/hooks/`** — React hooks that subscribe to Foundry documents. Do not put hooks in `utils/`.
 - **`types/`** — augment Foundry document classes so `system` is the Robotech union, not `unknown`; `ui.ts` holds unions shared with game logic (`IconTone`, `TagColor`).
@@ -101,7 +102,9 @@ Use https://foundryvtt.com/api/ only as a fallback when the local sources do not
 - List HTML fields under `htmlFields` in the manifest so the server sanitizes them. Back them with `HTMLField` in the schema. Enrich for chat with `enrichHtml()`; do not `escapeHtml` enriched HTML. Use `escapeHtml` only for user-controlled strings (document names) interpolated into HTML templates, not i18n labels or numbers.
 - Persist with `document.update()`, `createEmbeddedDocuments`, `deleteEmbeddedDocuments`. Never assign through `actor.system.foo =` from UI code.
 - Use dotted update paths: `{ "system.armor": 4 }`. For arrays/objects that must be replaced as a whole, pass the next value (do not mutate the live array in place and then update).
-- Derived combat/sheet numbers belong in `prepareDerivedData()` or getters on the data model. `prepareDerivedData` may write derived fields; UI must not invent a second source of truth.
+- Derived combat/sheet numbers belong in `prepareDerivedData()` or getters on the data model. `prepareDerivedData` may write derived fields; UI must not invent a second source of truth. Do not persist what is derived: a derived field is `declare`d on the class but left out of `defineSchema` (character `vitals`, wound `max`/`value`, stress counts). Token bars find derived attributes through `CONFIG.Actor.trackableAttributes`, and `RobotechActor.modifyTokenAttribute` maps bar edits back onto persisted data.
+- Active Effects apply between `prepareBaseData` and `prepareDerivedData`. Resolve nullable "override or default" fields to their default in `prepareBaseData` so an `add` change adds to the default instead of replacing `null`.
+- Never write an effect-modified value back into the source. Sheet inputs for fields an effect can change are disabled when `isOverridden(actor, path)` (with `overrideHint` as the tooltip); dialogs that save several fields at once start from `sourceValueOf(actor, path)`.
 - Change schema and field names in place. Do not add `migrateData`, dual-read of old keys, or defaulting logic that exists only to support previous shapes unless explicitly asked.
 - User-visible failures go through `ui.notifications` and localized strings. Check `document.isOwner` / `game.user.isGM` before privileged writes.
 - Settings, chat, and sockets use the system id `"robotech"`. Localization keys use the `ROBOTECH.*` namespace (Foundry type names live under `TYPES`).
@@ -130,6 +133,8 @@ static override defineSchema() {
 
 Sheets extend `ActorSheetV2` / `ItemSheetV2`. Other windows extend `ReactDialog` (ApplicationV2). Configure with `static DEFAULT_OPTIONS` (`classes` must include `"robotech"`).
 
+- Declare only the class's own option keys. ApplicationV2 already merges `DEFAULT_OPTIONS` down the class chain and concatenates arrays, so spreading `super.DEFAULT_OPTIONS` duplicates inherited header controls. Where the inferred parent type rejects a partial object, wrap it in `ownOptions<typeof Parent.DEFAULT_OPTIONS>({ … })` from `@/sheets/ownOptions`.
+
 - Create the React root once in `_renderHTML`. First render with `flushSync` so Foundry receives committed DOM; later renders are async. Unmount in `_onClose`.
 - Do not call `createRoot` from a component. Do not use Handlebars for system UI.
 - `_replaceHTML` should only `replaceChildren` when the container is not already mounted.
@@ -151,6 +156,8 @@ Function components and named exports only. `ref` is a normal prop — do not us
 
   Foundry re-renders the sheet and React follows. For user actions that can fail, `async` handlers plus `ui.notifications`.
 
+- `Input` / `NumberInput` commit on blur or Enter by default, so a document field writes once per edit. Inputs backed by React state (dialog forms) pass `commit="change"` so totals and validation follow every keystroke.
+- Async handlers that write documents guard against double submission with a `pending` state and report failures with `reportFailure(error)`. Deleting a document from a sheet goes through `document.deleteDialog()`.
 - Reuse `@/components/ui` primitives. Do not add one-off `<button>` / `<input>` styling, Tailwind, or `className` in apps/blocks/items. If a look is missing, add a variant in `ui/`. See `DESIGN.md`.
 - Import only what you use (`useState`, `useRef`, `type JSX`). Do not default-import `React` unless you need the namespace (`React.memo`).
 - `React.memo` belongs on leaf primitives that take `children`, not on every block. Do not wrap handlers in `useCallback` unless a memoized child actually depends on referential equality.

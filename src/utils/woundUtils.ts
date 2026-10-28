@@ -1,5 +1,4 @@
 import type { ActorOf } from "@/models";
-import { countCheckedBoxes } from "@/utils/trackers";
 
 export type WoundType = "brawl" | "critical";
 
@@ -113,22 +112,30 @@ export function woundGroupOf(actor: ActorOf<"character">): WoundRef[] {
   return flatWoundGroup(brawl.max, critical.max);
 }
 
+/** Update payload for a full set of wound box states; counts are derived from them. */
+export function woundStatesUpdate(next: { brawl: boolean[]; critical: boolean[] }): Record<string, unknown> {
+  return {
+    "system.wounds.brawl.states": next.brawl,
+    "system.wounds.critical.states": next.critical,
+  };
+}
+
+export function emptyWoundBoxes(actor: ActorOf<"character">): number {
+  const { brawl, critical } = actor.system.wounds;
+  return brawl.max + critical.max - brawl.value - critical.value;
+}
+
 /** Token-bar remaining empty boxes → wound state update. */
 export function woundUpdatesForBar(actor: ActorOf<"character">, remaining: number): Record<string, unknown> {
   const { brawl, critical } = actor.system.wounds,
     group = woundGroupOf(actor),
-    filled = countCheckedBoxes(brawl.states) + countCheckedBoxes(critical.states),
+    filled = brawl.value + critical.value,
     targetFilled = Math.max(0, brawl.max + critical.max - remaining),
     next =
       targetFilled > filled
         ? filledWoundStates(group, targetFilled - filled, brawl.states, critical.states)
         : emptiedWoundStates(group, filled - targetFilled, brawl.states, critical.states);
-  return {
-    "system.wounds.brawl.states": next.brawl,
-    "system.wounds.brawl.value": countCheckedBoxes(next.brawl),
-    "system.wounds.critical.states": next.critical,
-    "system.wounds.critical.value": countCheckedBoxes(next.critical),
-  };
+  return woundStatesUpdate(next);
 }
 
 /** Token-bar filled stress boxes → stress box update. Empty boxes fill as fatigue. */

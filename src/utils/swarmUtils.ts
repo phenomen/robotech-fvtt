@@ -34,6 +34,20 @@ export function leadStructureOf(member: SwarmMember, hardened: boolean): number 
   return Math.min(member.currentStructure, memberStructureOf(member, hardened));
 }
 
+/**
+ * Applies a sheet edit to a member stack. A stack's capacity grows to fit its count; the lead vessel
+ * keeps between 1 and its reduced structure while any vessel is left, and none once the stack is empty.
+ */
+export function patchSwarmMember(member: SwarmMember, updates: Partial<SwarmMember>): SwarmMember {
+  const next = { ...member, ...updates };
+  next.maxCount = Math.max(next.maxCount, next.count);
+  if (next.count <= 0) {
+    return { ...next, currentStructure: 0 };
+  }
+  const current = next.currentStructure <= 0 ? next.reducedStructure : next.currentStructure;
+  return { ...next, currentStructure: Math.min(current, next.reducedStructure) };
+}
+
 export function remainingSwarmDice(living: number, spent: number): number {
   return Math.max(0, living - spent);
 }

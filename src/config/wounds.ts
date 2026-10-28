@@ -3,6 +3,7 @@ export const MAX_CRITICAL_WOUNDS = 10;
 export const STRESS_BOX_COUNT = 5;
 export const MENTAL_BREAK_THRESHOLD = 5;
 
+/** A Triumvirate is three characters on one sheet: 9 wounds in total, spread across the members as damage lands. */
 const BASE_WOUNDS = { brawl: 2, critical: 1 },
   TRIUMVIRATE_WOUNDS = { brawl: 6, critical: 3 };
 

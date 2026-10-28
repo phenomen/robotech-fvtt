@@ -13,16 +13,12 @@ import { RobotechActorDirectory } from "@/sidebar/RobotechActorDirectory";
 import { applyTheme } from "@/utils/theme";
 
 function registerSystemSheets(): void {
-  // Core still ships AppV1 defaults; unregister them before registering ApplicationV2 sheets.
-  // eslint-disable-next-line typescript/no-deprecated
-  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  // v14 registers no core Actor or Item sheet, so there is nothing to unregister first.
   foundry.documents.collections.Actors.registerSheet("robotech", RobotechActorSheet, {
     label: "ROBOTECH.Sheet.Actor",
     makeDefault: true,
   });
 
-  // eslint-disable-next-line typescript/no-deprecated
-  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
   foundry.documents.collections.Items.registerSheet("robotech", RobotechItemSheet, {
     label: "ROBOTECH.Sheet.Item",
     makeDefault: true,

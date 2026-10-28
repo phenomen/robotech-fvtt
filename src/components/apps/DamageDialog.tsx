@@ -22,6 +22,7 @@ import {
   toggleHardwareSlot,
 } from "@/utils/applyDamage";
 import type { DamageAmounts, DamagePreview, DamageSink } from "@/utils/applyDamage";
+import { reportFailure } from "@/utils/reportFailure";
 
 interface DamageDialogContentProps {
   preview: DamagePreview;
@@ -31,7 +32,7 @@ interface DamageDialogContentProps {
 export function DamageDialogContent({ preview, onClose }: DamageDialogContentProps): JSX.Element {
   const damage = preview.cascade.damageInflicted,
     { sinks } = preview,
-    [amounts, setAmounts] = useState<DamageAmounts>(initialAmountsOf),
+    [amounts, setAmounts] = useState<DamageAmounts>(() => initialAmountsOf(sinks, damage)),
     incoming = preview.breakdown.multipliedHits,
     assigned = assignedDamageOf(amounts),
     remaining = Math.max(0, damage - assigned),
@@ -46,12 +47,19 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
     handleHardware = (sink: DamageSink, index: number, checked: boolean): void => {
       setAmounts((current) => toggleHardwareSlot(current, sink, index, checked, damage));
     },
+    [pending, setPending] = useState(false),
     handleApply = async (): Promise<void> => {
-      if (!canApply) {
+      if (!canApply || pending) {
         return;
       }
-      await commitDamage(preview, amounts);
-      onClose();
+      setPending(true);
+      try {
+        await commitDamage(preview, amounts);
+        onClose();
+      } catch (error: unknown) {
+        reportFailure(error);
+      }
+      setPending(false);
     };
 
   return (
@@ -103,7 +111,7 @@ export function DamageDialogContent({ preview, onClose }: DamageDialogContentPro
         onCancel={onClose}
         onConfirm={() => void handleApply()}
         confirmKey="ROBOTECH.Roll.ApplyDamage"
-        confirmDisabled={!canApply}
+        confirmDisabled={!canApply || pending}
       />
     </Stack>
   );
@@ -134,6 +142,7 @@ function SinkRow({ sink, amounts, onChange }: SinkRowProps): JSX.Element {
       }
     >
       <NumberInput
+        commit="change"
         min={0}
         max={sink.maxAssign}
         controls
@@ -198,12 +207,10 @@ export class DamageDialogApp extends ReactDialog {
   }
 
   static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
     classes: ["robotech", "dialog", "damage-dialog"],
     id: "robotech-damage-dialog",
     position: { height: "auto", width: 420 },
     window: {
-      ...super.DEFAULT_OPTIONS.window,
       resizable: false,
       title: "ROBOTECH.Damage.DistributeTitle",
     },

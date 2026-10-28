@@ -10,6 +10,11 @@ export type InputWidth = "auto" | "full" | "small" | "medium" | "large";
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "className" | "size"> {
   ref?: Ref<HTMLInputElement>;
+  /**
+   * `blur` (default) commits once on blur or Enter, so a document field writes once per edit.
+   * `change` commits on every keystroke, for inputs backed by React state such as dialog forms.
+   */
+  commit?: "blur" | "change";
   size?: InputSize;
   value?: string | number;
   width?: InputWidth;
@@ -31,6 +36,7 @@ const SIZE_PAD: Record<InputSize, string> = {
 export const Input = memo(
   ({
     type = "text",
+    commit = "blur",
     value,
     size = "medium",
     width = "auto",
@@ -42,11 +48,13 @@ export const Input = memo(
     ref,
     ...props
   }: InputProps): JSX.Element => {
-    const [draft, setDraft] = useState<string | null>(null),
+    const isToggle = type === "checkbox" || type === "radio",
+      commitsOnBlur = commit === "blur" && !isToggle,
+      [draft, setDraft] = useState<string | null>(null),
       displayValue = draft ?? value ?? "",
       handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setDraft(e.target.value);
-        if (type === "checkbox" || type === "radio") {
+        if (!commitsOnBlur) {
           onChange?.(e);
         }
       },
@@ -54,7 +62,7 @@ export const Input = memo(
         onFocus?.(e);
       },
       handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-        if (type !== "checkbox" && type !== "radio" && draft !== null && onChange && draft !== String(value ?? "")) {
+        if (commitsOnBlur && draft !== null && onChange && draft !== String(value ?? "")) {
           onChange(e);
         }
         setDraft(null);
@@ -62,7 +70,7 @@ export const Input = memo(
       },
       handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         onKeyDown?.(e);
-        if (e.key === "Enter" && type !== "checkbox" && type !== "radio") {
+        if (e.key === "Enter" && !isToggle) {
           (e.target as HTMLInputElement).blur();
         }
       };

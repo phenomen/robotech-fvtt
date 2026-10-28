@@ -13,6 +13,14 @@ function resolveAll<T extends ActorType>(uuids: readonly string[], types: readon
   return uuids.map((uuid) => ({ actor: actorFromUuidSync(uuid, types), uuid }));
 }
 
+/** Returns `current` when `next` links the same documents, so React skips the re-render. */
+function keepIfSame<T extends ActorType>(current: LinkedActor<T>[], next: LinkedActor<T>[]): LinkedActor<T>[] {
+  const same =
+    current.length === next.length &&
+    current.every((entry, index) => entry.uuid === next[index]?.uuid && entry.actor === next[index]?.actor);
+  return same ? current : next;
+}
+
 /**
  * Resolves linked-actor UUIDs into live documents, one entry per UUID in order. Reads are
  * synchronous for world documents and fall back to async resolution for compendium entries;
@@ -32,19 +40,22 @@ export function useLinkedActors<T extends ActorType>(uuids: readonly string[], t
 
   useEffect(() => {
     let cancelled = false;
-    const { uuids: currentUuids, types: currentTypes } = inputsRef.current;
-    setActors(resolveAll(currentUuids, currentTypes));
-    void (async () => {
-      const resolved = await Promise.all(
-        currentUuids.map(async (uuid) => ({
-          actor: await actorFromUuid(uuid, currentTypes),
-          uuid,
-        }))
-      );
-      if (!cancelled) {
-        setActors(resolved);
-      }
-    })();
+    const { uuids: currentUuids, types: currentTypes } = inputsRef.current,
+      synced = resolveAll(currentUuids, currentTypes);
+    setActors((current) => keepIfSame(current, synced));
+    // World actors resolve synchronously; only compendium entries need the async lookup.
+    if (synced.some((entry) => entry.actor === null)) {
+      void (async () => {
+        const resolved = await Promise.all(
+          synced.map(async (entry) =>
+            entry.actor ? entry : { actor: await actorFromUuid(entry.uuid, currentTypes), uuid: entry.uuid }
+          )
+        );
+        if (!cancelled) {
+          setActors((current) => keepIfSame(current, resolved));
+        }
+      })();
+    }
     return () => {
       cancelled = true;
     };
@@ -73,7 +84,7 @@ export function useLinkedActors<T extends ActorType>(uuids: readonly string[], t
           return;
         }
         const { uuids: currentUuids, types: currentTypes } = inputsRef.current;
-        setActors(resolveAll(currentUuids, currentTypes));
+        setActors((current) => keepIfSame(current, resolveAll(currentUuids, currentTypes)));
       };
     foundry.helpers.Hooks.on("updateActor", handleUpdate);
     foundry.helpers.Hooks.on("deleteActor", handleDelete);

@@ -9,8 +9,7 @@ import { Stack } from "@/components/ui/Stack";
 import { TrackerHex } from "@/components/ui/TrackerHex";
 import { GRADATION } from "@/config";
 import type { ActorOf } from "@/models";
-import { countCheckedBoxes } from "@/utils/trackers";
-import { flatWoundGroup, triumvirateGroupsOf } from "@/utils/woundUtils";
+import { flatWoundGroup, triumvirateGroupsOf, woundStatesUpdate } from "@/utils/woundUtils";
 import type { WoundRef, WoundType } from "@/utils/woundUtils";
 
 interface WoundTrackerProps {
@@ -88,12 +87,7 @@ export function CharacterWoundTracker({ actor }: WoundTrackerProps): JSX.Element
       } else {
         nextCritical[ref.index] = !(nextCritical[ref.index] ?? false);
       }
-      void actor.update({
-        "system.wounds.brawl.states": nextBrawl,
-        "system.wounds.brawl.value": countCheckedBoxes(nextBrawl),
-        "system.wounds.critical.states": nextCritical,
-        "system.wounds.critical.value": countCheckedBoxes(nextCritical),
-      });
+      void actor.update(woundStatesUpdate({ brawl: nextBrawl, critical: nextCritical }));
     };
 
   return (

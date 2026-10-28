@@ -4,6 +4,7 @@ import type Item from "@client/documents/item.mjs";
 import { renderActorSheet } from "@/components/apps/actorSheets";
 import { itemAllowedOn, UNIQUE_ITEM_TYPES } from "@/config/documentMeta";
 import type { ActorOf, SwarmMember } from "@/models";
+import { ownOptions } from "@/sheets/ownOptions";
 import { createReactMount, renderReactMount, replaceReactContent, unmountReactMount } from "@/sheets/reactMount";
 import type { ReactMount } from "@/sheets/reactMount";
 import type { CloseOptions, RenderContext, RenderOptions } from "@/types/application";
@@ -16,13 +17,11 @@ type DropActorResult = ReturnType<ActorSheetBase["_onDropActor"]>;
 export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2 {
   private readonly mount: ReactMount = createReactMount();
 
-  static override DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
+  static override DEFAULT_OPTIONS = ownOptions<typeof foundry.applications.sheets.ActorSheetV2.DEFAULT_OPTIONS>({
     classes: ["robotech", "sheet", "actor"],
-    dragDrop: [{ dropSelector: null }],
     position: { height: "auto", width: 710 },
-    window: { ...super.DEFAULT_OPTIONS.window, resizable: true },
-  };
+    window: { resizable: true },
+  });
 
   override async _onFirstRender(...args: Parameters<ActorSheetBase["_onFirstRender"]>): Promise<void> {
     await super._onFirstRender(...args);
@@ -139,24 +138,26 @@ export class RobotechActorSheet extends foundry.applications.sheets.ActorSheetV2
       return null;
     }
 
-    await this.clearUniqueItem(item);
-    return await super._onDropItem(event, item);
+    // A unique item (career, race) replaces the current one, but only once the new one exists.
+    const replaced = this.uniqueItemIds(item),
+      created = await super._onDropItem(event, item);
+    if (created && replaced.length > 0) {
+      await this.actor.deleteEmbeddedDocuments("Item", replaced);
+    }
+    return created;
   }
 
-  private async clearUniqueItem(item: Item): Promise<void> {
+  private uniqueItemIds(item: Item): string[] {
     if (!UNIQUE_ITEM_TYPES.some((type) => type === item.type)) {
-      return;
+      return [];
     }
-
     const ids: string[] = [];
     for (const owned of this.actor.items) {
       if (owned.type === item.type && owned.id) {
         ids.push(owned.id);
       }
     }
-    if (ids.length > 0) {
-      await this.actor.deleteEmbeddedDocuments("Item", ids);
-    }
+    return ids;
   }
 
   override _onClose(options: CloseOptions): void {

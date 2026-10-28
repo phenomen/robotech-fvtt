@@ -9,7 +9,7 @@ import { Portrait } from "@/components/ui/Portrait";
 import { Select } from "@/components/ui/Select";
 import { Stack } from "@/components/ui/Stack";
 import { Text } from "@/components/ui/Text";
-import { ARMOR_CLASS_OPTIONS } from "@/config/options";
+import { ARMOR_CLASS_OPTIONS, isChoiceValue } from "@/config/options";
 import type { ActorOf } from "@/models";
 import { pickImage } from "@/utils";
 
@@ -55,12 +55,16 @@ export function SwarmHeaderBlock({ actor }: SwarmHeaderBlockProps): JSX.Element 
 
         <Stack direction="row" gap={2}>
           <Stack align="center" justify="center" grow>
-            <Label>{game.i18n.localize("ROBOTECH.ArmorClass.Title")}</Label>
+            <Label htmlFor={`${actor.id}-armor-class`}>{game.i18n.localize("ROBOTECH.ArmorClass.Title")}</Label>
             <Select
+              id={`${actor.id}-armor-class`}
               width="medium"
               value={system.armorClass}
               onChange={(e) => {
-                void actor.update({ "system.armorClass": e.target.value });
+                const next = e.target.value;
+                if (isChoiceValue(ARMOR_CLASS_OPTIONS, next)) {
+                  void actor.update({ "system.armorClass": next });
+                }
               }}
             >
               {ARMOR_CLASS_OPTIONS.map((option) => (

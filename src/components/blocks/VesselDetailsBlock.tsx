@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/Input";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Stack } from "@/components/ui/Stack";
 import type { ActorOf, FieldValue } from "@/models";
+import { isOverridden, overrideHint } from "@/utils/documents";
 
 interface VesselDetailsBlockProps {
   actor: ActorOf<"vessel">;
@@ -41,6 +42,8 @@ export function VesselDetailsBlock({ actor }: VesselDetailsBlockProps): JSX.Elem
       >
         <NumberInput
           value={system.hardwarePoints}
+          disabled={isOverridden(actor, "system.hardwarePoints")}
+          title={overrideHint(actor, "system.hardwarePoints")}
           onValueChange={(val) => {
             handleFieldChange("system.hardwarePoints", val ?? 0);
           }}

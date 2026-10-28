@@ -159,6 +159,21 @@ export function controlledTokenActor(): Actor | null {
   return token.actor;
 }
 
+/** Whether an Active Effect changes this path. Sheets show such fields read-only so the result is never saved back. */
+export function isOverridden(actor: Actor, path: string): boolean {
+  return foundry.utils.hasProperty(actor.overrides, path);
+}
+
+/** Tooltip for a field an Active Effect controls, or undefined when the user may edit it. */
+export function overrideHint(actor: Actor, path: string): string | undefined {
+  return isOverridden(actor, path) ? game.i18n.localize("ROBOTECH.Effect.Overridden") : undefined;
+}
+
+/** Persisted value at `path`, before Active Effects. Dialogs that edit several fields at once start from this. */
+export function sourceValueOf(actor: Actor, path: string): unknown {
+  return foundry.utils.getProperty(actor._source, path);
+}
+
 /** Opens Foundry's file browser and stores the picked image on the actor. */
 export function pickImage(document: Actor): void {
   const picker = new foundry.applications.apps.FilePicker.implementation({

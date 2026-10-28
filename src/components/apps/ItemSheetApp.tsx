@@ -60,7 +60,7 @@ export function ItemSheetApp({ item }: ItemSheetAppProps): JSX.Element {
             <GridCell solid pad={3}>
               <Stack gap={2}>
                 <Text variant="label" color="primary">
-                  {game.i18n.localize(`TYPES.Item.${item.type}`) || item.type}
+                  {game.i18n.localize(`TYPES.Item.${item.type}`)}
                 </Text>
                 <Input
                   value={item.name}
